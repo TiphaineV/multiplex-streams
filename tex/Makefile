@@ -1,0 +1,2 @@
+all:
+	lualatex main.tex

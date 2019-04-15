@@ -1,0 +1,44 @@
+\documentclass[dvipsnames,a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{todonotes}
+\usepackage{xcolor}
+
+\newcommand{\tiph}[1]{\todo[inline,color=Orchid]{#1}}
+\newcommand{\pimprenelle}[1]{\todo[inline, color=ForestGreen]{#1}}
+
+
+\title{Multiplex stream graphs}
+\author{Pimprenelle Parmentier, Tiphaine Viard, ...}
+
+\begin{document}
+    \maketitle
+
+    \section{Multiplex stream graphs}
+
+    We define a multiplex stream graph as a tuple $M = (T_M, V_M, W_M, E_M, T, V, {\cal L})$, such that $T_M \subseteq T$, $V_M \subseteq V \times {\cal L}$, $W_M \subseteq T_M\times V_M$ and $E_M\subseteq T_M \times V_M \otimes V_M$.
+    $T$ and $V$ are, respectively, a time interval and a set of nodes, just like in stream graphs.
+    We then define {\em layers}; a multiplex stream graph can have an arbitrary number $d$ of aspects, and we define ${\cal L}$, as $\{L_i\}_{i=0}^{d}$ thset of layers, such that there is one layer for each $i=0..d$.
+    Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
+    
+    \tiph{Je ne suis pas sûre que l'on aie besoin de $V_M$, en fait; toute l'info de présence des n\oe{}uds dans les couches peut être contenue dans $W_M$ ?}
+
+    \pimprenelle{Test note}
+
+    From this definition, let us define common streams of interest.
+    For any layer $i \in {\cal L}$, the {\em intra-layer} stream graph $S^{(i)}$ is the stream such that ...
+
+    For any two layers $i,j\in {\cal L}$, the {\em inter-layer} stream graph $S^{(i,j)}$ ...
+
+    Notice that for any layer $i$, $S^{(i)}$ is equivalent to $S^{(i,j)}$.
+
+    The {\em coupling} ...
+
+    Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
+
+    Special case when the multiplex stream can be expressed in clusters of the stream graph.
+
+\end{document}
