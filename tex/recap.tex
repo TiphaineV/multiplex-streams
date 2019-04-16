@@ -1,0 +1,56 @@
+\documentclass[dvipsnames,a4paper,11pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{a4wide}
+\usepackage{amsmath}
+\usepackage{todonotes}
+\usepackage{xcolor}
+\usepackage{tabularx}
+
+\newcommand{\tiph}[1]{\todo[inline,color=Orchid]{#1}}
+\newcommand{\pimprenelle}[1]{\todo[inline, color=ForestGreen]{#1}}
+
+
+\title{Multiplex stream graphs : tableau récapitulatif des notions existantes pour les streams et les multilayer et pour les Stream-multilayer}
+\author{Pimprenelle Parmentier, Tiphaine Viard, ...}
+
+\begin{document}
+    \maketitle
+	\begin{tabularx}{\linewidth}{|X||X|X||c|}
+		\hline
+		\textbf{Classical Graphs} & \textbf{Stream graphs} & \textbf{Multilayer} & \textbf{Multilayer stream graphs}\\
+		$G=(V,E)$ & $S = (T,V,W,E)$ &  $M= (V_M,E_M,V,L)$ & $S_M = (T_M, V_M, W_M, E_M, T, V, {\cal L})$\\
+		\hline
+		\hline
+		- & - & intra-layer graph & intra-layer graph\\
+		\hline
+		- & - & inter-layer graph & inter-layer graph \\
+		\hline
+		\hline
+		- & covergage & - & ?? to do\\
+		- & cov$(S)=\frac{|W|}{|T\times V|}$&-&?? to do\\
+		\hline
+		- & $G_t$ graph at $t$ & - & $M_t$ (to do) \\
+		\hline
+		- & $G(S)$ agregated graph & - & $M(S_M)$ (to do) \\
+		\hline
+		Number of nodes & Number of nodes & Number of nodes & Number of nodes \\
+		$|V|$ & $\frac{|W|}{|T|}$ & $|V|$ & $\frac{|W|}{|T|}$??? problem\\
+		\hline
+		number of links & number of links & number of links & number of links\\
+		$|E|$ & $\frac{|E|}{|T|}$ & $|E_M|$ & ??? to do\\
+		\hline
+		- & compactness & - & compactness \\
+		 & $\frac{|W|}{|T'\times V'|}$& &???\\
+		 \hline
+		 - & uniformity & - & uniformity \\
+		 & $U = \frac{\sum_{uv \ V \otimes V}{|T_u \cap T_v|}}{\sum_{uv \in V\otimes V}{|T_u\cup T_v|}}$& & ??? to do\\
+		 \hline
+		 density & density & ?? & density ? \\
+		 $\frac{|E|}{|V|\otimes V|} = \frac{|E|2}{|V|(|V|-1)} $& $\delta(S) = \frac{\sum_{uv \ V \otimes V}{|T_uv|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}$ & & \\
+		 \hline
+		 \hline
+		 
+	\end{tabularx}
+	- : doesn't exists
+\end{document}
