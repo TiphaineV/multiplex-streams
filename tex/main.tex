@@ -21,18 +21,39 @@
 
     We define a multiplex stream graph as a tuple $M = (T_M, V_M, W_M, E_M, T, V, {\cal L})$, such that $T_M \subseteq T$, $V_M \subseteq V \times {\cal L}$, $W_M \subseteq T_M\times V_M$ and $E_M\subseteq T_M \times V_M \otimes V_M$.
     $T$ and $V$ are, respectively, a time interval and a set of nodes, just like in stream graphs.
-    We then define {\em layers}; a multiplex stream graph can have an arbitrary number $d$ of aspects, and we define ${\cal L}$, as $\{L_i\}_{i=0}^{d}$ thset of layers, such that there is one layer for each $i=0..d$.
+    We then define {\em layers}; a multiplex stream graph can have an arbitrary number $d$ of aspects, and we define ${\cal L}$, as $\{L_i\}_{i=0}^{d}$ the set of layers, such that there is one layer for each $i=0..d$.
     Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
     
     \tiph{Je ne suis pas sûre que l'on aie besoin de $V_M$, en fait; toute l'info de présence des n\oe{}uds dans les couches peut être contenue dans $W_M$ ?}
     \pimprenelle{Je ne sais pas, ça dépend de si on considère qu'un n\oe{}ud qui n'apparait à aucun temps t dans une couche existe dans cette couche ou pas : on pourrait avoir un n\oe{}ud qui apparait dans $V_M$ et pas dans $W_M$ même si c'est tordu ... et puis à ce moment là même dans un stream graph classique $S=(T,V,W,E)$, est-ce qu'on pourrait pas se dire que de la même façon que V n'est pas "utile" en terme d'informations supplémentaires ?}
     \pimprenelle{Je ne vois pas bien ce que représente la variable $T_M$ par rapport à la variable $T$ ? est-ce que les layers elle-mêmes seraient dépendantes du temps ? }
-
+    
+	\pimprenelle{Il y a une subtilité sur les layers : an aspect $(i)$ is a set $L_i$ of  elementary layers $\alpha^{i}_1,\dots,\alpha^{i}_n$
+    		 a layer $\alpha$ is an combination of elementary layer of each aspect : $\alpha \in L_1\times\dots\times L_d$
+   	}
+   	
+   	
     From this definition, let us define common streams of interest.
     For any layer $i \in {\cal L}$, the {\em intra-layer} stream graph $S^{(i)}$ is the stream such that ...
-
+	
+	\pimprenelle{Suggestion :}
+	For any layer $\alpha \in L_1 \times \dots \times L_d$, the {\em intra-layer} stream graph $S^{\alpha}$ is the stream $S^{\alpha}=(T,V^{\alpha},W^{\alpha},E^{\alpha})$ such that for all $t$ in T :
+	\begin{itemize}
+		\item $V^{\alpha}$ is the set of nodes $(u,\alpha) \in V_M$
+		\item $W^{\alpha}$ is the set of $(t,u,\alpha)$ included in $W_M$. 
+		\item $E^{\alpha}$ is the set of links $(t,(u,\alpha),(v,\alpha))$ included in $E_M$.		
+	\end{itemize}
+	\pimprenelle{fin}	
+	
     For any two layers $i,j\in {\cal L}$, the {\em inter-layer} stream graph $S^{(i,j)}$ ...
-
+	\pimprenelle{Suggestion}
+	For any two layers $\alpha, \beta \in L_1\times \dots\times L_d$, the {\em inter-layer} stream graph is the stream $S^{\alpha,\beta} = (T, V^{(\alpha,\beta)},W^{(\alpha,\beta)},E^{(\alpha,\beta)})$ such that :
+	\begin{itemize}
+		\item $V^{(\alpha,\beta)} = \{(u,\gamma) | u \in V, \gamma \in \{\alpha,\beta\} \} \cap V_M$
+		\item $W^{(\alpha,\beta)}= \{(t,u,\gamma) | u \in V, \gamma \in \{\alpha,\beta\} \} \cap W_M$
+		\item $E^{(\alpha,\beta)} = \{(t,(u,\alpha),(v,\beta) | u,v \in V\} \cap E_M $
+	\end{itemize}
+	\pimprenelle{fin}
     Notice that for any layer $i$, $S^{(i)}$ is equivalent to $S^{(i,j)}$.
 
     The {\em coupling} ...
