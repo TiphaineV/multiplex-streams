@@ -56,15 +56,31 @@
 		\item $E^{(\alpha,\beta)} = \{(t,(u,\alpha),(v,\beta) | u,v \in V\} \cap E_M $
 	\end{itemize}
 	\pimprenelle{fin}
-    Notice that for any layer $i$, $S^{(i)}$ is equivalent to $S^{(i,j)}$.
-    \pimprenelle{du coup je ne comprends pas...}
+    Notice that for any layer $\alpha$, $S^{(\alpha)}$ is equivalent to $S^{(\alpha,\alpha)}$.
+	
+	
+	
+    The {\em coupling edges} are $E_C=\{(t,u,\alpha,v,\beta)\in E_M | u=v\}$.
+    
+    The {\em intra-layer edges} are $E_I = \{(t,u,\alpha,v,\beta) \in E_M | \alpha = \beta \}$
+    
+    The {\em inter-layer edges} are $\bar{E_I} = E_M\backslash E_I$.
+    
+    Given a time $t\in T$, $M_t = (V_{M,t}, E_{M,t},V_t,\cal{L}_t)$ with : 
+    \begin{itemize}
+		\item $V_{M,t} = \{(u,\alpha)| (t,u,\alpha)\in W_M\}$
+		\item $E_{M,t} = \{(u,\alpha,v,\beta) | (t,u,\alpha,v,\beta) \in E_M\}$
+		\item $V_t = {u | (t,u) \in V}$
+		\item ${\cal L}_t = \{L_i,t}_{i=1}^d \Alpha$
+    \end{itemize}
 
-    The {\em coupling} ...
-
+	\pimprenelle{Il faut qu'on choisisse comment les layers varient au cours du temps. On peut choisir d'avoir un ensemble d'aspects $L_i$ fixe et faire varier seulement les couches élémentaires $\alpha_i$. Mais que se passe-t-il à ce moment là si toutes les couches elem d'un aspect disparaissent en même temps ? Le cas d'un aspect vide n'est pas discuté dans l'article mais il parait problématique. On n'a pas envie de faire disparaitre un aspect pour des raisons pratiques évidentes.}
+	
     Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
 
     Special case when the multiplex stream can be expressed in clusters of the stream graph.
     
+       
     \section{Isomorphism in multiplex stream graphs}
     \paragraph{}
     In classical graphs, $G$ and $G'$ are isomorphs if we can find $f:V \rightarrow V'$ bijective such as $G_f=G'$,$G_f=(f(V),E_f), E_f={(f(u),f(v)), (u,v) \in E}$.
@@ -81,5 +97,6 @@
     Two stream graphs $S$ and $S'$ are {\em isomorphs } if we can find $f$ such as $f(S)=S'$.
     Two stream graphs $S$ and $S'$ are {\em sychnronised} if we can find $f$ with $f_t=Id$ and $f(S)=S'$.
     Two stream graphs are {\em shifted} if we can find $f$ with $f_t(t)=t+\beta$ and $f(S)=S'$.
-
+    
+    
 \end{document}
