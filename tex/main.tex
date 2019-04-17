@@ -26,7 +26,8 @@
     
     \tiph{Je ne suis pas sûre que l'on aie besoin de $V_M$, en fait; toute l'info de présence des n\oe{}uds dans les couches peut être contenue dans $W_M$ ?}
     \pimprenelle{Je ne sais pas, ça dépend de si on considère qu'un n\oe{}ud qui n'apparait à aucun temps t dans une couche existe dans cette couche ou pas : on pourrait avoir un n\oe{}ud qui apparait dans $V_M$ et pas dans $W_M$ même si c'est tordu ... et puis à ce moment là même dans un stream graph classique $S=(T,V,W,E)$, est-ce qu'on pourrait pas se dire que de la même façon que V n'est pas "utile" en terme d'informations supplémentaires ?}
-    \pimprenelle{Je ne vois pas bien ce que représente la variable $T_M$ par rapport à la variable $T$ ? est-ce que les layers elle-mêmes seraient dépendantes du temps ? }
+    \pimprenelle{Je ne vois pas bien ce que représente la variable $T_M$ par rapport à la variable $T$ ? est-ce que les layers elle-mêmes seraient dépendantes du temps ? 
+    Proposition : $T_M$ is a set of $T_i \subseteq T$.}
     
 	\pimprenelle{Il y a une subtilité sur les layers : an aspect $(i)$ is a set $L_i$ of  elementary layers $\alpha^{i}_1,\dots,\alpha^{i}_n$
     		 a layer $\alpha$ is an combination of elementary layer of each aspect : $\alpha \in L_1\times\dots\times L_d$
@@ -43,6 +44,7 @@
 		\item $W^{\alpha}$ is the set of $(t,u,\alpha)$ included in $W_M$. 
 		\item $E^{\alpha}$ is the set of links $(t,(u,\alpha),(v,\alpha))$ included in $E_M$.		
 	\end{itemize}
+	
 	\pimprenelle{fin}	
 	
     For any two layers $i,j\in {\cal L}$, the {\em inter-layer} stream graph $S^{(i,j)}$ ...
@@ -62,5 +64,22 @@
     Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
 
     Special case when the multiplex stream can be expressed in clusters of the stream graph.
+    
+    \section{Isomorphism in multiplex stream graphs}
+    \paragraph{}
+    In classical graphs, $G$ and $G'$ are isomorphs if we can find $f:V \rightarrow V'$ bijective such as $G_f=G'$,$G_f=(f(V),E_f), E_f={(f(u),f(v)), (u,v) \in E}$.
+    \paragraph{}
+    Given a stream graph $S=(T,V,W,E)$ and $S'=(T,V,W,E)$ we define $f=(f_t,f_v,f_w,f_e)$ :
+    \begin{itemize}
+    	\item $f_t(t)=\alpha t + \beta, \alpha > 0$
+    	\item $f_v:V\rightarrow V'$ is a bijection.
+    	\item $f_w((t,u))=(f_t(t),f_u(u)) \forall (t,u) \in W$
+    	\item $f_e((t,u,v))=(f_t(t),f_v(u),f_v(v)) \forall (t,u,v) \in E$
+    	\item $f(S)=(f_t(T),f_v(V),f_w(W),f_e(E))$
+    \end{itemize}
+    
+    Two stream graphs $S$ and $S'$ are {\em isomorphs } if we can find $f$ such as $f(S)=S'$.
+    Two stream graphs $S$ and $S'$ are {\em sychnronised} if we can find $f$ with $f_t=Id$ and $f(S)=S'$.
+    Two stream graphs are {\em shifted} if we can find $f$ with $f_t(t)=t+\beta$ and $f(S)=S'$.
 
 \end{document}
