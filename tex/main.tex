@@ -43,6 +43,7 @@
 
     Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
    	
+   	\pimprenelle{La représentation de la présence ou non des couches en fonction du temps par $T_M$ est un choix, que nous préférons pour le moment à celle $M_M$ des couples $(t,\alpha)$}
    	
     From this definition, let us define common streams of interest.
    
@@ -112,24 +113,30 @@
     Special case when the multiplex stream can be expressed in clusters of the stream graph.
     
     \section{Intrications (Etranglement)}
-    
+    	
        
     \section{Isomorphism in multiplex stream graphs}
     \paragraph{}
     In classical graphs, $G$ and $G'$ are isomorphs if we can find $f:V \rightarrow V'$ bijective such as $G_f=G'$,$G_f=(f(V),E_f), E_f={(f(u),f(v)), (u,v) \in E}$.
     \paragraph{}
-    Given a stream graph $S=(T,V,W,E)$ and $S'=(T,V,W,E)$ we define $f=(f_t,f_v,f_w,f_e)$ :
+    Given a stream graph $S=(T,V,W,E)$ and $S'=(T,V,W,E)$ we define $f=(f_T,f_V,f_V,f_E)$ :
     \begin{itemize}
-    	\item $f_t(t)=\alpha t + \beta, \alpha > 0$
-    	\item $f_v:V\rightarrow V'$ is a bijection.
-    	\item $f_w((t,u))=(f_t(t),f_u(u)) \forall (t,u) \in W$
-    	\item $f_e((t,u,v))=(f_t(t),f_v(u),f_v(v)) \forall (t,u,v) \in E$
-    	\item $f(S)=(f_t(T),f_v(V),f_w(W),f_e(E))$
+    	\item $f_T(t)= t + \beta, \alpha > 0$
+    	\item $f_V:V\rightarrow V'$ is a bijection.
+    	\item $f_W((t,u))=(f_T(t),f_V(u)) \forall (t,u) \in W$
+    	\item $f_E((t,u,v))=(f_T(t),f_V(u),f_V(v)) \forall (t,u,v) \in E$
+    	\item $f(S)=(f_T(T),f_V(V),f_W(W),f_E(E))$
     \end{itemize}
     
     Two stream graphs $S$ and $S'$ are {\em isomorphs } if we can find $f$ such as $f(S)=S'$.
-    Two stream graphs $S$ and $S'$ are {\em sychnronised} if we can find $f$ with $f_t=Id$ and $f(S)=S'$.
-    Two stream graphs are {\em shifted} if we can find $f$ with $f_t(t)=t+\beta$ and $f(S)=S'$.
+    Two stream graphs are {\em shifted} if we can find $f$ with $f_V=\text{Id}$ and $f(S)=S'$.
+
+	\begin{rmq}
+		We can also generalise again with $f_T(t)=\alpha t$ . We say that the two graphs are proportional. 
+	\end{rmq}    
+    
+    \pimprenelle{This notion could be usefull for example to find some patterns in a music sheet. The theme could for example be done at different times with different instruments, and at different tones. (The use of multilayer could so be justified)}
+    
     
     
 \end{document}
