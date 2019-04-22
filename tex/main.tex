@@ -7,6 +7,9 @@
 \usepackage{todonotes}
 \usepackage{xcolor}
 \usepackage{amsthm}
+\usepackage{amssymb}
+
+
 
 \newtheorem{thm}{Theorem}
 \newtheorem{prop}{Propery}
@@ -30,26 +33,32 @@
     \section{Multiplex stream graphs}
 
 	\pimprenelle{Multilayer stream graphs serait peut etre plus général ?}
-
+	\subsection{Definition}
     We define a multiplex stream graph as a tuple $M = (T,T_M,V,W_M,E_M,{\cal L})$, such that $T$ and $V$ are, respectively, a time interval and a set of nodes, just like in stream graphs. 
     As in multilayer graphs, ${\cal L}$ is a set of $d$ {\em aspects}; ${\cal L} = \{L_i\}_{i=1}^d$, and an element $\alpha_i$ of $L_i$ is named {\em elementary layer}. An element of $L=L_1\times \dots \times L_d$ is named {\em layer}. From those elements, $V_M$ is defined as follows : $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$ .
     
     
 	$T_M$ is a set of intervals of $T$ so for that each layer $\alpha$, $T_{\alpha}$ is the interval at which the layer exists.
 		
-	$W_M \subseteq T\times V \times (L_1 \times \dots \times L_d)$ represents the existing points on layers with respect to the time. 
+	$W_M \subseteq T\times V \times (L_1 \times \dots \times L_d)$ represents the existing points on layers with respect to time. 
    
    $E_M \subseteq T\times V_M \otimes V_M$ are the links appearing with respect to time.
 
     Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
+    
+    \begin{rmq}
+    	Note that $V$ can be seen as the aspect $L_0$ with $T_0 = T$ and that more generally it is just an aspect similar to the other ones.
+    \end{rmq}
    	
    	\pimprenelle{La représentation de la présence ou non des couches en fonction du temps par $T_M$ est un choix, que nous préférons pour le moment à celle $M_M$ des couples $(t,\alpha)$}
    	
+   	\subsection{Substreams and operations over substreams}
+   		
     From this definition, let us define common streams of interest.
    
 	For any layer $\alpha \in L_1 \times \dots \times L_d$, the {\em intra-layer} stream graph $S^{\alpha}$ is the stream $S^{\alpha}=(T^{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ such that for all $t$ in T :
 	\begin{itemize}
-		\item $T^{\alpha} \in T_M$
+		\item $T^{\alpha} = T_{\alpha} \in T_M$
 		\item $V^{\alpha} =\{(u,\alpha),u\in V\} \cap V_M$
 		\item $W^{\alpha} =\{(t,u,\alpha),|u\in V, t \in T \} \cap W_M$ 
 		\item $E^{\alpha} = \{(t,(u,\alpha),(v,\alpha))| t \in T,(u,v)\in V^2 \} \cap E_M$.		
@@ -66,6 +75,7 @@
 	
 	    Notice that for any layer $\alpha$, $S^{(\alpha)}$ is equivalent to $S^{(\alpha,\alpha)}$.
 	
+
 	
 	The {\em intersection} of two substreams $S_1$ and $S_2$ is defined as follows :
 	\[
@@ -89,6 +99,7 @@
 		\]
 	\end{prop}
 	
+	\subsection{Projections }
 	
     The {\em coupling edges} are $E_C=\{(t,u,\alpha,v,\beta)\in E_M | u=v\}$.
     
@@ -107,19 +118,95 @@
     \begin{rmq}
     	We assume that $\forall (i,t), \; L_{(i,t)} \neq \emptyset$.
     \end{rmq}
+    
+    A {\em multiplex stream graph (MpSG)} is a graph in which the only inter-layer connections allowed are connections between the same point : $E_M = E_I \cup E_C$.
+    
+    The {\em multilayer graph induced} $M_I(M)$ of $M$ is the multilayer graph which gather all the points on all the layer who appear during $T$ and all the links in $E$.
+    \begin{align*}
+    	M_I(M) = (V_{M,I}, E_{M,I}, V_I,L_I)\\
+    	V_{M,I} = \bigcup_{t\in T} V_{M,t}\\
+    	E_{M,I} = \bigcup_{t\in T} E_{M,t}\\
+    	V_I = \bigcup_{t\in T} V_t \\
+    	L_I = \bigcup_{t\in T} L_t\\
+    \end{align*}
 	
+    The {\em underlying stream } $S_U(M)$ of $M$ is $(T,V_M,W_M,E_M)$, and could be share into clusters corresponding to the different layers. This definition is a generalisation to the one used for simple multilayer graphs. 
+    
+
+    
+    The {\em contribution} of one node-layer in the MPG is $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. The {\em number of node-layers} is the sum of the contributions $N(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$. 
+    
+	The {\em overlap presence } of two nodes-layers $(u,\alpha)$ and $(v,\beta)$ measures the rate of simultaneous presence of two node-layers :
+	\begin{align*}
+		\mathbb{U}((u,\alpha),(v,\beta))=\mathbb{P}( t \in T_{u,\alpha} \cap T_{v,\beta} | t \in T_{u,\alpha} \cup T_{u,\beta}) \\
+		= \frac{|T_{u,\alpha}\cap T_{u,\beta}|}{|T_{u,\alpha}\cup T_{u,\beta}|}		
+	\end{align*}
+    
+	The {\em overlap presence} of two layers $\alpha$ and $\beta$ is defined on the same pattern :  
+	\begin{align*}
+		\mathbb{U}(\alpha,\beta) = \frac{|T_{\alpha}\cap T_{\beta}|}{|T_{\alpha}\cup T_{\beta}|}
+	\end{align*}	    
+    
+    The {\em node-layer uniformity} measures the rate of simultaneous presences of node-layers in the multilayer-stream graph :
+    \[
+    	\mathbb{U}(M) = \frac{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\beta)}|}}{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\beta)}|}}
+    \]
+
+	  
+    
+	\begin{rmq}
+		Note that this concept can be used for sub-stream graphs of any type.
+	\end{rmq}
+
+	When $\mathbb{U}=1$, we say that the multilayer stream graph is uniform.
+    
+    	
+    
+      
+    
+    \section{Intrication (Entanglement)}
+    	
+	************
     Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
 
     Special case when the multiplex stream can be expressed in clusters of the stream graph.
+    ************
     
-    \section{Intrications (Etranglement)}
+    
     	
-       
+    \subsection{Density}
+	In classical graphs (unweighed and non directional), the density $d(G)$ measures how much the vertexes are connected. 
+		\[
+			d(G) = \frac{|E|}{|V\otimes V|} = \frac{2\times |E|}{|V|(|V|-1)}
+		\] 
+	In stream graphs, the density measures too the "rate of connectivity", or the probability that, at a randow time when two point exist, they are connected.
+	
+		\begin{align*}
+			\delta_s(G) = & \mathbb{P}((t,u,v)\in E| (t,u),(t,v) \in W) \\
+			 =  & \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}
+		\end{align*}
+	
+	We can then define the density of the multilayer graph. Notice first that the density measures the rate of connectivity, and so depending to the type of system we study, the definition can change. If some connections are forbidden, we will ignore it in the density. We name $C \in V_M\times V_M$ the set of possible connections in the mutlilayer.
+	\[
+		\delta_M (M) = \frac{|E_M|}{|\{\text{"possible connections"}\}|}
+	\]
+	
+	The generalisation to multilayer stream graphs is then natural.
+	\[
+		\delta_M (M) = \frac{\int_{t\in T}|E_M,t|}{\int_{t\in T}|C|} = \frac{\sum_{(u,\alpha)(v,\beta) \in V_M \otimes V_M}|T_{(u,\alpha)(v,\beta)}|}{\sum_{(u,\alpha)(v,\beta) \in C}|T_{(u,\alpha)}\cap T_{(v,\beta)}|}
+	\]
+	
+	For example, in a multiplex stream graph, $C=\{(t,u,\alpha),(t,v,\beta))| t\in T_{u,\alpha} \cap T_{u,\beta}, u=v \text{or} \alpha = \beta)\}$ :
+	
+	\[
+		\delta_M (M) = \frac{|E_M|}{|C|}= \frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}{\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|+ \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|} 
+	\]
+		       
     \section{Isomorphism in multiplex stream graphs}
     \paragraph{}
     In classical graphs, $G$ and $G'$ are isomorphs if we can find $f:V \rightarrow V'$ bijective such as $G_f=G'$,$G_f=(f(V),E_f), E_f={(f(u),f(v)), (u,v) \in E}$.
     \paragraph{}
-    Given a stream graph $S=(T,V,W,E)$ and $S'=(T,V,W,E)$ we define $f=(f_T,f_V,f_V,f_E)$ :
+    Given a stream graph $S=(T,V,W,E)$ and $S'=(T,V,W,E)$ we define $f=(f_T,f_V,f_V,f_E)$ such that:
     \begin{itemize}
     	\item $f_T(t)= t + \beta, \alpha > 0$
     	\item $f_V:V\rightarrow V'$ is a bijection.
@@ -132,11 +219,14 @@
     Two stream graphs are {\em shifted} if we can find $f$ with $f_V=\text{Id}$ and $f(S)=S'$.
 
 	\begin{rmq}
-		We can also generalise again with $f_T(t)=\alpha t$ . We say that the two graphs are proportional. 
-	\end{rmq}    
+		We can also generalise again with $f_T(t)=\alpha t$ . We say that one graph is expanded/contracted with respect to the other. 
+	\end{rmq}
+	
+	
     
-    \pimprenelle{This notion could be usefull for example to find some patterns in a music sheet. The theme could for example be done at different times with different instruments, and at different tones. (The use of multilayer could so be justified)}
+    \pimprenelle{This notion could be usefull for example to find some patterns in a music sheet. The theme could for example be done at different times with different instruments, and at different tones, and different tempis. (The use of multilayer could so be justified)}
     
-    
-    
+    \nocite{*}
+	\bibliography{main}
+
 \end{document}
