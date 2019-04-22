@@ -19,7 +19,7 @@
 	\begin{tabularx}{\linewidth}{|X||X|X||c|}
 		\hline
 		\textbf{Classical Graphs} & \textbf{Stream graphs} & \textbf{Multilayer} & \textbf{Multilayer stream graphs}\\
-		$G=(V,E)$ & $S = (T,V,W,E)$ &  $M= (V_M,E_M,V,L)$ & $S_M = (T_M, V_M, W_M, E_M, T, V, {\cal L})$\\
+		$G=(V,E)$ & $S = (T,V,W,E)$ &  $M= (V_M,E_M,V,L)$ & $M = (T,T_M,V,W_M,E_M,{\cal L})$\\
 		\hline
 		\hline
 		- & - & intra-layer graph & intra-layer graph\\
@@ -27,12 +27,17 @@
 		- & - & inter-layer graph & inter-layer graph \\
 		\hline
 		\hline
-		- & covergage & - & ?? to do\\
-		- & cov$(S)=\frac{|W|}{|T\times V|}$&-&?? to do\\
+		- & covergage & - & intra/inter layer coverage \\
+		- & cov$(S)=\frac{|W|}{|T\times V|}$&-& (importance de garder les $V_M$ ?)\\
 		\hline
-		- & $G_t$ graph at $t$ & - & $M_t$ (to do) \\
+		- & $G_t$ graph at $t$ & - & $M_t$ \\
 		\hline
-		- & $G(S)$ agregated graph & - & $M(S_M)$ (to do) \\
+		- & Graph induced & - & Multilayer induced \\
+		\hline
+		- & $G(S)$ & - & $M_I(M)$\\
+		\hline
+		- & - & underlying graph & underlying Stream \\
+		- & - & $G(M)$ & $S_U$\\
 		\hline
 		Number of nodes & Number of nodes & Number of nodes & Number of nodes \\
 		$|V|$ & $\frac{|W|}{|T|}$ & $|V|$ & $\frac{|W|}{|T|}$??? problem\\
@@ -47,7 +52,7 @@
 		 & $U = \frac{\sum_{uv \ V \otimes V}{|T_u \cap T_v|}}{\sum_{uv \in V\otimes V}{|T_u\cup T_v|}}$& & ??? to do\\
 		 \hline
 		 density & density & ?? & density ? \\
-		 $\frac{|E|}{|V|\otimes V|} = \frac{|E|2}{|V|(|V|-1)} $& $\delta(S) = \frac{\sum_{uv \ V \otimes V}{|T_uv|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}$ & & \\
+		 $\frac{|E|}{|V|\otimes V|} = \frac{|E|2}{|V|(|V|-1)} $& $\delta(S) = \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}$ & & \\
 		 \hline
 		 \hline
 		 
