@@ -104,10 +104,11 @@ venv.bak/
 .mypy_cache/
 
 #latex
-.aux
-.bbl
-.bak
-.blg
-.log
-.pdf 
-.gz
+*.aux
+*.bbl
+*.bak
+*.blg
+*.log
+*.pdf 
+*.gz
+*.aux
