@@ -20,6 +20,9 @@
 \theoremstyle{remark}
 \newtheorem{rmq}{Remark}
 
+\theoremstyle{remark}
+\newtheorem{ex}{Example}
+
 \newcommand{\tiph}[1]{\todo[inline,color=Orchid]{#1}}
 \newcommand{\pimprenelle}[1]{\todo[inline, color=ForestGreen]{#1}}
 \newcommand{\jeffin}[1]{\todo[inline, color=BrickRed]{#1}}
@@ -32,13 +35,11 @@
 \begin{document}
     \maketitle
 
-    \section{Multiplex stream graphs}
-
-	\pimprenelle{Multilayer stream graphs serait peut etre plus général ?}
+    \section{Multilayer stream graphs}
 
 	\subsection{Definition}
-    We define a multiplex stream graph as a tuple $M = (T,T_M,V,W_M,E_M,{\cal L})$, such that $T$ and $V$ are, respectively, a time interval and a set of nodes, just like in stream graphs.
-    As in multilayer graphs, ${\cal L}$ is a set of $d$ {\em aspects}; ${\cal L} = \{L_i\}_{i=1}^d$, and an element $\alpha_i$ of $L_i$ is named {\em elementary layer}. An element of $L=L_1\times \dots \times L_d$ is named {\em layer}. From those elements, $V_M$ is defined as follows : $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$ .
+    We define a multiplex stream graph as a tuple $M = (T,T_M,V,W_M,E_M,{\cal L})$, such that $T$ and $V$ are, respectively, a time interval and a set of nodes, just like for stream graphs \cite{stream}.
+    As for multilayer graphs \cite{mlkiv}, ${\cal L}$ is a set of $d$ {\em aspects}; ${\cal L} = \{L_i\}_{i=1}^d$, and an element $\alpha_i$ of $L_i$ is named {\em elementary layer}. An element of $L=L_1\times \dots \times L_d$ is named {\em layer}. From those elements, the set of {\em node-layers } $V_M$ is defined as follows : $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$.
 
 
 	$T_M$ is a set of intervals of $T$ so for that each layer $\alpha$, $T_{\alpha}$ is the interval at which the layer exists.
@@ -49,12 +50,64 @@
 
     Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
 
-    \begin{rmq}
-    	Note that $V$ can be seen as the aspect $L_0$ with $T_0 = T$ and that more generally it is just an aspect similar to the other ones.
-    \end{rmq}
+    \pimprenelle{Note that $V$ can be seen as the aspect $L_0$ with $T_0 = T$ and that more generally it is just an aspect similar to the other ones. .... a discuter}
 
    	\pimprenelle{La représentation de la présence ou non des couches en fonction du temps par $T_M$ est un choix, que nous préférons pour le moment à celle $M_M$ des couples $(t,\alpha)$}
 
+	\pimprenelle{FIGURE + EXEMPLE }
+
+	
+	\begin{ex}[Research world]\label{exresearch}
+	We consider a set of people working in research.
+	
+	These people can work in one or more universities and/or companies, in one or more departments. They can work together on different ways : they can collaborate on a paper, supervise or being supervised. And their work on different subjects, linked together thanks to keywords.
+
+
+	The multilayer stream graph is the following :
+	\begin{itemize}
+		\item the {\bf nodes V} are the researchers
+		\item the {\bf aspects L} are : the university/companies , the departments, the subjects, the type of status of interaction (supervisor/ supervised / collaborator) 
+		\item {\bf links} appear during an interaction between two researchers.
+		\item all these parameters vary with time, the set $T$ is chosen arbitrarily
+	\end{itemize}
+	
+	Question : which aspect is the more important in the spreading and creation of knowledge ?
+	
+	\end{ex}
+	
+	\begin{figure}
+    	\centering
+    	\includegraphics[width=15cm]{schemas/chercheurs.jpg}
+    	\caption{An simplified scheme of a multiplex stream graph for example \ref{exresearch}. The nodes are the researchers R1,R2,R3, and the aspects are the Universities (U1,U2,U3), and the department (Maths, Computer sciences, Physics)}
+    	\label{fig:chercheurs}
+	\end{figure}
+	
+
+	\begin{ex}[Epidemics between species]
+		We consider an set of individuals from different species, and a disease. This disease could be transmitted through different types of interaction : by blood, by  by respiratory tracts, digestive tracks, etc.
+		
+		The stream-multilayer graph is the following : 
+		\begin{itemize}
+			\item the {\bf nodes V} are the individuals
+			\item the {\bf aspects L} are : the species, the type of possible interaction, the state of the individual (sane, infected, contagious, dead, recoved ... ) 
+			\item {\bf links} appear when there is an interaction between two individuals.
+			\item all these parameters vary with time, the set $T$ is chosen arbitrarily (from example from the start of the infection)
+		\end{itemize}
+	
+		The question here could be : when and where do we have to act (cut some connection / remove some node-layer) to stop the spreading of the disease as soon as possible ?
+	\end{ex}
+
+	
+	\begin{rmq}
+		We notice that it is easy to make the multilayer as complex as we want. Three rules seem to be important to have a pertinent use of multiplex-stream graph :
+		\begin{itemize}
+			\item a set of nodes which could have various properties which can be "melted"
+			\item different ways to interact between the nodes in function of their properties
+			\item a time-dependency
+		\end{itemize}
+	\end{rmq}
+	
+	
    	\subsection{Substreams and operations over substreams}
 
     From this definition, let us define common streams of interest.
@@ -230,6 +283,7 @@
     \pimprenelle{This notion could be usefull for example to find some patterns in a music sheet. The theme could for example be done at different times with different instruments, and at different tones, and different tempis. (The use of multilayer could so be justified)}
 
     \nocite{*}
+    \bibliographystyle{plain}
 	\bibliography{main}
 
 \end{document}
