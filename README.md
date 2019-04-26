@@ -1,2 +1,2 @@
 # multiplex-streams
-Tihs is the Readme for multiplex streams project.
+This is the Readme for multiplex streams project.
