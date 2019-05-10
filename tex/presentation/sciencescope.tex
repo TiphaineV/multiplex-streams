@@ -51,10 +51,10 @@
 %\usetheme{Ilmenau}
 %\usetheme{JuanLesPins}
 %\usetheme{Luebeck}
-%\usetheme{Madrid}
+\usetheme{Madrid}
 %\usetheme{Malmoe}
 %\usetheme{Marburg}
-\usetheme{Montpellier}
+%\usetheme{Montpellier}
 %\usetheme{PaloAlto}
 %\usetheme{Pittsburgh}
 %\usetheme{Rochester}
@@ -95,12 +95,13 @@
 %----------------------------------------------------------------------------------------
 
 \title{Multilayer stream graphs} % The short title appears at the bottom of every slide, the full title is only on the title page
+\subtitle{JFLI Workshop - 2019}
+\author{Pimprenelle Parmentier \\ M1 student\\ Riken AIP} % Your name
 
-\author{Pimprenelle Parmentier} % Your name
-
-
-
-\date{\today} % Date, can be changed to a custom date
+%\logo{} 
+\institute{\textit{pimprenelle.parmentier@polytechnique.edu}} 
+\date{} 
+\subject{JFLI Workshop - 2019}
 
 
 
@@ -108,6 +109,11 @@
 
 \begin{frame}
 \titlepage % Print the title page as the first slide
+\centering
+\textbf{Supervisors :} \\
+Tiphaine Viard {\footnotesize(Riken AIP)}\\
+Benjamin Renoust {\scriptsize(Institute for Datability Science}, {\footnotesize Osaka University)}\\
+Jean-François Baffier {\scriptsize(Japan Society for the Promotion of Science},{\footnotesize Tokyo Institute of Technology)}
 \end{frame}
 
 %\begin{frame}
@@ -120,39 +126,108 @@
 %----------------------------------------------------------------------------------------
 
 %------------------------------------------------
-
-
-\begin{frame}{The basic notions}
-\begin{minipage}[t]{5cm}
-\textbf{Multilayer graphs}
-\\
-$M=(V_M,E_M,V,L)$
-\\
+\begin{frame}{Introduction}
+\textbf{Graphs} : interactions (edges) between individuals (nodes).
+\[
+	G=(V,E)
+\]
+\pause
+\begin{minipage}{0.4\linewidth}
+{\large A few examples :}
 \begin{itemize}
-    \item Different types of interaction
-    \item Different types of nodes
-    \item More complex structures
+    \item social interactions
+    \item biological interactions
+    \item IP network
+    \item transportation network
 \end{itemize}
+\end{minipage}
+\pause
+\begin{minipage}{0.5\linewidth}
 \begin{figure}
-    \centering
-    \includegraphics[width=4cm]{img/exMulti.JPG}
-    \label{fig:exmulti}
+	\centering
+    \includegraphics[width=\textwidth]{img/multimodalTransport.jpg}
+    \label{fig:exmultitransport}
 \end{figure}
 \end{minipage}
-\begin{minipage}[t]{5cm}
-\textbf{Stream Graphs}
-\\
-$S=(T,V,W,E)$
+\pause
+
+$\Rightarrow$ {\large More complex systems : How to deal with...}
+\begin{itemize}
+    \item time-dependence ?
+    \item different types of nodes and/or different types of links ?
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Multilayer graphs : complex structures}
+
+\[
+	M=(V_M,E_M,V,L)
+\]
+\begin{minipage}{0.4\textwidth}
+\begin{footnotesize}
+$V = (MAP,MB,YYA)$\\
+$L = $(conferences, relationship types)\\
+$V_M = $((MAP/ECCS'13/Talk to each other), etc )\\
+$E_M = $Edges between elements of $V_M$
+\end{footnotesize}
+\end{minipage}
+\begin{minipage}[r]{0.59\textwidth}
+\begin{figure}
+    \flushright
+    \includegraphics[width=0.8\textwidth]{img/exMulti.jpg}
+    \label{fig:exmultitransport}
+\end{figure}
+\end{minipage}
+$$
+\left.
+\begin{array}{l}
+    \text{ Different types of interaction}\\
+    \text{ Different types of nodes}
+\end{array}
+\right \}\rightarrow \textbf{More complex structures}
+$$
+
+\end{frame}
+
+
+
+
+
+\begin{frame}{Stream Graphs : time-dependance}
+
+\[
+	S=(T,V,W,E)
+\]
+\medskip
+
+\begin{minipage}{0.4\textwidth}
+\begin{footnotesize}
+$T=[0,10]$\\
+$V=(a,b,c,d)$\\
+$W = ((t,u) | u \text{ appears at } t)$\\
+$E = ((t,(u,v)) | (u,v) \text{ appears at } t)$
+\end{footnotesize}
+\end{minipage}
+\begin{minipage}[r]{0.55\textwidth}
+\begin{figure}
+    \flushright
+    \includegraphics[width=0.8\textwidth]{img/exampleStream.JPG}
+    \label{fig:exstream}
+\end{figure}
+\end{minipage}
+\medskip
+
 \begin{itemize}
     \item nodes can appear or desappear in function of continuous time
     \item links can appear or desappear in function of continuous time
 \end{itemize}
-\begin{figure}
-    \centering
-    \includegraphics[width=4cm]{img/exampleStream.JPG}
-    \label{fig:exstream}
-\end{figure}
-\end{minipage}
+\smallskip
+\centering
+$\rightarrow \textbf{Model interactions over time}$
+
+
+
+
 
 \end{frame}
 
@@ -160,48 +235,74 @@ $S=(T,V,W,E)$
 \[
 G=(T,T_M,V,W_M,E_M,\cal{L})
 \]
-%\begin{minipage}{10cm}
-%\begin{itemize}
-%	\item nodes and links can appear at different times in different layers
-%	\item layers can appear and disappear at different times
-%\end{itemize}
-%\end{minipage}
 
 \begin{figure}
     \centering
-    \includegraphics[width=8cm]{img/chercheurs.jpg}
+    \includegraphics[width=\linewidth]{img/chercheurs.jpg}
     \label{fig:chercheurs}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Application areas}
-A good dataset should have :
-\begin{itemize}
-    \item time-dependence
-    \item different types of nodes and/or different types of links
-\end{itemize}
-A few examples :
-\begin{itemize}
-    \item social interactions
-    \item biological interactions
-    \item information network
-    \item transportation network
-    \item diffusion (epidemics, etc)
-\end{itemize}
+\begin{frame}{The multilayer stream graph}
+\[
+G=(T,T_M,V,W_M,E_M,\cal{L})
+\]
+\begin{minipage}{0.69\linewidth}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/chercheurs.jpg}
+    \label{fig:chercheurs}
+\end{figure}
+\end{minipage}
+\begin{minipage}{0.3\textwidth}
+\begin{footnotesize}
+$T=[0,18]$\\
+${\cal L} = (Uni,Dept)$\\
+$V=(R1,R2,R3)$\\
+\end{footnotesize}
+\end{minipage}
+
+
+$W_M = ((t,(R1,U1,Math))| t \in [0,18]), etc)$\\
+$E_M= ((t,(R1,U1,Math),(R2,U2,Math)| t \in [1,6]), etc)$\\
+$T_M= (([0,10],(U3,Math)),etc)$
+\end{frame}
+
+\begin{frame}{Possibilities}
+Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
+
+\begin{figure}
+	\centering
+    \includegraphics[width=\linewidth]{img/epidemiet0.jpg}
+    \label{fig:chercheurs}	
+\end{figure}
 \end{frame}
 \begin{frame}{Possibilities}
- 
-\begin{itemize}
-\pause
-    \item find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
-    \pause
-    \item measure "influence" : find a "precursor", find which parameter are "important" and which are not (ex : most of researchers in dept D in university U at time T became "influent") ...\pause
-    \item measure "intrication" : how much a group of layers are "superimposed" (ex: the relationships of type "co-workers in this company" are "strongly correlated" to most of the overall relationships)\pause
-    \item determinate if two multilayer-streams have the same structure (isomorphism)
-    \pause
-    \item ...
-\end{itemize}
-    
+Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
+\begin{figure}
+	\centering
+    \includegraphics[width=\linewidth]{img/epidemiet0.jpg}
+    \label{fig:chercheurs}	
+\end{figure}
+\end{frame}
+
+\begin{frame}{Possibilities}
+Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
+\begin{figure}
+	\centering
+    \includegraphics[width=\linewidth]{img/epidemiet1.jpg}
+    \label{fig:chercheurs}	
+\end{figure}
+\end{frame}
+
+\begin{frame}{Possibilities}
+Measure "influence" : find a "precursor", find which parameter are "important" and which are not (ex : most of researchers in dept D in university U at time T became "influent") ...\pause
+\end{frame}
+\begin{frame}{Possibilities}
+     measure "intrication" : how much a group of layers are "superimposed" (ex: the relationships of type "co-workers in this company" are "strongly correlated" to most of the overall relationships)\pause
+\end{frame}
+\begin{frame}{Possibilities}
+     determinate if two multilayer-streams have the same structure (isomorphism)
 \end{frame}
 
 \begin{frame}{Thank you !}
