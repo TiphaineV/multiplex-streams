@@ -163,10 +163,10 @@ $\Rightarrow$ {\large More complex systems : How to deal with...}
 \]
 \begin{minipage}{0.4\textwidth}
 \begin{footnotesize}
-$V = (MAP,MB,YYA)$\\
-$L = $(conferences, relationship types)\\
-$V_M = $((MAP/ECCS'13/Talk to each other), etc )\\
-$E_M = $Edges between elements of $V_M$
+$V = \{MAP,MB,YYA,AC\}$\\
+$L = \{$conferences, relationship types$\}$\\
+$V_M = \{$(MAP/ECCS'13/Talk to each other), etc $\}$\\
+$E_M = \{$Edges between elements of $V_M \}$
 \end{footnotesize}
 \end{minipage}
 \begin{minipage}[r]{0.59\textwidth}
@@ -194,12 +194,12 @@ $$
 \]
 \medskip
 
-\begin{minipage}{0.4\textwidth}
+\begin{minipage}{0.43\textwidth}
 \begin{footnotesize}
 $T=[0,10]$\\
-$V=(a,b,c,d)$\\
-$W = ((t,u) | u \text{ appears at } t)$\\
-$E = ((t,(u,v)) | (u,v) \text{ appears at } t)$
+$V=\{a,b,c,d\}$\\
+$W = \{(t,u) | u \text{ appears at } t\}$\\
+$E = \{(t,(u,v)) | (u,v) \text{ appears at } t\}$
 \end{footnotesize}
 \end{minipage}
 \begin{minipage}[r]{0.55\textwidth}
@@ -227,9 +227,9 @@ $\rightarrow \textbf{Model interactions over time}$
 
 \begin{frame}{Our object : the multilayer stream graph}
 	\begin{itemize}
-		\item generalizing the two first notions
-		\item coherent 
-		\item effective
+		\item generalizing the first two notions\pause
+		\item coherent \pause
+		\item efficient \pause
 		\item useful
 	\end{itemize}
 \end{frame}
@@ -259,21 +259,21 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 	\begin{minipage}{0.4\textwidth}
 		\begin{footnotesize}
 			$T=[0,18]$\\ \pause
-			${\cal L} = (Uni,Dept)$\\ \pause
-			$V=(R1,R2,R3)$\\ \pause
+			${\cal L} = \{Uni,Dept\}$\\ \pause
+			$V=\{R1,R2,R3\}$\\ \pause
 			$T_M= \{([0,10],(U3,Math)), \dots \}$
 		\end{footnotesize}
 	\end{minipage}
 
 	\begin{footnotesize}
-		$W_M = \bigg( (t,(R1,U1,Math))| t \in [0,18]), \dots \bigg)$ \pause
+		$W_M = \{ (t,(R1,U1,Math))| t \in [0,18]), \dots \}$ \pause
 		\\
-		$E_M= \bigg( (t,(R1,U1,Math),(R2,U2,Math)| t \in [1,6]), \dots \bigg)$ 	
+		$E_M= \{ (t,(R1,U1,Math),(R2,U2,Math)| t \in [1,6]), \dots \}$ 	
 	\end{footnotesize}
 \end{frame}
 
 
-\begin{frame}{Possibilities}%isomorphism
+\begin{frame}{Isomorphism}%isomorphism
     determinate if two multilayer-streams have the same structure (isomorphism)
     
 	\begin{minipage}{0.4\linewidth}
@@ -291,7 +291,7 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 		\end{figure}
 	\end{minipage} \pause
 	
-	$a \rightarrow e $, $b \rightarrow d$, $c \rightarrow f$
+	$a \rightarrow f $, $b \rightarrow d$, $c \rightarrow e$
     \pause
     
     \begin{minipage}{0.4\linewidth}
@@ -310,9 +310,9 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 	\end{minipage}
 		\pause
 		
-	Not isomorph !
+	Not isomorphic !
 \end{frame}
-\begin{frame}{Possibilities} %diffusion
+\begin{frame}{Possibilities : diffusion} %diffusion
 Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
 
 \begin{figure}
@@ -321,7 +321,7 @@ Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a w
     \label{fig:chercheurs}	
 \end{figure}
 \end{frame}
-\begin{frame}{Possibilities} %diffusion 2
+\begin{frame}{Possibilities : diffusion} %diffusion 2
 Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
 \begin{figure}
 	\centering
@@ -331,7 +331,7 @@ Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a w
 \end{frame}
 
 
-\begin{frame}{Possibilities}%influence
+\begin{frame}{Possibilities : influence}%influence
 	Measure "influence" : find a "precursor", find which parameter are "important" and which are not (ex : most of researchers who won the price P worked in dept D in university U at time T) ...
 	\begin{figure}
 		\centering
@@ -344,14 +344,12 @@ Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a w
 
 \begin{frame}{Thank you !}
 	In brief :
-	\[
-		G=(T,T_M,V,W_M,E_M,\cal{L})
-	\]
 	\begin{itemize}
-		\item Complex structures (different layers of nodes) which change with time...
-		\item What we have done : formal object
+		\item \textbf{Multilayer stream graphs} are graphs with nodes and edges of different types and can change with time.
+		\item What we have done : formal object $\mathbf{G=(T,T_M,V,W_M,E_M,\cal{L})}$
 		\item What we are doing : computational object, graphic representation.
-		\item Next step : measure of influence.
+		\item Next step : \textbf{measure of "influence"}.
+		\item Tracks for the future : \textbf{study of diffusion}.
 	\end{itemize}
 	
 \end{frame}
