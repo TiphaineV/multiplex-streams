@@ -107,13 +107,13 @@
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}%titre
 \titlepage % Print the title page as the first slide
 \centering
 \textbf{Supervisors :} \\
 Tiphaine Viard {\footnotesize(Riken AIP)}\\
 Benjamin Renoust {\scriptsize(Institute for Datability Science}, {\footnotesize Osaka University)}\\
-Jean-François Baffier {\scriptsize(Japan Society for the Promotion of Science},{\footnotesize Tokyo Institute of Technology)}
+Jean-François Baffier {\footnotesize(JSPS)}
 \end{frame}
 
 %\begin{frame}
@@ -132,7 +132,6 @@ Jean-François Baffier {\scriptsize(Japan Society for the Promotion of Science},
 {\large A few examples :}
 \begin{itemize}
     \item social interactions
-    \item biological interactions
     \item IP network
     \item transportation network
 \end{itemize}
@@ -142,7 +141,6 @@ Jean-François Baffier {\scriptsize(Japan Society for the Promotion of Science},
 \begin{figure}
 	\centering
     \includegraphics[width=\textwidth]{img/multimodalTransport.jpg}
-    \label{fig:exmultitransport}
 \end{figure}
 \end{minipage}
 \pause
@@ -154,7 +152,24 @@ $\Rightarrow$ {\large More complex systems : How to deal with...}
 \end{itemize}
 \end{frame}
 
-
+\begin{frame}{Building a new object}
+	\begin{itemize}
+		\item useful : \begin{itemize}
+							\item applicable
+							\item interesting results
+						\end{itemize}		 \pause
+		\item efficient \begin{itemize}
+							\item easy to manipulate $\rightarrow$ building theories
+							\item high complexity
+						\end{itemize}\pause
+		\item coherent \pause
+		\item generalizing the first two existing notions : 
+			\begin{itemize}
+				\item multilayer graphs
+				\item stream graphs
+			\end{itemize}
+	\end{itemize}
+\end{frame}
 
 \begin{frame}{Multilayer graphs : complex structures}
 
@@ -173,7 +188,6 @@ $E_M = \{$Edges between elements of $V_M \}$
 \begin{figure}
     \flushright
     \includegraphics[width=0.8\textwidth]{img/exMulti.jpg}
-    \label{fig:exmultitransport}
 \end{figure}
 \end{minipage}
 $$
@@ -212,8 +226,8 @@ $E = \{(t,(u,v)) | (u,v) \text{ appears at } t\}$
 \medskip
 
 \begin{itemize}
-    \item nodes can appear or desappear in function of continuous time
-    \item links can appear or desappear in function of continuous time
+    \item nodes can appear or disappear in function of continuous time
+    \item links can appear or disappear in function of continuous time
 \end{itemize}
 \smallskip
 \centering
@@ -225,14 +239,7 @@ $\rightarrow \textbf{Model interactions over time}$
 
 \end{frame}
 
-\begin{frame}{Our object : the multilayer stream graph}
-	\begin{itemize}
-		\item generalizing the first two notions\pause
-		\item coherent \pause
-		\item efficient \pause
-		\item useful
-	\end{itemize}
-\end{frame}
+
 
 \begin{frame}{The multilayer stream graph}
 \[
@@ -242,7 +249,6 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/chercheurs.jpg}
-    \label{fig:chercheurs}
 \end{figure}
 \end{frame}
 \begin{frame}{The multilayer stream graph}
@@ -253,7 +259,6 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 		\begin{figure}
     		\centering
     		\includegraphics[width=\linewidth]{img/chercheurs.jpg}
-    		\label{fig:chercheurs}
 		\end{figure}
 	\end{minipage}
 	\begin{minipage}{0.4\textwidth}
@@ -261,7 +266,7 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 			$T=[0,18]$\\ \pause
 			${\cal L} = \{Uni,Dept\}$\\ \pause
 			$V=\{R1,R2,R3\}$\\ \pause
-			$T_M= \{([0,10],(U3,Math)), \dots \}$
+			$T_M= \{([0,10],(U3,Math)), \dots \}$\pause
 		\end{footnotesize}
 	\end{minipage}
 
@@ -274,8 +279,26 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 
 
 \begin{frame}{Isomorphism}%isomorphism
-    determinate if two multilayer-streams have the same structure (isomorphism)
+    $G_1$ and $G_2$ are \textbf{isomorphic} if we can find a bijection which map the nodes of $G1$ to the nodes of $G2$ 
     
+	\begin{minipage}{0.5\linewidth}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/graph1iso.jpg}
+		\end{figure}			
+	\end{minipage}			   
+	\begin{minipage}{0.49\linewidth}
+		\begin{figure}
+			\centering
+			\includegraphics[width=0.7\linewidth]{img/graph2iso.jpg}
+		\end{figure}			
+	\end{minipage}
+	
+	\pause
+	\centering
+	$a \rightarrow 2, b \rightarrow 3, c \rightarrow 1, d \rightarrow 4$
+\end{frame}
+\begin{frame}{Isomorphism}    
 	\begin{minipage}{0.4\linewidth}
 		\begin{figure}
 			\centering
@@ -298,41 +321,34 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 		\begin{figure}
 			\centering
 			\includegraphics[width=\linewidth]{img/iso1multi.jpg}
-			\label{influ}
 		\end{figure}
 	\end{minipage}
 	\begin{minipage}{0.4\linewidth}
 		\begin{figure}
 			\centering
 			\includegraphics[width=\linewidth]{img/iso2multi.jpg}
-			\label{influ}
 		\end{figure}
 	\end{minipage}
 		\pause
-		
-	Not isomorphic !
+	\\	
+	There is no bijection that respects layer structure.
 \end{frame}
 \begin{frame}{Possibilities : diffusion} %diffusion
 Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
 
 \begin{figure}
 	\centering
-    \includegraphics[width=\linewidth]{img/epidemiet0.jpg}
+    \only<1>{\includegraphics[width=\linewidth]{img/epidemiet1.jpg}}
+    \only<2>{\includegraphics[width=\linewidth]{img/epidemiet2.jpg}}
+    \only<3>{\includegraphics[width=\linewidth]{img/epidemiet3.jpg}}
     \label{fig:chercheurs}	
 \end{figure}
 \end{frame}
-\begin{frame}{Possibilities : diffusion} %diffusion 2
-Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a weakness in the network...
-\begin{figure}
-	\centering
-    \includegraphics[width=\linewidth]{img/epidemiet1.jpg}
-    \label{fig:chercheurs}	
-\end{figure}
-\end{frame}
+
 
 
 \begin{frame}{Possibilities : influence}%influence
-	Measure "influence" : find a "precursor", find which parameter are "important" and which are not (ex : most of researchers who won the price P worked in dept D in university U at time T) ...
+	Measure "influence" : find a "precursory", find which parameter are "important" and which are not (ex : most of researchers who won the price P worked in dept D in university U at time T) ...
 	\begin{figure}
 		\centering
 		\includegraphics[width=10cm]{img/chercheurs.jpg}
@@ -343,13 +359,12 @@ Find the "decisive" times and and nodes/links/layer : stop a diffusion, find a w
 
 
 \begin{frame}{Thank you !}
-	In brief :
 	\begin{itemize}
-		\item \textbf{Multilayer stream graphs} are graphs with nodes and edges of different types and can change with time.
+		\item \textbf{Multilayer stream graphs} are graphs with nodes and edges of different types and can change with time
 		\item What we have done : formal object $\mathbf{G=(T,T_M,V,W_M,E_M,\cal{L})}$
 		\item What we are doing : computational object, graphic representation.
-		\item Next step : \textbf{measure of "influence"}.
-		\item Tracks for the future : \textbf{study of diffusion}.
+		\item Next step : \textbf{measure of "influence"}
+		\item Tracks for the future : \textbf{study of diffusion}
 	\end{itemize}
 	
 \end{frame}
