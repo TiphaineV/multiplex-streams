@@ -49,8 +49,6 @@
 
     Notice that just like in multiplex networks, nodes in time ({\em i.e.}, elements of $W_M$) can be present in an arbitrary number of layers.
 
-    \pimprenelle{Note that $V$ can be seen as the aspect $L_0$ with $T_0 = T$ and that more generally it is just an aspect similar to the other ones. .... a discuter}
-
    	\pimprenelle{La représentation de la présence ou non des couches en fonction du temps par $T_M$ est un choix, que nous préférons pour le moment à celle $M_M$ des couples $(t,\alpha)$}
 
 	\subsection{2 examples}
@@ -195,12 +193,12 @@
 	
 	
 	\begin{itemize}
-		\item $T=T_U$ by definition of $S_U$. Let's take $t\in T$. By definition of multilayer stream graphs, $\exists \alpha \in L | t\in T_{\alpha}=T^{\alpha,\alpha}$. So $t \in [\underset{(\alpha,\beta) \in L^2}{\min}(T^{\alpha,\beta}),\underset{(\alpha,\beta) \in L^2}{\max}(T^{\alpha,\beta})]=T^{*}$. $T_U \in T^{*}$. 
+		\item $T=T_U$ by definition of $S_U$. Let's take $t\in T$. By definition of multilayer stream graphs, $\exists \alpha \in L | t\in T_{\alpha}=T^{\alpha,\alpha}$. So $t \in [\underset{(\alpha,\beta) \in L^2}{\min}(T^{\alpha,\beta}),\underset{(\alpha,\beta) \in L^2}{\max}(T^{\alpha,\beta})]=T^{*}$. $T_U \subseteq T^{*}$. 
 	Moreover, $\underset{(\alpha,\beta) \in L^2}{\min}(T^{\alpha,\beta}) \geq \min(T)$ 
 	and $\underset{(\alpha,\beta) \in L^2}{\max}(T^{\alpha,\beta}) \leq \max(T)$. 
 	So $\mathbf{T^{*} = T}$.
-		\item  $V_M = V_U$ by definition of $V_U$.$V^{*}=\bigcup_{(\alpha,\beta) \in L^2} V^{\alpha,\beta} \subset V = V_M$.
-	Let $(v,\alpha) \in V_U$. So $(v,\alpha) \in V^{\alpha,\alpha} \in V^{*}$.$V^{*}=V_U$.$\mathbf{V^{*}=V_U}$.
+		\item  $V_M = V_U$ by definition of $V_U$.$V^{*}=\bigcup_{(\alpha,\beta) \in L^2} V^{\alpha,\beta} \subseteq V_M$.
+	Let $(v,\alpha) \in V_U$. $(v,\alpha) \in V^{\alpha,\alpha} \in V^{*}$.$V^{*}=V_U$.$\mathbf{V^{*}=V_U}$.
 		\item $W_U=W_M$ and $W^{*}=\bigcup_{\alpha,\beta \in L^2} W^{\alpha,\beta} \subset W_M$. So as for all $ (t,u,\alpha)$ in $W_M$, $(t,u,\alpha)$ belongs to $W^{\alpha,\alpha}$, $W_M$ is a subset of $W^{*}$. So $\mathbf{W^{*}=W_M}$.
 		\item $E_U=E_M$ and $E^{*}=\bigcup_{\alpha,\beta \in L^2}(E^{\alpha,\beta})$ by definition. So as $E^{\alpha,\beta}$ is a subset of $E_M$ for every couple of layers $\alpha,\beta$, $E^{*} \subset E_M$. 
 		$\forall e =(t,u,\alpha,v,\beta) \in E_M$, $e \in E^{\alpha,\beta}$. So $\mathbf{E_M=E^{*}}$.
@@ -274,7 +272,10 @@
 	For example, in a multiplex stream graph, $C=\{(t,u,\alpha),(t,v,\beta))| t\in T_{u,\alpha} \cap T_{u,\beta}, u=v \text{or} \alpha = \beta)\}$ :
 
 	\[
-		\delta_M (M) = \frac{|E_M|}{|C|}= \frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}{\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|+ \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|}
+		\delta_M (M) = 
+		\frac{|E_M|}{|C|}= 
+		\frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}
+		{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)+( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}
 	\]
 
     \section{Isomorphism in multiplex stream graphs}
@@ -299,7 +300,7 @@
 
 
 
-    \pimprenelle{This notion could be usefull for example to find some patterns in a music sheet. The theme could for example be done at different times with different instruments, and at different tones, and different tempis. (The use of multilayer could so be justified)}
+    \pimprenelle{This notion could be usefull for example to find some patterns...}
 
     \nocite{*}
     \bibliographystyle{plain}

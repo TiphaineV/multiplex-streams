@@ -13,7 +13,7 @@ sg.addNode("R1,U1,M1",[(3,10)])
 sg.addNode("R2,U1,Math")
 sg.addNode("R1,U1,CS")
 
-
+sg.addLink("R1,U1,M1","R2,U1,Math",2,9)
 
 sg.addTimeLine()
 sg.closeFile()

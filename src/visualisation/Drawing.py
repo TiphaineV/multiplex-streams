@@ -35,7 +35,10 @@ class Drawing:
 
     nodes = {}
     node_cpt = 1
-
+    
+    layers={}
+    layer_cpt=1
+    
     colors = {}
     color_cpt = 31
 
@@ -73,11 +76,11 @@ Single\n\
 
         self.f.writelines("\n"+"0 " + str(self.color_cpt) + " " + str(hex))
 
-    def addNode(self, u, times=[], color=0, linetype=None):
+    def addNode(self, u, times=[], color=0, linetype=None,layer="layer0",newLayer=0):
         if self.discrete > 0:
-            self.addDiscreteNode(u, times, color)
+            self.addDiscreteNode(u,layer, times, color)
         else:
-            self.addContinuousNode(u, times, color, linetype)
+            self.addContinuousNode(u,layer, newLayer, times, color, linetype)
 
     def addDiscreteNode(self, u, times=[], color="grey", width=1):
 
@@ -103,7 +106,7 @@ Single\n\
 
 
 
-    def addContinuousNode(self, u, times=[], color=0, linetype=None):
+    def addContinuousNode(self, u, layer, newLayer, times=[], color=0, linetype=None):
         """ nodeId : identifiant du noeud
             times : suite d'intervalles de temps ou le noeud est actif
         """
@@ -118,10 +121,13 @@ Single\n\
             self.first_node = u
 
         self.node_cpt += 1
+        self.layer_cpt += newLayer # = 0 if the layer is not new, 1 if the layer is new
+        
         self.nodes[u] = self.node_cpt
-
+        self.layers[layer] = self.layer_cpt
+        
         sizestr = len(u)
-        self.f.writelines("\n"+"4 0 " + str(color) + " 50 -1 0 10 0.0000 4 135 120 " + str(self.offset_x + int(self.alpha * self.time_unit) - 100*sizestr) + " " + str(self.offset_y + 125 + int(self.node_cpt * self.node_unit)) + " " + str(u) + "\\001")
+        self.f.writelines("\n"+"4 0 " + str(color) + " 50 -1 0 10 0.0000 4 135 120 " + str(self.offset_x + int(self.alpha * self.time_unit) - 100*sizestr) + " " + str(self.offset_y + 125 + int(self.node_cpt * self.node_unit)+int(self.layer_cpt * self.node_unit)) + " " + str(u) + "\\001")
 
         if len(times) == 0:
             self.f.writelines("\n"+"""2 1 """ + str(linetype) + """ 2 """ + str(color) + """ 7 50 -1 -1 6.000 0 0 7 0 0 2\n \
@@ -131,6 +137,10 @@ Single\n\
                 self.f.writelines("\n"+"""2 1 """ + str(linetype) + """ 2 """ + str(color) + """ 7 50 -1 -1 6.000 0 0 7 0 0 2\n \
           """ + str(self.offset_x + int(i* self.time_unit)) + """ """ + str(self.offset_y + int(self.node_cpt * self.node_unit)) + """ """ + str(self.offset_x + int(j * self.time_unit)) + """ """ + str(self.offset_y + int(self.node_cpt * self.node_unit)))
 
+   #def printLayer(self,layerLabel):
+    #    self.f.writelines("\n"+"4 0 " + str(color) + " 50 -1 0 12 0.0000 4 135 120 " + str(self.offset_x + int(self.alpha * self.time_unit) - 100*sizestr) + " " + str(self.offset_y + 125 + int(self.node_cpt * self.node_unit)) + " " + str(layerLabel) + "\\001")
+    
+    
     def addLink(self, u, v, b, e, curving=0.0, color=0, height=0.5, width=3):
         if self.discrete > 0:
             self.addDiscreteLink(u, v, b, e, curving, color, height, width)
@@ -158,6 +168,11 @@ Single\n\
             sys.stdout.write("%s %s %s %s %s %s\n" % (x1, y1, x2, y2, x3, y3))
             sys.stdout.write("0.000 -1.000 0.000\n")
 
+
+
+            self.f.writelines("\n 3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
+            self.f.writelines("%s %s %s %s %s %s\n" % (x1, y1, x2, y2, x3, y3))
+            self.f.writelines("\n 0.000 -1.000 0.000\n")
             numnodes = abs(self.nodes[u] - self.nodes[v])
 
 
@@ -181,6 +196,10 @@ Single\n\
         sys.stdout.write("3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
         sys.stdout.write("%s %s %s %s %s %s\n" % (x1, y1, x2, y2, x3, y3))
         sys.stdout.write("0.000 -1.000 0.000\n")
+
+        self.f.writelines("3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
+        self.f.writelines(str(x1)+" "+ str(y1)+" "+str( x2)+" "+ str(y2)+" "+ str(x3)+" "+str(y3))
+        self.f.writelines("0.000 -1.000 0.000\n")
 
         numnodes = abs(self.nodes[u] - self.nodes[v])
 
@@ -389,6 +408,8 @@ Single\n\
 
         # Write "time"
         self.f.writelines("\n"+"4 2 0 50 -1 0 20 0.0000 4 135 120 " + str(self.offset_x + int(self.omega * self.time_unit)) + " " + str(self.offset_y + timeline_y + 250) + " time\\001")
+
+        
     def closeFile(self):
         self.f.close()
 
@@ -398,32 +419,3 @@ Single\n\
         #self.addRectangle(self.first_node, self.first_node, self.alpha, self.omega, width=300,depth=60, color=7)
 
 # main
-if __name__ == '__main__':
-
-    # s = Drawing()
-    # s = Drawing(alpha=0, omega=10)
-    s = Drawing(alpha=0, omega=10)
-
-    s.addColor("grey", "#888888")
-    s.addColor("red", "#ff0000")
-
-    s.addNode("u")
-    s.addNode("v")
-    s.addNode("x")
-
-    # s.addNodeCluster("u", [(0.5,2)], color=11, width=200)
-    # s.addNodeCluster("v", color=11)
-    s.addRectangle("u", "v", 4, 6, color=12)
-    # s.addNodeCluster("u", [(6,7.5)], color="red")
-
-    s.addLink("u", "v", 1.5, 6, curving=0.2)
-    s.addLink("v", "x", 3, 5)
-
-    s.addPath([(2, "u", "v"), (4, "v", "x")], 1, 9, width=5, color=11)
-
-    # s.addLink("u", "v", 1, 4, height=0.25)
-    # s.addLink("u", "v", 5, 7)
-    # s.addLink("v", "x", 3, 4)
-
-    # s.addTimeLine(ticks=2, marks=[(2, "a"), (2.5, "c"), (5, "t"), (6, "b")])
-    s.addTimeLine(ticks=2)
