@@ -53,4 +53,4 @@ m.addNodeLayerT(nlt2)
 m.addLink(Link(nlt,nlt2,Interval(6,7)))
 m.printMS()
 
-m.draw(nameFile2="chercheurs.fig")
+m.draw(nameFile2="chercheurs2.fig")

@@ -1,7 +1,7 @@
 from Drawing import *
 
 from sortedcollection import *
-
+from random import uniform
 """
 Interval classes
 """
@@ -126,8 +126,11 @@ class IntervalList :
             [[2,4],[6,9]]
         """
         i=index;
-        while i<(len(self.listOfIntervals)-1):
-            if self.listOfIntervals[i].end()>self.listOfIntervals[i+1].begining():
+        #print("type i",type(i))
+        while i<((self.listOfIntervals.__len__())-1):
+            #print(self.listOfIntervals[i].end(),self.listOfIntervals[i+1].begining())
+            if self.listOfIntervals[i].end()>=self.listOfIntervals[i+1].begining():
+                print("fusion!")
                 inte=self.listOfIntervals.pop(i+1)
                 self.listOfIntervals[i].setEnd(max(inte.end(),self.listOfIntervals[i].end()))
             else :
@@ -135,9 +138,11 @@ class IntervalList :
 
 
     def addInterval(self,interval):
-        k=self.listOfInterval.find_le(interval)
-        self.listOfInterval.insert(interval)
-        self.condensateIntervals(index=k)
+        #b=interval.begining()
+        #self.printIntervals()
+        k=self.listOfIntervals.index_key(interval)
+        self.listOfIntervals.insert(interval)
+        self.condensateIntervals(index=max(k-1,0))
 
     def printIntervals(self):
         print("list of intervals")
@@ -148,7 +153,6 @@ class IntervalList :
         for i in self.listOfIntervals:
             str=str+i.intervalToString()
         return str
-
 
 
 
@@ -370,7 +374,6 @@ class LayerList :
         add some node-layers from one layer.
         """
         if self.listOfLayers.contains_key(layer):
-            #print("-------cond")
             i=self.listOfLayers.index_key(layer)
             self.listOfLayers[i].setInterval(layer.giveInterval().union(self.listOfLayers[i].giveInterval()))
             for n in layer.giveNodesT().giveListOfNodes():
@@ -386,30 +389,41 @@ class LayerList :
         print("list of layers :")
         for l in self.listOfLayers :
             l.printLayer()
-    
 
+    
 
 class Link:
     """
-    class Link :
+    class Link : 
     for now, very simplified.
-
+    
+    :type intervals: intervalList
+    :type node1/2: nodeT
+    :type layerLabel1/2: str ?
+    
     todo : Find a better indexing ?
     """
-    def __init__(self,interval,node1,layerLabel1,node2,layerLabel2):
-        self.interval=interval
+    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2):
+        if node1.giveNode()>node2.giveNode():
+            layerLabel1,layerLabel2=layerLabel2,layerLabel1
+            node1,node2=node2,node1
+        self.intervals=intervals
         self.node1=node1
         self.node2=node2
         self.layerLabel1=layerLabel1
         self.layerLabel2=layerLabel2
-
-    def giveInterval(self):
-        return(self.interval)
+        #intervals.printIntervals()
+    
+    def giveIntervals(self):
+        return(self.intervals.giveListOfIntervals())
+    def addInterval(self,i):
+        self.intervals.addInterval(i)
     def giveNodes(self):
         return([self.node1,self.node2])
     def giveLayers(self):
         return([self.layerLabel1,self.layerLabel2])
-
+    def giveLabel(self):
+        return([self.node1.giveNode(),self.node2.giveNode(),self.layerLabel1,self.layerLabel2])
     def printLink(self):
         print("Link : ")
         self.node1.printNodeT()
@@ -420,7 +434,40 @@ class Link:
         print("endlink")
 
 
-
+class LinkList:
+    """
+    class LinkList : 
+    the list is sorted by the names of node1, then the name of node2, then the layer1, then Layer2.
+    
+    """
+    
+    def __init__(self,liste,key=lambda link: link.giveLabel()):
+        self.listOfLinks = SortedCollection(iterable=liste,key=key)
+    
+    def addLink(self,l):
+        if self.listOfLinks.contains_key(l):
+            #print("la liste")
+            #self.printListLabels()
+            #print("l'element")
+            #print(l.giveLabel())
+            i = self.listOfLinks.index_key(l)
+            for inter in l.giveIntervals():
+                #print("-------cond")
+                #print("type link",type(self.listOfLinks[i]))
+                #self.listOfLinks[i].printLink()
+                #inter.printInterval()
+                self.listOfLinks[i].addInterval(inter)
+        else : 
+            self.listOfLinks.insert(l)
+    def giveListOfLinks(self):
+        return(self.listOfLinks)
+    def printLinkList(self):
+        print("list of link")
+        for n in self.listOfLinks :
+            n.printLink()
+    def printListLabels(self):
+        for l in self.listOfLinks:
+            print(l.giveLabel())
 
 
 
@@ -437,7 +484,7 @@ class MultiStream :
     :type T: interval
     :type layerStruct: LayerStruct
     :type layers: LayerList
-    :type em: list[Link]
+    :type em: LinkList
 
     """
 
@@ -464,11 +511,10 @@ class MultiStream :
         self.layers.addLayer(layer)
     def addLink(self,link):
         #to do : check intervals coherence
-        self.em.append(link)
+        self.em.addLink(link)
     def printMS(self):
         print("T:",self.T.intervalToString() )
         print("structure")
-        self.layerStruct.printLayerStruct()
         print("layers and nodes")
         self.layers.printLayerList()
         print("EM")
@@ -479,11 +525,22 @@ class MultiStream :
         for i in range(self.layers.length()) :
             #f.printLayer() : todo
             lay=self.layers.giveLayer(i).giveLayerLabel()
+            newlay=1
             for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
                 times=[]
                 for k in j.giveIntervals():
                     times.append((k.begining(),k.end()))
-                f.addNode(str(j.giveNode()),times=times,layer=str(lay))
-        #for j in self.em:
-            ## TODO:
+                f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay)
+                newlay=0
+        for j in self.em.giveListOfLinks():
+            for inte in j.giveIntervals():
+                b=inte.begining()
+                e=inte.end()
+                u=str(j.giveNodes()[0].giveNode())
+                v=str(j.giveNodes()[1].giveNode())
+                lay1=str(j.giveLayers()[0])
+                #print("lay1",lay1)
+                lay2=str(j.giveLayers()[1])
+                #inte.printInterval()
+                f.addLink( u, v, b, e, layer1=lay1, layer2=lay2,color=int(uniform(1,20)))
         f.closeFile()
