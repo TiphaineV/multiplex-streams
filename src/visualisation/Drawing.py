@@ -423,7 +423,7 @@ Single\n\
     def closeFile(self):
         self.f.close()
 
-    #je n'ai pas compris à quoi sert del donc je le retire ...
+    #pimprenelle : je n'ai pas compris à quoi sert (et ça bloquait !) donc je le retire ...
     #def __del__(self):
         # Adds white rectangle in background around first node (for EPS bounding box)
         #self.addRectangle(self.first_node, self.first_node, self.alpha, self.omega, width=300,depth=60, color=7)

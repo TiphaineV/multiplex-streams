@@ -153,7 +153,15 @@
     The {\em intra-layer edges} are $E_I = \{(t,u,\alpha,v,\beta) \in E_M | \alpha = \beta \}$
 
     The {\em inter-layer edges} are $\bar{E_I} = E_M\backslash E_I$.
-
+    
+	(See fig.\ref{exIntraInter} for a visual representation.)
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=\textwidth]{schemas/edgesCat.jpg}
+		\caption{Illustration with our example of coupling edges, intra-layer edges and inter-layer edges}
+		\label{exIntraInter}
+	\end{figure}
    	The {\em multilayer graph at time t} $M_t$ is $M_t = (V_{M,t}, E_{M,t},V_t,{\cal L}_t)$ with :
     \begin{itemize}
 		\item $V_{M,t} = \{(u,\alpha)| (t,u,\alpha)\in W_M\}$
@@ -162,6 +170,16 @@
 		\item ${\cal L}_t = {L_i,t}_{i=1}^d, L_{i,t}=(\alpha)_i, t\in T_\alpha$
     \end{itemize}
 
+	\begin{figure}	
+		\begin{minipage}{0.49\linewidth}
+			\includegraphics[width=\textwidth]{schemas/pauset.jpg}
+		\end{minipage}
+		\begin{minipage}{0.49\linewidth}
+			\includegraphics[width=\textwidth]{schemas/pausetproj.jpg}
+		\end{minipage}
+		\caption{Our multilayer example at time $t=5$}
+	\end{figure}
+	
     \begin{rmq}
     	We assume that $\forall (i,t), \; L_{(i,t)} \neq \emptyset$.
     \end{rmq}
@@ -207,7 +225,36 @@
 
 
 
-    The {\em contribution} of one node-layer in the MPG is $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. The {\em number of node-layers} is the sum of the contributions $N(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
+   
+
+	
+
+
+	\section{Number of nodes, number of layers}
+	
+	
+	 The {\em contribution} of one node-layer in the MPG is $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. The {\em number of node-layers} is the sum of the contributions $N(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
+    
+**************NEW*******************    
+    
+    We define too the {\em contribution} of one layer as follows : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. The {\em number of layers is then the sum of the contributions}.
+    
+	In multilayer graphs, the number of nodes hasn't been fully defined as far as we know.
+	Rather than just counting the nodes or the node layers, we define the {\em number of nodes in a multilayer} as :
+	\begin{align*}
+		N_{nodes in multilayers}(M_l) = \frac{\text{number of node-layers}}{\text{number of layers}}
+	\end{align*}	    
+	Notice that if there is only one layer, we find the classical number of nodes. A node appearing in half of the layers doesn't bring the same contribution than a node appearing in all the layers.  
+    
+    We decide then to define the \textbf{number of nodes} as follows : 
+    
+    The {\em the contribution} of a node describes the rate of appearance of the node on the different layers : $n_v = \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|}$.
+    The {\em number of nodes} is then the sum of the contribution of the nodes : 
+    \begin{align}
+    N_n(M) = \sum_{v\in V} n_v= \sum_{v\in V} \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|} 
+    \label{numberNodes}
+	\end{align}     
+**********END nEW*******************
 
 	The {\em overlap presence } of two nodes-layers $(u,\alpha)$ and $(v,\beta)$ measures the rate of simultaneous presence of two node-layers :
 	\begin{align*}
@@ -235,19 +282,7 @@
 
 
 
-
-
-    \section{Intrication (Entanglement)}
-
-	************
-    Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
-
-    Special case when the multiplex stream can be expressed in clusters of the stream graph.
-    ************
-
-
-
-    \subsection{Density}
+    \section{Density}
 	In classical graphs (unweighed and non directional), the density $d(G)$ measures how much the vertexes are connected.
 		\[
 			d(G) = \frac{|E|}{|V\otimes V|} = \frac{2\times |E|}{|V|(|V|-1)}
@@ -259,7 +294,7 @@
 			 =  & \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}
 		\end{align*}
 
-	We can then define the density of the multilayer graph. Notice first that the density measures the rate of connectivity, and so depending to the type of system we study, the definition can change. If some connections are forbidden, we will ignore it in the density. We name $C \in V_M\times V_M$ the set of possible connections in the mutlilayer.
+	We can then define the density of the multilayer graph. Notice first that the density measures the rate of connectivity, and so depending to the type of system we study, the definition can change. If some connections are forbidden, we will ignore it in the density. We name $C \in V_M\times V_M$ the set of possible connections in the mutlilayer. If some connections are automatics (like the ones between the same node in different layers), we don't take it into account too.
 	\[
 		\delta_M (M) = \frac{|E_M|}{|\{\text{"possible connections"}\}|}
 	\]
@@ -277,6 +312,46 @@
 		\frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}
 		{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)+( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}
 	\]
+
+		\section{Neighbours and degrees}
+	
+		In classic graphs, the degree of a node is the number of its neighbours. The neighbours are the nodes for which a link between the first node and the neighbour.
+		
+		\subsection{Nieghbours and degree in multilayer graphs}
+		
+		In the multilayer graphs, it is a more tricky question to know who are the neighbours of a node. In many multiplexes, the nodes-layers corresponding to the same node are linked together with an "invisible" connection. The main question, should be of course : "what do we want to measure ?" We will give a few example of different situation and the definition of the degree associated.
+		
+		I the case of a transportation multiplex, our nodes are some cities, the layers are different types of means of transportation. If we want to know how many cities you can reach from Tokyo without correspondence, we will calculate the degree of Tokyo in the aggregated graph.
+		
+		But we might want to highlight the fact that it is not equivalent to have one or many different links in different layers between two nodes. For example, two city will be better connected if we can take the train of the plane to travel between them.  We then can take the sub-multilayer graph of the neighbours of all the node-layers labelled Paris, and compute the number of nodes as defined in \ref{numberNodes}. 
+		
+		\begin{align}
+			d_2(v)= \frac{|\{((u,\alpha,v,\beta) \in E\}|}{|L|} = \frac{\text{Number of node-layers neighbours of u}}{\text{number of layers}}
+		\end{align}
+		
+		But this time, we lose the information of how many cities we can reach. A city connected to two other cities by the train will have the same score than a city connected to only one city by train and plane. The good point is just that if we have just one layer, we find again the same result than in a classical graph.
+		
+		\subsection{A attempt to }
+		
+		\subsection{Neighbours and degree in multilayer stream graphs}
+		
+		We can resume as follows the notion of the degree of a node : it is the number of nodes of the neighbours cluster. The question is the what neighbours do we take and what is their nature ?
+		
+		As we know the number of nodes in a multilayer, the degree of a node is then : 
+		$$
+			d(v) = 
+		$$
+	
+	
+	
+	\section{Intrication (Entanglement)}
+
+	************
+    Intrication, extensions from stream graphs (inter-density, intra-density, etc.)
+
+    Special case when the multiplex stream can be expressed in clusters of the stream graph.
+    ************
+
 
     \section{Isomorphism in multiplex stream graphs}
     \paragraph{}

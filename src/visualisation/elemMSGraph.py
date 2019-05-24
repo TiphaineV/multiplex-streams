@@ -1,0 +1,266 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed May 22 15:02:31 2019
+
+@author: Pimprenelle
+"""
+
+from sortedcollection import *
+
+"""
+Graph contents
+"""
+
+
+class NodeT :
+    """
+    class NodeT :
+    =====
+
+    :type node: node
+    :type intervals: IntervalList
+
+    """
+    def __init__(self,node,intervals):
+        self.node=node
+        self.intervals = intervals
+        self.intervals.condensateIntervals()
+    def giveIntervals(self):
+        """
+        function giveIntervals()
+        from NodeT
+        
+        return the list of intervals of type SortedCollection
+        """
+        return(self.intervals.giveListOfIntervals())
+    def giveIntervals2(self):
+        """
+        function giveIntervals()
+        from NodeT
+        
+        return the list of intervals of type IntervalList
+        """
+        return(self.intervals)
+    def giveNode(self):
+        return(self.node)
+    def addInterval(self,interval):
+        self.intervals.addInterval(interval)
+    def printNodeT(self):
+        print("node : "+ str(self.node)+ ", intervals : "+self.intervals.intervalListToString() )
+
+
+class NodeTList :
+    """
+    class NodeTList :
+    ====
+
+    :type listOfNodeT: list[NodeT]
+
+    The listOfNodeT contains each layer once, and inside each layer, we find each node once, in which the intervals are sorted and not overlapping
+    """
+    def __init__(self,liste,key=lambda nodeT: nodeT.giveNode()):
+        self.listOfNodeT = SortedCollection(iterable=liste,key=key)
+
+    def addNodeT(self,n):
+        if self.listOfNodeT.__contains__(n):
+            i = self.listOfNodeT.index(n)
+            for inter in n.giveIntervals():
+                self.listOfNodeT[index].addInterval(inter)
+        else :
+            self.listOfNodeT.insert(n)
+    def giveListOfNodes(self):
+        return(self.listOfNodeT)
+    def printNodeTList(self):
+        print("listOfNodes")
+        for n in self.listOfNodeT :
+            n.printNodeT()
+
+class Layer :
+    """
+    class Layer :
+    =====
+    :type layerLabel: list[ElemLayer]
+    :type interval: Interval
+    :type nodesT: NodeTList
+    """
+
+    def __init__(self,layerStruct,layerLabel,interval,nodesT,checkCorrectL="True", checkCorrectN="True"):
+        if checkCorrectL :
+            if not(layerStruct.isALayerLabel(layerLabel)):
+                print("not possible")
+        self.layerLabel=layerLabel
+        self.interval = interval
+        self.nodesT = NodeTList([])
+        if checkCorrectN :
+            for n in nodesT.giveListOfNodes() :
+                self.nodesT.addNodeT(n)
+        else :
+            self.nodesT=NodeTList(nodesT)
+
+    def giveLayerLabel(self):
+        return(self.layerLabel)
+    def giveInterval(self):
+        return(self.interval)
+    def giveNodesT(self):
+        return(self.nodesT)
+    def addNodeT(self,n):
+        self.nodesT.addNodeT(n)
+    def setInterval(self,inter):
+        self.interval=inter
+    def printLayer(self):
+        print("layer"+str(self.layerLabel))
+        print("interval")
+        self.interval.printInterval()
+        print("nodes:")
+        self.nodesT.printNodeTList()
+
+class LayerList :
+    """
+    class LayerList:
+    ======
+
+    :type listOflayers : list[Layer]
+
+    - each layerLabel appears one time max
+    - each node appears one time max in each layer
+    """
+    def __init__(self,listOfLayers,key = lambda layer : layer.giveLayerLabel()):
+        self.listOfLayers = SortedCollection(iterable=listOfLayers,key=key)
+        self.condensate()
+
+    def condensate(self,start=0):
+        i = start
+        while(i<(self.listOfLayers.__len__())-1):
+            if self.listOfLayers[i].giveLayerLabel()==self.listOfLayers[i+1].giveLayerLabel():
+                for n in self.listOfLayers[i+1].giveNodes():
+                    self.listOfLayers[i].addNode(n)
+                self.listOfLayers.pop(i+1)
+            else:
+                i=i+1
+    def giveLayers(self):
+        return(self.listOfLayers)
+        
+    def addLayer(self,layer):
+        """
+        function addLayer(layer)
+        ===
+        class LayerList
+        ---
+
+        :type layer: Layer
+
+        add some node-layers from one layer.
+        """
+        if self.listOfLayers.contains_key(layer):
+            i=self.listOfLayers.index_key(layer)
+            self.listOfLayers[i].setInterval(layer.giveInterval().union(self.listOfLayers[i].giveInterval()))
+            for n in layer.giveNodesT().giveListOfNodes():
+                self.listOfLayers[i].addNodeT(n)
+        else:
+            self.listOfLayers.insert(layer)
+    
+    def length(self):
+        return(self.listOfLayers.__len__())
+    def giveLayer(self,i):
+        return(self.listOfLayers[i])
+    def giveLayerFromLabel(self,label):
+        print(label)
+        if self.listOfLayers.contains_label(label):
+            print("slkdsjfs")
+            i=self.listOfLayers.index_label(label)
+            print("coucou")
+            return(self.giveLayer(i))
+        else:
+            print("error : this layer doesn't exist : ",label)
+            
+    def printLayerList(self):
+        print("list of layers :")
+        for l in self.listOfLayers :
+            l.printLayer()
+
+    
+
+class Link:
+    """
+    class Link : 
+    for now, very simplified.
+    
+    :type intervals: intervalList
+    :type node1/2: nodeT
+    :type layerLabel1/2: str ?
+    
+    todo : Find a better indexing ?
+    """
+    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2):
+        if node1.giveNode()>node2.giveNode():
+            layerLabel1,layerLabel2=layerLabel2,layerLabel1
+            node1,node2=node2,node1
+        self.intervals=intervals
+        self.node1=node1
+        self.node2=node2
+        self.layerLabel1=layerLabel1
+        self.layerLabel2=layerLabel2
+        #intervals.printIntervals()
+    
+    def giveIntervals(self):
+        return(self.intervals.giveListOfIntervals())
+        """
+        function giveIntervals()
+        from Link
+        
+        return the list of intervals of type SortedCollection
+        """
+    def giveIntervals2(self):
+        return(self.intervals)
+        """
+        function giveIntervals()
+        from Link
+        
+        return the list of intervals of type IntervalList
+        """
+        
+    def addInterval(self,i,tolerance=0):
+        self.intervals.addInterval(i,tolerance)
+    def giveNodes(self):
+        return([self.node1,self.node2])
+    def giveLayers(self):
+        return([self.layerLabel1,self.layerLabel2])
+    def giveLabel(self):
+        return([self.node1.giveNode(),self.node2.giveNode(),self.layerLabel1,self.layerLabel2])
+    def printLink(self):
+        print("Link : ")
+        self.node1.printNodeT()
+        print("from"+str(self.layerLabel1))
+        print("--->")
+        self.node2.printNodeT()
+        print("from"+str(self.layerLabel2))
+        print("endlink")
+        self.intervals.printIntervals()
+    
+
+class LinkList:
+    """
+    class LinkList : 
+    the list is sorted by the names of node1, then the name of node2, then the layer1, then Layer2.
+    
+    """
+    
+    def __init__(self,liste,key=lambda link: link.giveLabel()):
+        self.listOfLinks = SortedCollection(iterable=liste,key=key)
+    
+    def addLink(self,l,tolerance=0):
+        if self.listOfLinks.contains_key(l):
+            i = self.listOfLinks.index_key(l)
+            for inter in l.giveIntervals():
+                self.listOfLinks[i].addInterval(inter,tolerance=tolerance)
+        else : 
+            self.listOfLinks.insert(l)
+    def giveListOfLinks(self):
+        return(self.listOfLinks)
+    def printLinkList(self):
+        print("list of link")
+        for n in self.listOfLinks :
+            n.printLink()
+    def printListLabels(self):
+        for l in self.listOfLinks:
+            print(l.giveLabel())

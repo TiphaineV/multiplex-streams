@@ -160,6 +160,11 @@ class SortedCollection(object):
         self._keys.insert(i, k)
         self._items.insert(i, item)
 
+    def indexInsertLabel(self,k):
+        'return the index of the first item of key>=item'
+        i = bisect_left(self._keys, k)
+        return(i)
+
     def insert_right(self, item):
         'Insert a new item.  If equal keys are found, add to the right'
         k = self._key(item)

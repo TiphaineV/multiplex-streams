@@ -55,7 +55,7 @@ def readLinks(liste):
     n=0
     for line in fl:
         n=n+1
-        if n<1000000:
+        if n<100:
             tab=line.split("\t")
             int1=Interval((int(tab[0]))/100-300,(int(tab[0])+20)/100-300)
             node1=tab[1]

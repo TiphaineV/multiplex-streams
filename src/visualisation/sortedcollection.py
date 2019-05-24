@@ -125,12 +125,19 @@ class SortedCollection(object):
         return item in self._items[i:j]
 
     def contains_key(self,item) :
+        'added by pimprenelle'
         'Find if an elem of the list has the same key as item'
         k = self._key(item)
         i = bisect_left(self._keys, k)
         j = bisect_right(self._keys, k)
         return (j-i>0)
 
+    def contains_label(self,k):
+        'added by pimprenelle'
+        'find an item into the keys'
+        i = bisect_left(self._keys, k)
+        j = bisect_right(self._keys, k)
+        return (j-i>0)
 
     def index(self, item):
         'Find the position of an item.  Raise ValueError if not found.'
@@ -140,12 +147,21 @@ class SortedCollection(object):
         return self._items[i:j].index(item) + i
 
     def index_key(self,item) :
+        'added by pimprenelle'
         'Find the first index of the item of the same key'
         k = self._key(item)
         i = bisect_left(self._keys, k)
         j = bisect_right(self._keys, k)
         return i
-
+    
+    def index_label(self,k):
+        'added by pimprenelle'
+        'gives the position of the first item labeled k'
+        i = bisect_left(self._keys, k)
+        j = bisect_right(self._keys, k)
+        return i
+        
+        
     def count(self, item):
         'Return number of occurrences of item'
         k = self._key(item)
@@ -159,7 +175,13 @@ class SortedCollection(object):
         i = bisect_left(self._keys, k)
         self._keys.insert(i, k)
         self._items.insert(i, item)
-
+    
+    def indexInsertLabel(self,k):
+        'added by pimprenelle'
+        'return the index of the first item of key>=item'
+        i = bisect_left(self._keys, k)
+        return(i)
+        
     def insert_right(self, item):
         'Insert a new item.  If equal keys are found, add to the right'
         k = self._key(item)
