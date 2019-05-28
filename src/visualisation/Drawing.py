@@ -125,7 +125,7 @@ Single\n\
         self.node_cpt += 1
         self.layer_cpt += newLayer # = 0 if the layer is not new, 1 if the layer is new
         
-        self.nodes[u] = self.node_cpt
+        self.nodes[u+layer] = self.node_cpt
         self.layers[layer] = self.layer_cpt
         
         sizestr = len(u)
@@ -186,21 +186,21 @@ Single\n\
     def addContinuousLink(self, u, v,layer1,layer2, b, e, curving=0.0, color=0, height=0.5, width=3):
         if color in self.colors:
             color = self.colors[color]
-        if self.nodes[u] > self.nodes[v]:
+        if self.nodes[u+layer1] > self.nodes[v+layer2]:
             (u,v) = (v,u)
             (layer1,layer2)=(layer2,layer1)
         # Draw circles for u and v
        # print("ajout")
-        self.f.writelines("\n"+"1 3 0 " + str(width) + " " + str(color) + " " + str(color) + " 49 -1 20 0.000 1 0.0000 " + str(self.offset_x + int(b * self.time_unit)) + " " + str(self.offset_y + self.nodes[u]*self.node_unit +int(self.layers[layer1] * self.node_unit) ) + " 45 45 -6525 -2025 -6480 -2025")
-        self.f.writelines("\n"+"1 3 0 " + str(width) + " " + str(color) + " " + str(color) + " 49 -1 20 0.000 1 0.0000 " + str(self.offset_x + int(b * self.time_unit)) + " " + str(self.offset_y + self.nodes[v]*self.node_unit + int(self.layers[layer2] * self.node_unit)) + " 45 45 -6525 -2025 -6480 -2025")
+        self.f.writelines("\n"+"1 3 0 " + str(width) + " " + str(color) + " " + str(color) + " 49 -1 20 0.000 1 0.0000 " + str(self.offset_x + int(b * self.time_unit)) + " " + str(self.offset_y + self.nodes[u+layer1]*self.node_unit +int(self.layers[layer1] * self.node_unit) ) + " 45 45 -6525 -2025 -6480 -2025")
+        self.f.writelines("\n"+"1 3 0 " + str(width) + " " + str(color) + " " + str(color) + " 49 -1 20 0.000 1 0.0000 " + str(self.offset_x + int(b * self.time_unit)) + " " + str(self.offset_y + self.nodes[v+layer2]*self.node_unit + int(self.layers[layer2] * self.node_unit)) + " 45 45 -6525 -2025 -6480 -2025")
 
         # Link them
         x1 = self.offset_x + int(b * self.time_unit)
-        y1 = self.offset_y + self.nodes[u]*self.node_unit + self.layers[layer1]*self.node_unit
+        y1 = self.offset_y + self.nodes[u+layer1]*self.node_unit + self.layers[layer1]*self.node_unit
         x2 = self.offset_x + int((b + curving) * self.time_unit)
-        y2 = int((self.offset_y + self.nodes[v]*self.node_unit + self.layers[layer2]*self.node_unit) - 0.5 * (self.nodes[v]+ self.layers[layer1]-self.nodes[u]-self.layers[layer1]) * self.node_unit)
+        y2 = int((self.offset_y + self.nodes[v+layer2]*self.node_unit + self.layers[layer2]*self.node_unit) - 0.5 * (self.nodes[v+layer2]+ self.layers[layer1]-self.nodes[u+layer1]-self.layers[layer1]) * self.node_unit)
         x3 = self.offset_x + int(b * self.time_unit)
-        y3 = self.offset_y + self.nodes[v]*self.node_unit+ self.layers[layer2]*self.node_unit
+        y3 = self.offset_y + self.nodes[v+layer2]*self.node_unit+ self.layers[layer2]*self.node_unit
         
 
         #sys.stdout.write("\n 3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
@@ -211,11 +211,11 @@ Single\n\
         self.f.writelines(str(x1)+" "+ str(y1)+" "+str( x2)+" "+ str(y2)+" "+ str(x3)+" "+str(y3)+"\n")
         self.f.writelines("0.000 -1.000 0.000\n")
 
-        numnodes = abs(self.nodes[u]+self.layers[layer1] - self.nodes[v]-self.layers[layer2])
+        numnodes = abs(self.nodes[u+layer1]+self.layers[layer1] - self.nodes[v+layer2]-self.layers[layer2])
 
         # Add duration
         self.f.writelines("\n"+"2 1 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 -1 0 0 2")
-        self.f.writelines("\n"+str(self.offset_x + int((b + curving) * self.time_unit)) + " " + str(self.offset_y + int(self.nodes[u]*self.node_unit +self.layers[layer1]*self.node_unit + (numnodes*self.node_unit*height))) + " " + str(self.offset_x + int(e * self.time_unit)) + " " + str(self.offset_y + (self.nodes[v]+self.layers[layer2])*self.node_unit - (numnodes*self.node_unit*(1-height))))
+        self.f.writelines("\n"+str(self.offset_x + int((b + curving) * self.time_unit)) + " " + str(self.offset_y + int(self.nodes[u+layer1]*self.node_unit +self.layers[layer1]*self.node_unit + (numnodes*self.node_unit*height))) + " " + str(self.offset_x + int(e * self.time_unit)) + " " + str(self.offset_y + (self.nodes[v+layer2]+self.layers[layer2])*self.node_unit - (numnodes*self.node_unit*(1-height))))
 
     def addNodeCluster(self, u, times=[], color=0, width=200):
 
@@ -377,7 +377,7 @@ Single\n\
         self.f.writelines("\n"+"4 0 " + str(color) + " 50 -1 0 " + str(font) + " 0.0000 4 135 120 " + str(self.offset_x + int(t * self.time_unit) - (2 * font * len(label))) + " " + str(self.offset_y - 175 + int(2 * self.node_unit)) + " " + str(label) + "\\001")
 
     def addTimeLine(self, ticks=1, marks=None):
-        timeline_y = self.node_cpt * self.node_unit + int(self.node_unit / 2)
+        timeline_y = self.node_cpt * self.node_unit + self.layer_cpt*self.node_unit + int(self.node_unit / 2)
 
         vals = []
         i = self.alpha

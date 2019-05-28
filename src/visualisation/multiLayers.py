@@ -264,7 +264,8 @@ class MultiLayer :
             draw a multilayer graph. Each circle corresponds to one layer.
         """
         nl=self.layers.length()
-        pointsLay=[(np.cos(np.pi *2* k /nl),np.sin(np.pi *2* k /nl)) for k in range(nl)]
+        #we create a "big circle" to place the different layers
+        pointsLay=[(np.cos(np.pi *2* k /nl),np.sin(np.pi *2* k /nl)) for k in range(nl)] 
         points=[]
         n=0
         for l in self.layers.giveLayerList():

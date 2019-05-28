@@ -6,7 +6,8 @@ from intervals import *
 from structure import *
 from elemMSGraph import *
 from multiLayers import *
-
+import numpy as np
+import matplotlib.pyplot as plt
 
 """
 Final structure : MultiStream
@@ -213,6 +214,153 @@ class MultiStream :
                     for l in j.giveNodesT().giveListOfNodes():
                         durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals()).duration()
         return(durationLinks/durationNodes)
-                
-            
+    
+    def computeStrength(self):
+        a=[]
+        for i in self.layers.giveLayers() :
+            tab=i.computeStrengthBetweenNodes(self.em)
+            a.append(tab)
+        return(a)
+
+
+
+def minimizeStrength(f):
+    n=len(f)
+    print("f",f)
+    pos=[i for i in range(0,n)]#!!! chaque case indique la position du noeud
+    grad=[0 for i in range(0,n)]
+    fx=0
+    for i in range(0,n):
+        g=0
+        for j in range(0,n):
+            #print("i",pos[i],"j",pos[j],"f[pos(i)][pos(j)]",f[pos[i]][pos[j]],"dif",(pos[i]-pos[j])*((pos[i]-pos[j])**2-1))
+            g=g+2*f[i][j]*(pos[i]-pos[j])
+            fx=fx+f[i][j]*(pos[i]-pos[j])**2
+        print("gi",g,"i",pos[i])
+        grad[i]=g
+    oldfx=fx+1
+    print("--",fx)
+    print("***",grad)
+    while fx<oldfx:
+        print("fx",fx)
+        oldfx=fx
+        oldpos=pos
+        noeudDepl1,move=findDepl(grad,pos)
+        print("gradient",grad)
+        print("deplacement",findDepl(grad,pos))
+        noeudDepl2=pos.index(pos[noeudDepl1]+move)
+        pos[noeudDepl1],pos[noeudDepl2]=pos[noeudDepl2],pos[noeudDepl1]
+        fx=0
+        print("po",pos)
+        for i in range(0,n):
+            g=0
+            for j in range(0,n):
+                print("i",pos[i],"j",pos[j],"f[i][j]",f[i][j],"dif",(pos[i]-pos[j]))
+                g=g+2*f[i][j]*(pos[i]-pos[j])
+                fx=fx+f[i][j]*(pos[i]-pos[j])**2
+                print((pos[i]-pos[j])**2)
+            print("gi",g)
+            print("fx",fx)
+            grad[i]=g
+        print("fxold",oldfx)
+        print("fxend=",fx)
+    return(oldpos)
+
+def fonction(pos,f):
+    n=len(pos)
+    eps=0.1
+    fx=0
+    for i in range(0,n):
+        for j in range(0,n):
+            fx=fx+f[i][j]*((pos[i]-pos[j])**2-1)**2
+            fx=fx+0.01*1/(pos[i]-pos[j]+eps)**2
+    return fx
+
+def gradient(pos,f):
+    n=len(pos)
+    g=[0]
+    eps=0.1
+    for i in range(1,n):
+        gi=0
+        for j in range(0,n):
+            gi=gi+4*f[i][j]*(pos[i]-pos[j])*((pos[i]-pos[j])**2-1)
+            gi=gi-0.01*1/(pos[i]-pos[j]+eps)**3
+        g.append(gi)
+    return(g)
+
+def descentGrad(fonction,f,der,posini,iterations):
+    h=0.01
+    n=len(posini)
+    pos=posini
+    listefi=[]
+    for i in range(0,iterations):
+        affiche(pos)
+        fi=fonction(pos,f)
+        grad=der(pos,f)
+        pos=[pos[j]-h*grad[j] for j in range(0,n)]
+        listefi.append(fi)
+    return(pos,listefi)
+
+def affiche(liste):
+    n=len(liste)
+    tab=[i for i in range(0,n)]
+    plt.plot(tab,liste,'ro')
+    plt.show()
+    
+def findDepl(liste,pos):
+    n=len(liste)
+    m=0
+    nm=0
+    M=0
+    nM=0
+    ancm=0
+    ancnm=0
+    ancM=0
+    ancnM=0
+    print("lenliste",len(liste))
+    p=0
+    for i in range(0,len(liste)):
+        print("liste",liste[i])
+        if liste[i]>M:
+            ancM=M
+            ancnM=nM
+            nM=i
+            M=liste[i]
+        elif liste[i]<=m:
+            ancm=m
+            ancnm=m
+            nm = i 
+            m=liste[i]
+    if abs(M)>=abs(m) and pos[nM]>0:
+        print("cas1")
+        print("M",M,"depl",nM,nM-1)
+        return(nM,-1)
+    elif abs(M)<abs(m) and pos[nm]<n-1:
+        print("cas2")
+        print("m",m,"depl",nm,+1)
+        return(nm,+1)
+    elif abs(M)>=abs(m) :
+        if abs(ancM)<abs(m) and pos[nm]<n-1:
+            print("cas3")
+            return(nm,+1)
+    else:
+        if abs(ancm)<abs(M) and pos[nM]>0:
+            print("cas4")
+            return(nM,-1)
+    if abs(ancm)>abs(ancM):
+        print("cas5")
+        return(ancnM,-1)
+    else :
+        print("cas6")
+        return(ancnm,+1)
+
+def donnerOrdre(pos):
+    n=len(pos)
+    pos2=pos.copy()
+    pos2.sort()
+    posfin=[]
+    for i in range(0,n):
+        ind=pos.index(pos2[i])
+        posfin.append(ind)
+    return posfin
     

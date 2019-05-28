@@ -6,6 +6,7 @@ Created on Wed May 22 15:02:31 2019
 """
 
 from sortedcollection import *
+import numpy as np
 
 """
 Graph contents
@@ -113,6 +114,31 @@ class Layer :
         self.interval.printInterval()
         print("nodes:")
         self.nodesT.printNodeTList()
+        
+    def computeStrengthBetweenNodes(self,links):
+        n=self.nodesT.giveListOfNodes().__len__()
+        f=[[0 for i in range(0,n)]for j in range(0,n)]
+        nInteract=SortedCollection([], key = lambda elem  : elem[0])
+        for i in links.giveListOfLinks():# we build a list of the times of begining of interaction and the number of simultaneus interactions at this time.
+            for j in i.giveIntervals():
+                b=j.begining()
+                if nInteract.contains_label(b):
+                    nInteract[nInteract.index_label(b)][1]=nInteract[nInteract.index_label(b)][1]+1
+                else :
+                    nInteract.insert([b,1])
+        #filling the strenghs matrixes
+        for i in links.giveListOfLinks():
+            node1,node2,label1,label2=i.giveLabel()
+            n1,n2= self.nodesT.giveListOfNodes().index_label(node1),self.nodesT.giveListOfNodes().index_label(node2)
+            if label1==label2 and label1==self.layerLabel :
+                for j in i.giveIntervals():
+                    b=j.begining()
+                    f[n1][n2]=f[n1][n2] + nInteract[nInteract.index_label(b)][1]
+        return(f)
+                
+    
+        
+        
 
 class LayerList :
     """
@@ -257,6 +283,7 @@ class LinkList:
             self.listOfLinks.insert(l)
     def giveListOfLinks(self):
         return(self.listOfLinks)
+
     def printLinkList(self):
         print("list of link")
         for n in self.listOfLinks :
