@@ -22,10 +22,11 @@ class NodeT :
     :type intervals: IntervalList
 
     """
-    def __init__(self,node,intervals):
+    def __init__(self,node,intervals,nodeLabel=""):
         self.node=node
         self.intervals = intervals
         self.intervals.condensateIntervals()
+        self.nodeLabel=nodeLabel
     def giveIntervals(self):
         """
         function giveIntervals()
@@ -47,7 +48,7 @@ class NodeT :
     def addInterval(self,interval):
         self.intervals.addInterval(interval)
     def printNodeT(self):
-        print("node : "+ str(self.node)+ ", intervals : "+self.intervals.intervalListToString() )
+        print("node : "+ str(self.node)+ str(self.nodeLabel)+ ", intervals : "+self.intervals.intervalListToString() )
 
 
 class NodeTList :
@@ -260,8 +261,10 @@ class Link:
         print("--->")
         self.node2.printNodeT()
         print("from"+str(self.layerLabel2))
-        print("endlink")
+        print("intervalLinks")
         self.intervals.printIntervals()
+        print("endlink")
+        
     
 
 class LinkList:

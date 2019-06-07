@@ -5,6 +5,8 @@
 # Remplacer les self.f.writelines("\n"+...\n)
 # Gestion des erreurs (noeud non ajout�...)
 
+
+#l'aspect discret n'est pas géré pour le multilayer
 import sys
 
 
@@ -127,6 +129,7 @@ Single\n\
         
         self.nodes[u+layer] = self.node_cpt
         self.layers[layer] = self.layer_cpt
+        
         
         sizestr = len(u)
         sizeLayer=len(str(layer))

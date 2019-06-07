@@ -215,12 +215,18 @@ class MultiStream :
                         durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals()).duration()
         return(durationLinks/durationNodes)
     
+    
+
+#tentative de représentation optimale du graphe en chantier
+
     def computeStrength(self):
         a=[]
         for i in self.layers.giveLayers() :
             tab=i.computeStrengthBetweenNodes(self.em)
             a.append(tab)
         return(a)
+
+
 
 
 

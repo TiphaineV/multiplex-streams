@@ -77,6 +77,10 @@ class SortedCollection(object):
         self._keys = [k for k, item in decorated]
         self._items = [item for k, item in decorated]
         self._key = key
+    
+    def printsort(self):
+        for i in self._items:
+            print(i, self.key(i))
 
     def _getkey(self):
         return self._key
