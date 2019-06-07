@@ -119,3 +119,5 @@ src/visualisation/college2.svg
 src/visualisation/college.svg
 src/visualisation/ftfMPF.svg
 src/visualisation/lycee.svg
+*.fig
+*.fig
