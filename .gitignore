@@ -113,3 +113,9 @@ venv.bak/
 *.gz
 *.aux
 *.gml
+*.ps
+*.fig
+src/visualisation/college2.svg
+src/visualisation/college.svg
+src/visualisation/ftfMPF.svg
+src/visualisation/lycee.svg
