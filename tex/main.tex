@@ -272,37 +272,38 @@
 	
 	We might want then to quantify the presence and the number of interactions in a multilayer stream graph. We will propose a few measures which take into account the multilayer and the stream aspect.
 	
-	The number of nodes in a graph $G=(V,E)$ is $|V|$ and the number of links is $|E|$.
+	The {\em number of nodes in a graph} $G=(V,E)$ is $|V|$ and the number of edges is $|E|$.
 	
-	The number of nodes in a stream graph $S=(T,V,W,E)$ is $n=\frac{|W|}{|E|}=\sum_{v\in V} n_v$, $n_v$ is called the {\em contribution of v} and is equal to $\frac{|T_v|}{|T|}$.
+	The {\em number of nodes in a stream graph} $S=(T,V,W,E)$ has been defined in \cite{stream} as $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$. $n_v$ is called the {\em contribution of v} and is equal to $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Note that this notion is different to the {\em number of nodes in the graph} $|V|$.
+	\newline
 	
-	In multilayer graphs, the number of nodes hasn't been explicitly defined as far as we know.
-	Rather than just counting the nodes or the node layers, we define the {\em number of nodes in a multilayer} as :
+	In multilayer graphs, such similar notion hasn't been explicitly defined as far as we know.
+	Rather than just counting the nodes or the node layers, we define the {\em average number of nodes by layer} as :
 	\begin{align*}
-		N_{nodes in multilayers}(M_l) = \frac{\text{number of node-layers}}{\text{number of layers}}
+		\hat{N}_n^L(M_l) = \frac{\text{number of node-layers}}{\text{number of layers}}=\frac{|V_M|}{|L|}
 	\end{align*}	    
 	Notice that if there is only one layer, we find the classical number of nodes, which means that this definition is a generalisation of the number of nodes for multilayer graphs.
 		
 	
 	\begin{defn}[Contribution of layer]
-	We define too the {\em contribution} of one layer as follows : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. The {\em number of layers} is then the sum of their contributions.
+	We define too the {\em contribution} of one layer as follows : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. The {\em number of layers in a multilayer stream graph} is then the sum of their contributions. $\hat{N}^T_l = \sum_{\alpha \in L}\frac{ |T_{\alpha}|}{|T|}$
     \end{defn}
 	
-	\begin{defn}[Contribution of node-layer]
-	The {\em contribution of one node-layer} in the multilayer stream graph is $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. The {\em number of node-layers} is the sum of the contributions $N(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
+	\begin{defn}[Contribution and quantity of node-layers]
+	The {\em contribution of one node-layer} in the multilayer stream graph is $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. The {\em number of node-layers} is the sum of the contributions $\hat{N}^{T}_{nl}(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
     \end{defn}
 	
 	Notice that if we have only one layer, we find the number of node-layers which is the number of nodes. If we take the underlying stream of the multilayer stream graph, we find too the same number of node-layers.
 
     
-    We decide then to define the \textbf{number of nodes} as follows : 
+    We decide then to define the \textbf{number of nodes in a multilayer stream graphs} as follows : 
     
     \begin{defn}[Contribution and number of nodes]
-    The {\em the contribution} of a node describes the rate of appearance of the node on the different layers : $n_v = \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|}$.
+    The {\em contribution} of a node describes the rate of appearance of the node on the different layers : $n_v = \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|}$.
     
-    The {\em number of nodes} is then the sum of the contribution of the nodes : 
+    The {\em quantity of nodes} is then the sum of the contribution of the nodes : 
     \begin{align}
-    N_n(M) = \sum_{v\in V} n_v= \sum_{v\in V} \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|} 
+    \hat{N}^{L,T}_n(M) = \sum_{v\in V} n_v= \sum_{v\in V} \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|} 
     \label{numberNodes}
 	\end{align}     
 	
@@ -312,9 +313,10 @@
 	
 	\section{Uniformity}
 	
-	In stream graph the {\em uniformity between a pair of nodes} $u$ and $v$ is the ratio $\Cup U(u,v) = \frac{|T_u\cap T_v|}{|T_u \cup T_v|}$, and the graph is the sum of uniformities for all the pairs of nodes.
+	In stream graph the {\em uniformity between a pair of nodes} $u$ and $v$ is the ratio $\Cup (u,v) = \frac{|T_u\cap T_v|}{|T_u \cup T_v|}$. It measures how much two nodes can be linked together.
 	
-	The {\em uniformity } of two nodes-layers $(u,\alpha)$ and $(v,\beta)$ measures the rate of overlap presence of two node-layers:
+	
+	The {\em uniformity } of two nodes-layers $(u,\alpha)$ and $(v,\beta)$ measures the rate of overlap presence of two node-layers, their "theoretical" ability to be linked together.
 	\begin{align*}
 		\Cup((u,\alpha),(v,\beta))=\mathbb{P}( t \in T_{u,\alpha} \cap T_{v,\beta} | t \in T_{u,\alpha} \cup T_{u,\beta}) \\
 		= \frac{|T_{u,\alpha}\cap T_{u,\beta}|}{|T_{u,\alpha}\cup T_{u,\beta}|}
@@ -329,7 +331,14 @@
     \[
     	\Cup(M) = \frac{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\beta)}|}}{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\beta)}|}}
     \]
-
+	
+	But we could nuance this definition by taking into account special multilayer stream graphs, in which only some of the edges are allowed. For instance, in a multiplex stream graph, the only inter-layer edges allowed are the edges between the same node. So the {\em uniformity of the multiplex stream graph} will be :
+	\[
+    	\Cup(M) = \frac{1}{|L|}\sum_{\alpha \in L} \frac{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\alpha)}|}}{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\alpha)}|}}
+    \]
+	
+	
+	
 	\begin{rmq}
 		Note that this concept can be used for sub-stream graphs of any type.
 	\end{rmq}
@@ -339,7 +348,10 @@
 
 
     \section{Density}
-	In classical graphs (unweighed and non directional), the density $d(G)$ measures how much the vertexes are connected.
+    
+    After measuring how much a graph "can be connected" with the uniformity, we will measure how actually it is connected compared to how it could be.
+    
+	In classical graphs (unweighed and non directional), the {\em density} $d(G)$ measures how much the vertexes are connected.
 		\[
 			d(G) = \frac{|E|}{|V\otimes V|} = \frac{2\times |E|}{|V|(|V|-1)}
 		\]
@@ -366,23 +378,44 @@
 		\delta_M (M) = 
 		\frac{|E_M|}{|C|}= 
 		\frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}
-		{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)+( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}
+		{\underbrace{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)}_{\text{intra-layer possible nodes}}+\underbrace{( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}_{\text{inter-layer possible nodes}}}
 	\]
 
 		\section{Neighbours and degrees}
 	
-		In classic graphs, the degree of a node is the number of its neighbours. The neighbours are the nodes for which a link between the first node and the neighbour.
+		In classic graphs, the degree of a node is the number of its neighbours. The neighbours are the nodes for which a link exists between the first node and the neighbour.
 		
-		\subsection{Nieghbours and degree in multilayer graphs}
+		\subsection{Neighbours and degree in multilayer graphs}
 		
-		In the multilayer graphs, it is a more tricky question to know who are the neighbours of a node. In many multiplexes, the nodes-layers corresponding to the same node are linked together with an "invisible" connection. The main question should be of course : "what do we want to measure ?" We will give a few examples of different situation and the definition of the degree associated.
+		In the multilayer graphs, it is a more tricky question to know who are the neighbours of a node. In many multiplexes, the nodes-layers corresponding to the same node are linked together with an "invisible" connection. The main question should be of course : "what do we want to measure ?" We will give a few examples of different situations and the definition of the degree associated.
 		
-		I the case of a transportation multiplex, our nodes are some cities, the layers are different types of means of transportation. If we want to know how many cities you can reach from Tokyo without correspondence, we will calculate the degree of Tokyo in the aggregated graph.
+		I the case of a transportation multiplex, our nodes are some cities, the layers are different means of transportation. If we want to know how many cities you can reach from Tokyo without correspondence, we will calculate the degree of Tokyo in the aggregated graph.
 		
-		But we might want to highlight the fact that it is not equivalent to have one or many different links in different layers between two nodes. For example, two city will be better connected if we can take the train of the plane to travel between them.  We then can take the sub-multilayer graph of the neighbours of all the node-layers labelled Paris, and compute the number of nodes as defined in \ref{numberNodes}. 
+		But we might want to highlight the fact that it is not equivalent to have one or many different links in different layers between two nodes. For example, two cities will be better connected if we can take the train or the plane to travel between them.  We then can take the sub-multilayer graph of the neighbours of all the node-layers labelled Paris, and compute the number of nodes as defined in \ref{numberNodes}. 
+		
+		The definition in \cite{BERL} allows us to capture the dimensional side of neighbours in multiplexes, we generalize it to multilayer graphs.
+		
+		\begin{defn}[The function neighbouring in multilayer graphs]
+		 Let $v \in V$ be a node and $D \in L$ a set of couples of layers of $M=(V_M,E_M,V,L)$. 
+		 
+		 $Neighbours(v,D): \left\{ 
+		 	\begin{array}{lcl}
+		 		V\times {\cal P}(L \times L)& \rightarrow & \mathbb{N}\\
+		 		(v,D) & \rightarrow & |\left\{u \in V | \exists (u,\alpha,v,\beta) \in E, (\alpha,\beta) \in D\right\}|
+		 	\end{array}
+		 	\right.$
+		
+		\end{defn}
+		
+		The advantage of this definition is that we recognise the "number of nodes" very easily. Bianconi defines the degree as the number of 
+		
+		
+		\pimprenelle{degré = nombre d'arêtes incidentes \\taille du voisinage dans couches = nombre de noeuds voisins }
+		
+		
 		
 		\begin{align}
-			d_2(v)= \frac{|\{((u,\alpha,v,\beta) \in E\}|}{|L|} = \frac{\text{Number of node-layers neighbours of u}}{\text{number of layers}}
+			d_2(v)= \frac{|\{((u,\alpha,v,\beta) \in E\}|}{|L|} = \frac{\text{Number of node-layers neighbours of u}}{\text{contribution of u }}
 		\end{align}
 		
 		But this time, we lose the information of how many cities we can reach. A city connected to two other cities by the train will have the same score than a city connected to only one city by train and plane. The good point is just that if we have just one layer, we find again the same result than in a classical graph.
