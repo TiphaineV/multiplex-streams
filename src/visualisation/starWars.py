@@ -137,3 +137,4 @@ readNodes("character")
 readLinks("character","character",sc)
 #m.printMS()
 m.drawMS("sw.fig")
+

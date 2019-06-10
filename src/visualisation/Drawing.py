@@ -78,11 +78,11 @@ Single\n\
 
         self.f.writelines("\n"+"0 " + str(self.color_cpt) + " " + str(hex))
 
-    def addNode(self, u, times=[], color=0, linetype=None,layer="layer0",newLayer=0):
+    def addNode(self, u, times=[], color=0, linetype=None,layer="layer0",newLayer=0,write=""):
         if self.discrete > 0:
             self.addDiscreteNode(u,layer, times, color)
         else:
-            self.addContinuousNode(u,layer, newLayer, times, color, linetype)
+            self.addContinuousNode(u,layer, newLayer, write, times, color, linetype)
 
     def addDiscreteNode(self, u, times=[], color="grey", width=1):
 
@@ -108,7 +108,7 @@ Single\n\
 
 
 
-    def addContinuousNode(self, u, layer, newLayer, times=[], color=0, linetype=None):
+    def addContinuousNode(self, u, layer, newLayer,write, times=[], color=0, linetype=None):
         """ nodeId : identifiant du noeud
             times : suite d'intervalles de temps ou le noeud est actif
             layer : etiquette de la layer en string
@@ -130,6 +130,8 @@ Single\n\
         self.nodes[u+layer] = self.node_cpt
         self.layers[layer] = self.layer_cpt
         
+        if write!="":
+            u=write
         
         sizestr = len(u)
         sizeLayer=len(str(layer))

@@ -45,6 +45,8 @@ class NodeT :
         return(self.intervals)
     def giveNode(self):
         return(self.node)
+    def giveNodeLabel(self):
+        return(self.nodeLabel)
     def addInterval(self,interval):
         self.intervals.addInterval(interval)
     def printNodeT(self):

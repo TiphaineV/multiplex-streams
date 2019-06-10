@@ -207,8 +207,10 @@ class IntervalList :
             returns the IntervalList of the intersection of all the intervals of the 2 lists.
         """
         l=IntervalList([])
-        for i1 in interList2:
+        for i1 in interList2.giveListOfIntervals():
             for i2 in self.listOfIntervals:
-                l.addInterval(i1.intersection(i2))
+                i3=i1.intersection(i2)
+                if i3 != Interval(0,0):
+                    l.addInterval(i3)
         return(l)
         

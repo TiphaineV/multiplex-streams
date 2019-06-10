@@ -90,7 +90,7 @@ class MultiStream :
                 times=[]
                 for k in j.giveIntervals():
                     times.append((k.begining(),k.end()))
-                f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay)
+                f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
                 newlay=0
         for j in self.em.giveListOfLinks():
             for inte in j.giveIntervals():
@@ -215,7 +215,23 @@ class MultiStream :
                         durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals()).duration()
         return(durationLinks/durationNodes)
     
-    
+    def cut(self,interval):
+        m2=MultiStream(interval,self.layerStruct, LayerList([]),LinkList([]))
+        for lay in self.layers.giveLayers() :
+            int2= lay.giveInterval().intersection(interval)
+            if int2 != Interval(0,0):
+                m2.addLayer(Layer(self.layerStruct,lay.giveLayerLabel(),int2,NodeTList([])))
+                for n in lay.giveNodesT().giveListOfNodes():
+                    int3=n.giveIntervals2().intersection(IntervalList([interval]))
+                    if int3!=IntervalList([]):
+                        m2.addLayer(Layer(self.layerStruct,lay.giveLayerLabel(),int2,NodeTList([NodeT(n.giveNode(),int3,nodeLabel=n.giveNodeLabel())])))
+        for e in self.em.giveListOfLinks():
+            intL4=e.giveIntervals2().intersection(IntervalList([interval]))
+            n1,n2,ll1,ll2= e.giveLabel()
+            nodes=e.giveNodes()
+            if intL4 != IntervalList([]):
+                m2.addLink(Link(intL4,nodes[0],ll1,nodes[1],ll2))
+        return(m2)
 
 #tentative de représentation optimale du graphe en chantier
 
