@@ -88,7 +88,7 @@ Chuo-ku, Tokyo\\
 
 \section*{Introduction}
 
-\section{Etat de l'art}
+\section{Etat de l'art : analyse de deux formalismes sur les graphes}
 \indent
 
 Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des interactions (arêtes : ensemble $E$) entre des entités (nœuds: ensemble $V$). 
@@ -197,11 +197,11 @@ De Domenico montre que le fait de conserver l'information multicouche permet de 
 Nous avons présenté ici deux exemples pour lesquels il a été judicieux de conserver l'aspect mutlicouche des graphes, parce qu'il contient plus d'informations, et qu'elles ont une structure particulière.
 
 
-\subsection{Les stream graphes}
+\subsection{Les stream graphs}
 
 
 
-Les stream graphs ont été créés très récemment (\cite{stream}) dans le but de pouvoir mieux étudier les graphes dynamiques, c'est à dire des graphes dont les nœuds et les liens peuvent apparaitre et disparaitre au fil du temps.
+Les stream graphs ont été créés dans le but de pouvoir mieux étudier les graphes dynamiques, c'est à dire des graphes dont les nœuds et les liens peuvent apparaitre et disparaitre au fil du temps.
 
 \subsubsection{Définition}
 
@@ -224,24 +224,22 @@ La représentation graphique des stream graphes est une des grandes forces du co
 
 Dans l'article de référence \cite{stream}, de nombreuses notions sont ensuite définies de telle sorte à ce que dans le cas où le stream graph serait statique, on retrouve les mêmes notions que pour un graphe classique.
 
-\paragraph{Mesures sur les stream graphes}
+Nous les évoquerons en temps voulu quand nous nous en servirons pour créer nos propres définitions.
 
-Dans \cite{stream}, on appelle \textbf{nombre de noeuds} $N_n(S)$ le nombre moyen de nœuds au cours du temps $N_n(S) = \sum_{u\in V}\frac{|T_u|}{|T|}$ et de la même façon le \textbf{nombre de liens} $N_e(S) = \sum_{e \in E} = \frac{|T_{u,v}|}{|T|}$.
+\subsubsection{De l'intérêt de l'usage des stream graphs}
+La notion de stream graphe est très récente (2017)\cite{stream} et ce n'est évidemment pas la première tentative de formalisme pour des graphes dynamiques.
 
-La \textbf{densité} $d(S)$ est définie comme étant le nombre de noeuds sur le "nombre de noeuds possibles", c'est à dire :
-$$
-d(S) = \frac{\sum_{(u,v)\in E} |T_{u,v}|}{\sum_{(u,v)\in V\otimes V} |T_u \cap T_v|}
-$$
+Par exemple on peut citer la représentation souvent utilisée en recherche opérationnelle, en "snapshot". Le nombre de noeuds d'un système est multiplié par un nombre de pas de temps discrets $n=\frac{t}{T}$. On crée ensuite un graphe temporel dont les noeuds sont étiquetés $(v,t_i)$, $v$ étant les noeuds et $t_i$ les temps auxquels ils sont considérés. Les liens peuvent être présents entre différents noeuds du même pas de temps, et on ajoute à cela une arête entre tous les couples de noeuds de la forme $(v,t_i),(v,t_{i+1})$. 
+Dans ces cas-là les liens sont très souvent orientés pour indiquer le sens du temps. Ces graphes sont utilisés pour des calculs de flots optimaux \cite{map}. On peut d'ailleurs raccrocher cette représentation à la théorie des graphes multicouches, chaque couche correspondant à un pas de temps.
 
-L'\textbf{uniformité} est définie comme la probabilité que deux noeuds apparaissent en même temps dans le stream graph :
+La notion de stream graph permet de "se libérer" de la vision discrétisée des snapshots. Même si dans l'absolu, les deux visions permettent de stocker les mêmes informations et de faire les mêmes choses (il suffit pour cela de choisir un pas de discrétisation assez petit), la vision stream graph permet d'aborder le problème sous un autre angle, plus orienté sur l'étude des ensembles d'intervalles qui caractérisent les liens et les nœuds.
 
-$$
- \Cup(S)=\sum_{u,v \in V \otimes V}\frac{|T_u\cap T_v|}{|T_u\cup T_v|}
-$$
+\begin{figure}
+\centering
+	\includegraphics[width=0.7\textwidth]{snapshot.JPG}
+	\caption{\textbf{Exemple de snapshot:} Un "snapshot" représentant un barrage (liens bleus) entre deux réservoirs aux temps $t_0,t_1,t_2,t_3$, tiré d'un projet MAP552}
+\end{figure}
 
-Un \textbf{cluster}
-
-\paragraph{Chemins}
 
 
 \section{Présentation d'un nouvel objet: le stream graph multicouche}
@@ -275,15 +273,257 @@ Un \textbf{cluster}
 
 \subsection{Extraction de sous-graphes}
 
+\subsubsection{Projection par rapport au temps}
+	Nous définissons ici deux moyens d'extraire des graphes multicouches en s'affranchissant du temps.
+	
+	Le premier est de "prendre une photo" au temps $t$ :
+	\begin{defn}[Graphe multicouche au temps t]
+   	Le {\em graphe multicouche au temps t} $M_t$ s'écrit $M_t = (V_{M,t}, E_{M,t},V,{\cal L})$ avec $V_{M,t}$ et $E_{M,t}$ contenant les noeuds-couches et les arrêtes apparaissant au temps $t$.
+   	$$ V_{M,t} = \{ (u,\alpha) | (t,u,\alpha) \in W_M\} $$
+   	$$ E_{M,t} = \{(u,\alpha,v,\beta) | (t,u,\alpha,v,\beta) \in E_M\}$$
+
+   \end{defn}
+
+	\begin{figure}[h]
+		\begin{minipage}{0.49\linewidth}
+			%\includegraphics[width=\textwidth]{schemas/pauset.jpg}
+		\end{minipage}
+		\begin{minipage}{0.49\linewidth}
+			%\includegraphics[width=\textwidth]{schemas/pausetproj.jpg}
+		\end{minipage}
+		\caption{dessin d'une extraction}
+	\end{figure}
+
+    
+    Le {\em graphe multicouche induit} $M_I(S_M) = (V_{M,I}, E_{M,I}, V,L)$ de $S_M$ est le graphe multicouche qui rassemble toutes les couches, noeuds couches et noeuds qui ont apparu durant $T$.
+    \begin{align*}
+    	V_{M,I} = \bigcup_{t\in T} V_{M,t}\\
+    	E_{M,I} = \bigcup_{t\in T} E_{M,t}\\
+    \end{align*}
+    
+	
 
 
+\subsubsection{Projection à partir de couches}
+Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier" les arêtes en plusieurs catégories :
+	
+	\begin{defn}[Arêtes de couplage, arêtes intra-couches et inter-couches]
 
+   	Les {\em arêtes de couplage} sont définies par l'ensemble $E_C=\{(t,u,\alpha,v,\beta)\in E_M | u=v\}$.
+
+    Les {\em arêtes intra-couches} sont définies par l'ensemble $E_I = \{(t,u,\alpha,v,\beta) \in E_M | \alpha = \beta \}$
+
+    Les {\em arêtes inter-couches} sont définies par l'ensemble $\bar{E_I} = E_M\backslash E_I$.
+    
+	%(See fig.\ref{exIntraInter} for a visual representation.)
+	
+	\end{defn}	
+	
+	\begin{figure}[h]
+		\centering
+		%\includegraphics[width=\textwidth]{schemas/edgesCat.jpg}
+		\caption{Illustration with our example of coupling edges, intra-layer edges and inter-layer edges}
+		\label{exIntraInter}
+	\end{figure}
+	
+	
+	Comme dit précédement, les graphes multiplexes sont présents dans beaucoup de cas concrets et font l'objet d'études qui leur sont particulièrement dédiées. Nous définissons ici de façon formelle les stream graphs multiplexes.
+	
+	\begin{defn}[Stream graph multiplexe]	
+	Un {\em stream graph multiplexe} est un graphe dans lequel chaque arête est une arête intra-couche ou une arête de couplage.
+	\end{defn}
+	
+	
+	 
+	\begin{defn}[Stream graph intra-couche]
+	Pour chaque couche $\alpha \in L_1 \times \dots \times L_d$, le {\em stream graph intra-couche} $S^{\alpha}$ est le stream graph $S^{\alpha}=(T^{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ tel que $T^{\alpha} = T_{\alpha} \in T_M$ est l'intervalle d'existence de $\alpha$. $V^{\alpha}$ est l'ensemble des nœuds couches dans la couche $\alpha$ et $W^{\alpha}$ représente leurs temps d'apparence dans la couche $\alpha$. $E^{\alpha}$ est le sous-ensemble $E_M$ contenant seulement les arêtes entre les noeuds-couches de $\alpha$.
+	\end{defn}
+	
+	
+	\begin{defn}[Stream graph inter-couches]	
+	Pour chaque doublet de couches $\alpha, \beta \in L_1\times \dots\times L_d$, le {\em stream graph inter-couches} est le stream graph $S^{(\alpha,\beta)} = (T, V^{\alpha,\beta},W^{\alpha,\beta},E^{\alpha,\beta})$ tel que : $T^{\alpha,\beta}=T^{\alpha}\cap T^{\beta}$ est l'intervalle durant lequel $\alpha$ et $\beta$ apparaissent simultanément. $V^{\alpha,\beta}$ sont tous les noeuds-couches du stream graph multicouche qui sont dans les couches $\alpha$ et $\beta$, $W^{\alpha,\beta}$ décrit leurs intervalles d'existence. Enfin, $E^{\alpha,\beta}$ sont les liens non orientés entre les noeuds couches des couches de $\alpha$ et $\beta$ avec leurs temps d'existence.
+	\end{defn}
+	
+	Notice that for any layer $\alpha$,  is equivalent to $S^{(\alpha,\alpha)}$.
+
+	On remarque que pour toute couche $\alpha$, $S^{(\alpha)}$ est équivalent à $S^{(\alpha,\alpha)}$.
+
+
+	Après avoir extrait les stream graphes d'intérêt, il nous pouvons effectuer des opérations d'union et d'intersection pour trouver des propriétés intéressantes.
+	
+	\begin{defn}[Intersection de deux stream graphs]
+	L'{\em intersection} de deux stream graphs $S_1$ et $S_2$ est un stream graph et est définie de la façon suivante :
+	\[
+		S' = S_1 \cap S_2 = (T_1\cap T_2, V_1 \cap V_2, W_1 \cap W_2, E_1\cap E_2)
+	\]
+	\end{defn}
+	
+
+	\begin{defn}[Union de deux stream graphs]
+	L'{\em union} de deux stream graphs $S_1$ et $S_2$ est un stream graph et est définie de la façon suivante :
+	\[
+		S' = S_1 \cup S_2 = (T', V_1 \cup V_2, W_1 \cup W_2, E' \})
+	\]
+	$T'$ est un intervalle :
+	\[
+		T' = [\min(T_1,T_2),\max(T_1,T_2)]
+	\]
+	\[
+		E' = E_1 \cup E_2 
+	\]
+	
+	\end{defn}
+	
+	
+	\begin{defn}[Underlying stream]
+		The {\em underlying stream } $S_U(S_M)$ of $S_M$ is $(T,V_M,W_M,E_M)$. Its is the stream graph in which the nodes are the node-layers. It could be shared into clusters corresponding to the different layers. This definition is a generalisation to the one defined on \cite{mlkiv} for simple multilayer graphs.
+	\end{defn}
+	
+	\begin{defn}[Aggregated stream]
+		
+		The {\em aggregated stream} $S_A(S_M)$ has the same $T$ as $S_M$. Its nodes are the nodes of $S_M$ and a link exists between two nodes if and only a link exist between two correspondent node-layers.	This definition is a generalisation to the one defined on \cite{mldd} for simple multilayer graphs.
+	
+	\end{defn}
+	
+	We can now demonstrate that the underlying stream graph is the union of all the intra and inter layer stream graphs.
+	
+	\begin{prop}
+		\[
+			\bigcup_{(\alpha,\beta) \in L^2} S^{(\alpha,\beta)} = S_U(M_S)
+		\]
+	\end{prop}
+	\begin{proof}
+	We call $S=\bigcup_{(\alpha,\beta) \in L^2} S^{(\alpha,\beta)}=(T^{*},V^{*},W^{*},E^{*})$ and we want to show that $S=S_U(M_S)=S_U(M) = (T_U,V_U,W_U,E_U)$.
+	
+	$T=T_U$ by definition of $S_U$. By construction of multilayer stream graphs, at each $t\in T$, at least one layer $\alpha$ is existing. Then as $T* = [\min_{\alpha \in L} (T^{\alpha}),max_{\alpha \in L} (T^{\alpha})]$, $t$ is included in $T*$. Each $T^{\alpha}$ is included in $T$, so $T^* \subseteq T$, which leads us to $T^*=T_U=T$.
+	
+	$V_M = V_U$ by definition of $V_U$.$V^{*}=\bigcup_{(\alpha,\beta) \in L^2} V^{\alpha,\beta} \subseteq V_M$. All the nodes of all the layers are included in $\bigcup_{(\alpha) \in L^2} V^{\alpha,\alpha} \subseteq V^{*}$, so we obtain the equality $V_M=V_U=V^*$.
+	With the same argument we find that $W_M=W_U=W^*$.
+	
+	$E_U=E_M$ and $E^{*}=\bigcup_{\alpha,\beta \in L^2}(E^{\alpha,\beta})$ by definition. So as $E^{\alpha,\beta}$ is a subset of $E_M$ for every couple of layers $\alpha,\beta$, $E^{*} \subset E_M$. We notice too that for every $e =(t,u,\alpha,v,\beta) \in E_M$, $e$ belongs to $E^{\alpha,\beta}$. So $\mathbf{E_M=E^{*}}$.
+					
+	\end{proof}
+
+\subsubsection{Remarque sur les extractions}
+On remarque que de nombreux graphes et graphes multicouches sont extraits de stream graphs multicouches.
 
 
 \subsection{Mesures}
 
 
+Nous avons créé des mesures permettant de mesurer la présence de liens et de nœuds dans les graphes. Nos exigences pour ces mesures sont qu'elles soient adaptées à l'objet spécifique que nous étudions (et qu'elles prennent en compte l'aspect multicouche et l'aspect temporel de façon simultanée), qu'elles aient des noms qui évoquent intuitivement ce qu'elles expriment et qu'elles soient une généralisation des notions utilisées pour les stream graphs, pour les graphes multicouches et pour les graphes.
 
+	\subsubsection{Nombre de nœuds}
+	Le {\em nombre de noeuds dans un graphe} $G=(V,E)$ est $|V|$ et le nombre d'arêtes est $|E|$.
+	
+	Le {\em nombre de noeuds dans un stream graph} $S=(T,V,W,E)$ est défini dans \cite{stream} comme $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$. $n_v$ est appelé {\em contribution de v} et est égal à $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Remarquons bien qu'ici cette notion est différente {\em du nombre de noeuds dans} $|V|$, sauf quand le stream graphe $S$ est constant au cours du temps.
+	\newline
+	
+	Dans les graphes multicouches, une telle notion n'a pas été définie explicitement.
+	Nous avons donc défini le {\em nombre moyen de noeuds par couche} comme :
+	\begin{align*}
+		\hat{N}_n^L(M_l) = \frac{\text{nombre de noeud-couches}}{\text{nombre de couches}}=\frac{|V_M|}{|L|}
+	\end{align*}	    
+	Remarquons que dans le cas d'un monocouche, nous retrouvons le nombre de noeuds classique, ce qui signifie que nous pouvons choisir cette mesure comme une généralisation du {\em nombre de nœuds} dans un graphe, comme cela a été fait dans \cite{stream} pour les stream graphs.
+		
+	
+	\begin{defn}[Contribution des couches]
+	On définit la {\em contribution} d'une couche comme suit : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. Le {\em nombre de couche dans un stream graph multicouches} est la somme des contributions. $\hat{N}^T_l = \sum_{\alpha \in L}\frac{ |T_{\alpha}|}{|T|}$.
+    \end{defn}
+	
+	\begin{defn}[Contribution et quantité de nœud-couches]
+	La {\em contribution d'un noeud-couche} dans un stream graphe multicouche est $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. Le {\em nombre de nœud-couches} est la somme de leurs contributions $\hat{N}^{T}_{nl}(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
+    \end{defn}
+	
+	Dans le cas d'un stream monocouche, nous retrouvons bien que le nombre de noeuds est égal au nombre de noeuds-couches. En prenant le stream graph sous-jacent du stream graphe multicouche, on retrouve également que le nombre de noeuds est égal au nombre de noeuds couches. Nous avons donc là une généralisation satisfaisante du nombre de noeuds-couches.
+    
+   Enfin, nous définissons le \textbf{nombre de noeuds dans un stream graph multicouches} de la façon suivante : 
+    
+    \begin{defn}[Contribution et nombre de noeuds dans un stream graph multicouche]
+    La {\em contribution} d'un noeud décrit le taux d'apparition d'un noeud dans les couches : $n_v = \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|}$.
+    
+    Le {\em nombre de noeuds} est la somme de ces contributions :
+    \begin{align}
+    \hat{N}^{L,T}_n(M) = \sum_{v\in V} n_v= \sum_{v\in V} \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|} 
+    \label{numberNodes}
+	\end{align}     
+	
+	\end{defn}
+	
+	Cette définition est cohérente avec les notions des multicouches et des stream graphs : si le noeud apparait dans toutes les couches tout le temps, nous trouvons $n_v=1$ comme dans les multicouches. Si tous les temps d'existence sont égaux, on retrouve $$n_v=\frac{\text{nombre de noeud-couches issus de v}\times |T|}{\text{nombre de couches}\times |T|}$$ Cette définition est donc une bonne généralisation pour tous les concepts.
+
+	
+
+
+	\subsubsection{Uniformité et densité}
+	
+	Dans les stream graphs \cite{stream}, {\em l'uniformité entre deux nœuds} $u$ et $v$ est le ratio $\Cup (u,v) = \frac{|T_u\cap T_v|}{|T_u \cup T_v|}$, c'est à dire la probabilité, prenant un temps $t$ dans $T_u$ ou $T_v$, que les deux nœuds $u$ et $v$ puissent être reliés entre eux. L'uniformité est définie comme le rapport de tous les temps de co-existence sur les temps d'existence : $
+ \Cup(S)=\sum_{u,v \in V \otimes V}\frac{|T_u\cap T_v|}{|T_u\cup T_v|}
+$
+	
+		
+	{\em L'uniformité } de deux noeuds-couches $(u,\alpha)$ et $(v,\beta)$ est définie sur le même modèle :
+	\begin{align*}
+		\Cup((u,\alpha),(v,\beta))=\mathbb{P}( t \in T_{u,\alpha} \cap T_{v,\beta} | t \in T_{u,\alpha} \cup T_{u,\beta}) \\
+		= \frac{|T_{u,\alpha}\cap T_{u,\beta}|}{|T_{u,\alpha}\cup T_{u,\beta}|}
+	\end{align*}
+
+	{\em Le chevauchement} de deux couches $\alpha$ et $\beta$ est également défini comme suit :
+	\begin{align*}
+		\cup(\alpha,\beta) = \frac{|T_{\alpha}\cap T_{\beta}|}{|T_{\alpha}\cup T_{\beta}|}
+	\end{align*}
+
+    L'{\em uniformité des noeuds-couches} mesure le taux d'apparition simultanée des noeuds-couches dans le stream-graphe multicouche :
+    \[
+    	\Cup(M) = \frac{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\beta)}|}}{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\beta)}|}}
+    \]
+	
+	But we could nuance this definition by taking into account special multilayer stream graphs, in which only some of the edges are allowed. For instance, in a multiplex stream graph, the only inter-layer edges allowed are the edges between the same node. So the {\em uniformity of the multiplex stream graph} will be :
+	Cette définition peut être nuancée en considérant que selon la nature du stream graph multicouche, certains noeuds peuvent ou ne peuvent pas apparaitre simultanément. En particulier, {\em l'uniformité dans un stream graph multiplexe} est définie ainsi:	
+	
+	\[
+    	\Cup(M) = \frac{1}{|L|}\sum_{\alpha \in L} \frac{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\alpha)}|}}{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\alpha)}|}}
+    \]
+    
+    On ne prend en compte que les temps d'apparition intra-layer, et on moyenne selon le nombre de couche. 
+
+
+	Quand $\Cup=1$, on dit que le stream graph est uniforme (autrement dit, $T_v = T_u, \forall (u,v) \in V^2$).
+
+
+    Après avoir mesuré "à quel point le stream graphe multilayer peut être connecté" grâce à l'uniformité, nous allons mesurer à quel point il est effectivement connecté grâce à a notion de \textbf{densité}.
+    
+    Dans les graphes classiques (non pondérés et non directionnel), la {\em densité} est la probabilité, prenant deux noeuds au hasard dans le graphe, qu'une arête existe entre ces noeuds.
+    
+		\[
+			d(G) = \frac{|E|}{|V\otimes V|} = \frac{2\times |E|}{|V|(|V|-1)}
+		\]
+	Dans les stream graphs, la notion définie dans \cite{stream} est la même , en prenant un temps et deux noeuds au hasard existant à ce temps. 	
+
+		\begin{align*}
+			\delta_s(G) = & \mathbb{P}((t,u,v)\in E| (t,u),(t,v) \in W) \\
+			 =  & \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}
+		\end{align*}
+		
+	Nous pouvons ensuite définir la densité dans les stream graphs multicouches. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont "automatiques" ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
+
+
+	\[
+		\delta_M (M) 
+		= \frac{\int_{t\in T}|E_M,t|}{\int_{t\in T}|C_t|} 
+		= \frac{\sum_{(u,\alpha)(v,\beta) \in E_M}|T_{(u,\alpha)(v,\beta)}|}{|C|}
+	\]
+
+	Par exemple, dans un stream graph multiplexe, les liens possibles sont les liens intra couches et les liens de couplage : $C=\{(t,u,\alpha),(t,v,\beta))| t\in T_{u,\alpha} \cap T_{u,\beta}, u=v \text{or} \alpha = \beta)\}$ :
+
+	\[
+		\delta_M (M) = 
+		\frac{|E_M|}{|C|}= 
+		\frac{\sum_{(u,\alpha)(v,\beta) \in (V_M \otimes V_M)} |T_{(u,\alpha)(v,\beta)}|}
+		{\underbrace{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)}_{\text{arêtes intra-couches}}+\underbrace{( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}_{\text{arêtes de couplage}}}
+	\]
+
+	
 \section{Application à des données concrètes}
 
 \subsection{Structure de données et organisation du code} 

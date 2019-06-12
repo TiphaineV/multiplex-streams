@@ -1,5 +1,5 @@
 \babel@toc {french}{}
-\contentsline {section}{\numberline {1}Etat de l'art}{3}% 
+\contentsline {section}{\numberline {1}Etat de l'art : analyse de deux formalismes sur les graphes}{3}% 
 \contentsline {subsection}{\numberline {1.1}Les graphes multicouches}{3}% 
 \contentsline {subsubsection}{\numberline {1.1.1}D\IeC {\'e}finition g\IeC {\'e}n\IeC {\'e}rale}{3}% 
 \contentsline {subsubsection}{\numberline {1.1.2}Cadres d'utilisation}{4}% 
@@ -8,19 +8,23 @@
 \contentsline {paragraph}{Importance de la structure : Isomorphismes de graphes}{5}% 
 \contentsline {paragraph}{Centralit\IeC {\'e}}{6}% 
 \contentsline {paragraph}{}{6}% 
-\contentsline {subsection}{\numberline {1.2}Les stream graphes}{6}% 
+\contentsline {subsection}{\numberline {1.2}Les stream graphs}{6}% 
 \contentsline {subsubsection}{\numberline {1.2.1}D\IeC {\'e}finition}{6}% 
 \contentsline {subsubsection}{\numberline {1.2.2}Quelques d\IeC {\'e}finitions}{7}% 
-\contentsline {paragraph}{Mesures sur les stream graphes}{7}% 
-\contentsline {paragraph}{Chemins}{7}% 
-\contentsline {section}{\numberline {2}Pr\IeC {\'e}sentation d'un nouvel objet: le stream graph multicouche}{7}% 
-\contentsline {subsection}{\numberline {2.1}Motivations}{7}% 
-\contentsline {subsection}{\numberline {2.2}D\IeC {\'e}finition}{7}% 
+\contentsline {subsubsection}{\numberline {1.2.3}De l'int\IeC {\'e}r\IeC {\^e}t de l'usage des stream graphs}{7}% 
+\contentsline {section}{\numberline {2}Pr\IeC {\'e}sentation d'un nouvel objet: le stream graph multicouche}{8}% 
+\contentsline {subsection}{\numberline {2.1}Motivations}{8}% 
+\contentsline {subsection}{\numberline {2.2}D\IeC {\'e}finition}{8}% 
 \contentsline {subsection}{\numberline {2.3}Extraction de sous-graphes}{9}% 
-\contentsline {subsection}{\numberline {2.4}Mesures}{9}% 
-\contentsline {section}{\numberline {3}Application \IeC {\`a} des donn\IeC {\'e}es concr\IeC {\`e}tes}{9}% 
-\contentsline {subsection}{\numberline {3.1}Structure de donn\IeC {\'e}es et organisation du code}{9}% 
-\contentsline {subsection}{\numberline {3.2}Classes pr\IeC {\'e}paratoires}{9}% 
-\contentsline {subsection}{\numberline {3.3}Star Wars}{9}% 
-\contentsline {subsection}{\numberline {3.4}Avions ?}{9}% 
-\contentsline {section}{\numberline {4}Conclusions et perspectives}{9}% 
+\contentsline {subsubsection}{\numberline {2.3.1}Projection par rapport au temps}{9}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Projection \IeC {\`a} partir de couches}{10}% 
+\contentsline {subsubsection}{\numberline {2.3.3}Remarque sur les extractions}{11}% 
+\contentsline {subsection}{\numberline {2.4}Mesures}{11}% 
+\contentsline {subsubsection}{\numberline {2.4.1}Nombre de n\IeC {\oe }uds}{12}% 
+\contentsline {subsubsection}{\numberline {2.4.2}Uniformit\IeC {\'e} et densit\IeC {\'e}}{13}% 
+\contentsline {section}{\numberline {3}Application \IeC {\`a} des donn\IeC {\'e}es concr\IeC {\`e}tes}{14}% 
+\contentsline {subsection}{\numberline {3.1}Structure de donn\IeC {\'e}es et organisation du code}{14}% 
+\contentsline {subsection}{\numberline {3.2}Classes pr\IeC {\'e}paratoires}{15}% 
+\contentsline {subsection}{\numberline {3.3}Star Wars}{15}% 
+\contentsline {subsection}{\numberline {3.4}Avions ?}{15}% 
+\contentsline {section}{\numberline {4}Conclusions et perspectives}{15}% 
