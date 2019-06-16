@@ -8,8 +8,12 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{amsthm}
+\usepackage{tikz}
 \usepackage{amssymb}
-\usepackage[francais]{babel}
+\usepackage[french,english]{babel}
+\usepackage[french]{cleveref}
+\usepackage{svg}
+\usepackage{caption}
 
 \usepackage[left=3cm,right=3cm,top=3cm,bottom=3cm]{geometry}
 
@@ -25,6 +29,29 @@
 \theoremstyle{remark}
 \newtheorem{ex}{Exemple}
 
+\usepackage{tikz}
+\usepackage{amsmath}
+
+\usetikzlibrary{decorations.pathmorphing, positioning}
+
+\definecolor{echoreg}{HTML}{2cb1e1}
+\definecolor{echodrk}{HTML}{0099cc}
+
+\tikzstyle{mybox} = [text=black, very thick,
+    rectangle, rounded corners, inner sep=10pt, inner ysep=20pt]
+\tikzstyle{fancytitle} =[text=black]
+
+\newcommand{\yslant}{0.5}
+\newcommand{\xslant}{-0.6}
+
+
+\newcommand\overmat[3]{%
+  \makebox[0pt][l]{$\smash{\color{#3}\overbrace{\phantom{%
+    \begin{matrix}#2\end{matrix}}}^{\text{#1}}}$}#2}
+\newcommand\undermat[3]{%
+  \makebox[0pt][l]{$\smash{\color{#3}\underbrace{\phantom{%
+    \begin{matrix}#2\end{matrix}}}_{\text{#1}}}$}#2}
+\newcommand\partialphantom{\vphantom{\frac{\partial e_{P,M}}{\partial w_{1,1}}}}
 
 \author{Pimprenelle Parmentier}
 
@@ -32,6 +59,7 @@
 
 \title{Stream graphes multicouches}
 \begin{document}
+\selectlanguage{french}
 \begin{titlepage}
 
 
@@ -75,10 +103,18 @@ Chuo-ku, Tokyo\\
 
 \begin{abstract}
 
+	
+
+
 \end{abstract}
 
+\selectlanguage{english}
 
+\begin{abstract}
 
+\end{abstract}
+
+\selectlanguage{french}
 \newpage 
 
 \tableofcontents
@@ -87,17 +123,31 @@ Chuo-ku, Tokyo\\
 
 
 \section*{Introduction}
-
+	Le concept de graphe remonterait à Euler \cite{wikigraphes,divin} dans les années 1750, et s'est révélé extrêmement puissant pour résoudre de nombreux problèmes en algorithmique, probabilités, en combinatoire, en optimisation et plus récemment pour traiter des données.
+	La théorie des graphes permet d'exprimer de nombreux problèmes réels dans un même formalisme pour lequel des algorithmes ont été créés.
+	
+	La théorie des graphes est utilisée dans de nombreux domaines, que ce soit en informatique (analyse de réseaux sociaux, PageRanking \cite{pr}), en biologie, ou dans l'étude des transports par exemple.
+	
+	Cependant, une partie de l'information est alors perdue, notamment le fait que les interactions entre différents individus dépendent souvent du temps. On "lisse" volontairement les différences au sein des noeuds et des liens, mais une fois encore, on simplifie beaucoup la représentations de nos données.
+	
+	Notre objectif ici est, en partant de formalismes déjà construits, de créer un nouvel objet nous permettant de représenter des graphes dépendant du temps et prenant en compte les différences au sein des noeuds et des liens. Dans une première partie, nous établirons un état de l'art en rappelant les définitions des graphes, des graphes multicouches et des stream graphes, nous donnerons une bibliographie associée et une analyse critique de ces formalismes. Ensuite, nous présenterons notre nouvel objet, le \og stream graphe multicouche \fg , les définitions associées.
+	Nous présenterons enfin la bibliothèque que nous avons créée pour étudier les stream graph multicouche ainsi que quelques exemples de bases de données pour lesquelles il est judicieux d'utiliser notre outil et les résultats que nous avons obtenus sur ces bases. 
+	
+	
+	
 \section{Etat de l'art : analyse de deux formalismes sur les graphes}
 \indent
+
+
 
 Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des interactions (arêtes : ensemble $E$) entre des entités (nœuds: ensemble $V$). 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.3\textwidth]{exGraphe.JPG}
-	\caption{Un exemple de graphe de connaissance. Les chercheurs MAP, AC et YYA se connaissent, les chercheurs MB et MAP aussi. En revanche, il n'y a pas de lien entre MB et AC, qui ne se connaissent donc pas.}
+	\caption{Un exemple de graphe de connaissances. Les chercheurs MAP, AC et YYA se connaissent, les chercheurs MB et MAP aussi. En revanche, il n'y a pas de lien entre MB et AC, qui ne se connaissent donc pas.}
 \end{figure}
+
 
 \subsection{Les graphes multicouches}
 
@@ -110,12 +160,14 @@ Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des int
  La structure d'un graphe multicouches est décrite par le k-uplet d'ensembles ${\cal L} = L_1, \dots , L_k$. Chaque $L_i$ est un ensemble d'attributs que peut avoir une couche, appelés "couches élémentaires". Chaque couche correspond donc à un élément de $L=L_1\times L_2 \times \dots \times L_k$.
  
  Un graphe multicouches s'écrit alors $M = (V_M, E_M, V, L)$. $V$ est l'ensemble de ses noeuds, $L$ la structure des couches, $V_M$ sont les noeuds-couches, qui comme leur nom l'indique, sont les éléments de $V\times L$. Enfin $E_M \subseteq V_M \times V_M $ est l'ensemble des liens, un lien pouvant relier deux noeuds-couches entre eux. 
+ 
+ On peut trouver un exemple de graphe multicouche \cref{exmulti}.
 
-\begin{figure}[H]
+\begin{figure}[h]
 	\centering
-	\includegraphics[width=0.6\textwidth]{exmultilayer.JPG}
-	\caption{\textbf{Un exemple de graphe multicouches} extrait de \cite{mlkiv}. Ici, les noeuds sont des chercheurs représentés par leurs initiales: $V = \{MAP,MB,YYA,AC\}$. Chaque couche est caractérisée par une conférence et un type de relation: $L = \{$conferences, relationship types$\}$. Les noeuds couches existent ou non en fonction de la présence ou non d'un chercheur à une conférence: $V_M$ contient par exemple (MAP;ECCS'13,Talked to each other). Enfin, les liens représentent les interaction entre les chercheurs à des conférences précises: $E_M$ contient par exemple ((MAP;ECCS'13,Taked to each other),(YYA;ECCS'13,Talk to each other)). }
-
+	\input{multi/multi.tex}
+	\caption{\textbf{Représentation d'un graphe multicouches.} Ici, les noeuds sont des animaux d'une même espèce représentés par leurs initiales: $V = \{A ,B,C,D \}$. Chaque couche est caractérisée par une milieu naturel et un type de relation: $L = \{$Milieu, type de relation$\}$. Les noeuds couches existent ou non en fonction de la présence ou non d'un animal dans un milieu pour un type de relation: $V_M$ contient par exemple (A;Forêt,Combat). Enfin, les liens représentent les interaction entre les animaux dans un milieu précises: $E_M$ contient par exemple ((B;Forêt,Collaboration),(C;Forêt, Collaboration)).}
+	\label{exmulti}
 \end{figure}
 
 \subsubsection{Cadres d'utilisation}
@@ -123,7 +175,7 @@ Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des int
 
 Les graphes multicouches trouvent de nombreuses applications, par exemple en \textbf{écologie} \cite{ecolo} (les noeuds sont alors des espèces ou des individus, les couches élémentaires des types d'interaction (parasite, prédateur...), des lieux, des temps, etc. On cherche alors à savoir comment se diffuse une maladie, quelles sont les faiblesses d'un écosystèmes (quels sont les liens / nœuds qui assurent le bon fonctionnement ?)
 
-Un autre jeu de données utilisé est en \textbf{économie}, celui des interactions entre les banques européennes, les couches étant caractérisées par le type d'interaction (de "prêt"), les noeuds étant les banques et un lien existant entre deux banques de la même couche quand celles-ci procèdent à une interaction du type correspondant.
+Un autre jeu de données utilisé est en \textbf{économie}, celui des interactions entre les banques européennes \cite{interbank}, les couches étant caractérisées par le type d'interaction (de "prêt"), les noeuds étant les banques et un lien existant entre deux banques de la même couche quand celles-ci procèdent à une interaction du type correspondant.
 
 Un dernier exemple intuitif est celui des \textbf{réseaux de transport}, dans lequel les couches sont les différents moyens de transport possible, les nœuds sont des localités et les liens les différentes lignes de transport. Un tel jeu de données peut être trouvé sur le site gouvernemental américain des statistiques de transport, pour les lignes aériennes \cite{plane}.
 
@@ -159,7 +211,7 @@ $$G=(V_{SJ},E_{SJ}), \quad V_{SJ} = V_M, \quad E_{SJ}=E_M$$
 
 
 
-\subsubsection{Pourquoi utiliser des graphes multicouches à la place de graphes ?}
+\subsubsection{Pourquoi utiliser des graphes multicouches à la place de graphes classiques ?}
 
 On remarque que dans beaucoup de cas, les graphes sont des graphes agrégés ou sous-jacent de graphes multicouches. Une partie de l'information a été "perdue" mais cela permet d'utiliser des outils très puissants et d'obtenir des résultats déjà satisfaisants grâce à la théorie des graphes. On peut donc se demander quel est l'intérêt d'utiliser ce formalisme, et de garder une telle quantité d'informations. De nouvelles mesures et de nouveaux algorithmes ont donc été créés pour pouvoir analyser plus finement ces informations plus détaillées.
 
@@ -171,7 +223,7 @@ En voici deux exemple, qui seront source d'inspiration dans la suite sur ce qu'i
 Deux graphes $G_1$ et $G_2$ sont dits isomorphes quand on peut trouver une bijection des sommets du premier graphes vers ceux du second qui préserve les arêtes.
 
 
-\begin{figure}
+\begin{figure}[H]
 \centering
 	\includegraphics[width=0.2\textwidth]{graph1iso.JPG}
 	\includegraphics[width=0.2\textwidth]{graph2iso.JPG} 
@@ -222,7 +274,7 @@ La représentation graphique des stream graphes est une des grandes forces du co
 
 \subsubsection{Quelques définitions}
 
-Dans l'article de référence \cite{stream}, de nombreuses notions sont ensuite définies de telle sorte à ce que dans le cas où le stream graph serait statique, on retrouve les mêmes notions que pour un graphe classique.
+Dans l'article \cite{stream}, de nombreuses notions sont ensuite définies de telle sorte à ce que dans le cas où le stream graph serait statique, on retrouve les mêmes notions que pour un graphe classique.
 
 Nous les évoquerons en temps voulu quand nous nous en servirons pour créer nos propres définitions.
 
@@ -242,6 +294,9 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 
 
 
+%conclusion partielle : cohérence avec les graphes classiques, à l'utilisateur de choisir ce qu'il veut obtenir
+
+ 
 \section{Présentation d'un nouvel objet: le stream graph multicouche}
 
 
@@ -263,7 +318,7 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\textwidth]{exMultiStream.JPG}
-		\caption{La représentation en multilayer stream graph des couches ["ECCS13","Talk to each other"] et ["Workshop in Oxford","Talk to each other"], générée avec "multiplex-stream" (description du programme en partie \ref{descode})}
+		\caption{La représentation en multilayer stream graph des couches ["ECCS13","Talk to each other"] et ["Workshop in Oxford","Talk to each other"], générée avec "multiplex-stream" (description du programme en partie \cref{descode})}
 	\end{figure}
 	
 	\begin{rmq}
@@ -272,7 +327,7 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 	\end{rmq}
 
 \subsection{Extraction de sous-graphes}
-
+\label{sousgraphes}
 \subsubsection{Projection par rapport au temps}
 	Nous définissons ici deux moyens d'extraire des graphes multicouches en s'affranchissant du temps.
 	
@@ -344,7 +399,7 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	Pour chaque doublet de couches $\alpha, \beta \in L_1\times \dots\times L_d$, le {\em stream graph inter-couches} est le stream graph $S^{(\alpha,\beta)} = (T, V^{\alpha,\beta},W^{\alpha,\beta},E^{\alpha,\beta})$ tel que : $T^{\alpha,\beta}=T^{\alpha}\cap T^{\beta}$ est l'intervalle durant lequel $\alpha$ et $\beta$ apparaissent simultanément. $V^{\alpha,\beta}$ sont tous les noeuds-couches du stream graph multicouche qui sont dans les couches $\alpha$ et $\beta$, $W^{\alpha,\beta}$ décrit leurs intervalles d'existence. Enfin, $E^{\alpha,\beta}$ sont les liens non orientés entre les noeuds couches des couches de $\alpha$ et $\beta$ avec leurs temps d'existence.
 	\end{defn}
 	
-	Notice that for any layer $\alpha$,  is equivalent to $S^{(\alpha,\alpha)}$.
+	%english Notice that for any layer $\alpha$,  is equivalent to $S^{(\alpha,\alpha)}$.
 
 	On remarque que pour toute couche $\alpha$, $S^{(\alpha)}$ est équivalent à $S^{(\alpha,\alpha)}$.
 
@@ -478,7 +533,6 @@ $
     	\Cup(M) = \frac{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\beta)}|}}{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\beta)}|}}
     \]
 	
-	But we could nuance this definition by taking into account special multilayer stream graphs, in which only some of the edges are allowed. For instance, in a multiplex stream graph, the only inter-layer edges allowed are the edges between the same node. So the {\em uniformity of the multiplex stream graph} will be :
 	Cette définition peut être nuancée en considérant que selon la nature du stream graph multicouche, certains noeuds peuvent ou ne peuvent pas apparaitre simultanément. En particulier, {\em l'uniformité dans un stream graph multiplexe} est définie ainsi:	
 	
 	\[
@@ -505,7 +559,7 @@ $
 			 =  & \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}
 		\end{align*}
 		
-	Nous pouvons ensuite définir la densité dans les stream graphs multicouches. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont "automatiques" ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
+	Nous pouvons ensuite définir la densité dans les stream graphs multicouches. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont \og automatiques\fg ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
 
 
 	\[
@@ -531,16 +585,114 @@ $
 
 	La gestion des flots de liens multicouche implique assez rapidement de gérer un grand nombre d'informations "imbriquées" : chaque couche contient des noeuds, qui apparaissent à des temps précis, ces noeud-couches sont reliés par des liens, eux-mêmes apparaissant à des temps précis...
 	
-	J'ai choisi de construire des classes python pour simplifier la gestion de telles données, et pour permettre de vérifier que le stream graph multicouche reste cohérent quand on le modifie.
+	J'ai choisi de construire des classes python pour simplifier la gestion de telles données, et pour permettre de vérifier simplement que le stream graph multicouche reste cohérent quand on le modifie.
+	
+	
 	
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.5\textwidth]{codeStructure.JPG}
-		\caption{Structure des classes de la }
+		\caption{Structure du code en classes }
 	\end{figure}
+	
+	Toutes les listes sont toujours triées et les listes d'intervalles contiennent seulement des intervalles disjoints (quitte à fusionner certains intervalles).
+	
+	
 
-\subsection{Classes préparatoires}
+\subsection{CPGE : interactions entre élèves d'un même établissement}
+
+Nous avons en premier lieu testé notre logiciel avec une base de donnée de SocioPatterns (\cite{cpge}), recensant les interactions de "face à face" entre élèves (enregistrées toutes les 20 secondes grâce à des capteurs de proximité), leurs amitiés sur Facebook, le fait qu'ils connaissent leur numéro de téléphone, et leur réponse à un questionnaire leur demandant s'ils étaient amis.
+
+Nous avons donc choisi une structure de multilayer suivante : \\
+{\tt L=[type de relation,classe,sexe]},\\
+ avec\\
+  {\tt type de relation = [face to face, facebook, contact, amitié]},\\
+  {\tt classe = "MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"}.
+  
+  Le temps de prise a duré 5 jours, les détecteurs s'activant toutes les 20 secondes.
+  
+  Comme les seules interactions dépendantes du temps sont celles de face à face, on peut dire que le jeu de donnée donne forcément lieu à un graphe "hybride".
+  
+	\subsubsection{Représentation graphique}  
+  
+  Nous avons tout d'abord tenté de représenter le graphe multicouche en entier (\cref{lyceeentier}). Sa taille le rend difficile à représenter (d'ailleurs, trouver un ordre optimal pour les noeuds qui limite les croisements des liens est un problème d'optimisation qui n'a pas encore été résolu de façon satisfaisante).
+	
+	\begin{figure}[h]
+	\includegraphics[width=\textwidth]{lyceeentier.JPG}
+	\caption{\textbf{Visualisation du stream graphe multilayer du dataset \cite{cpge}.} Les liens intra-couches ont été coloriés dans des couleurs aléatoires. On remarque des apparitions de liens inter-couches assez importants au moment des "pauses" (il y a visiblement une pause le matin, une autre le midi, et à la fin de la journée). On peut également visualiser simplement l'emploi du temps des élèves (représentés par des vides dans le graphe).}
+	\label{lyceeentier}
+\end{figure}
+
+
+
+
+
+\subsubsection{Sous-graphes, sous-streams et sous graphes multicouches}
+
+Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{sousgraphes}. Nous avons décidé de nous cantonner aux relations \texttt{'face to face'} et \texttt{'facebook'}, mais ces résultats sont généralisables à plus de couches. 
+
+
+
+
+\paragraph{Graphe induit}
+	Le graphe multicouche induit des relations de deux classes, filles et garçons, est représenté \cref{completinduit}.
+	
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{tout.png}
+	\caption{\textbf{Graphe induit}}
+	\label{completinduit}
+\end{figure}
+
+	Nous représentons ensuite les sous-graphes multicouches intra-couches et inter-couches des couches de deux classes différentes pour plus de visibilité.
+
+
+	
+	On peut alors se demander en regardant le schéma, si la règle "
+
+
+
+\begin{figure}[h]
+	\begin{minipage}[t]{0.48\textwidth}
+		\captionsetup{margin=10pt}
+		\includegraphics[width=\textwidth]{sousmulticlasse.png}
+	\caption{\textbf{Visualisation du sous graphe multicouches des relations \texttt{'facebook'}, entre les élèves de deux classes} : les \texttt{'2BIO1'} et les \texttt{'MP'}.}
+	\end{minipage}
+	\begin{minipage}[t]{0.48\textwidth}
+		\centering
+		\includegraphics[width=\textwidth]{sousmulticlasseftf.png}
+		\captionsetup{margin=10pt}
+		\caption{\textbf{Visualisation du sous graphe induit multicouches des relations \texttt{'face to face'}, entre les élèves de deux classes} : les \texttt{'2BIO1'} et les \texttt{'MP'}.}
+	\end{minipage}
+	\label{induit}
+	\caption{\textbf{Comparaison entre différents aspects du graphe multicouche. } On peut s'intéresser à la pertinence de séparer filles et garçons en différentes couches. En revanche, la séparation entre différentes classes semble être justifiée.}
+\end{figure}
+
+
+Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes.
+
+
+
+
+
+
+
+\begin{figure}
+	\includegraphics[width=\textwidth]{1jourMP.JPG}
+	\caption{Une prise de vue le premier jour, des relations entre élèves féminins et masculins de la classe de MP. Nous y voyons "plus clair", cependant, il devient plus difficile de discerner les pauses.}
+\end{figure}
+
+
+
+
+\subsubsection{Densité : Repérer des "moments" importants}
+
 \subsection{Star Wars}
+
+Ce jeu de données recense toutes les scènes, les personnages et leurs scènes d'apparition, les dialogues, les mots-clés, les lieux.
+
+Là encore, on peut représenter le graphe : 
+
 \subsection{Avions ?}
 
 \section{Conclusions et perspectives}

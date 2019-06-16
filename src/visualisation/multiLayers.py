@@ -3,7 +3,9 @@ from sortedcollection import *
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 
+#matplotlib.use('AGG')
 
 """
 MultiLayer class is usefull to do some extraction from multilayer stream.
@@ -126,11 +128,9 @@ class LayerNTList :
     def giveLayer(self,i):
         return(self.listOfLayersNT[i])
     def giveLayerFromLabel(self,label):
-        print(label)
+        #print(label)
         if self.listOfLayersNT.contains_label(label):
-            print("slkdsjfs")
             i=self.listOfLayersNT.index_label(label)
-            print("coucou")
             return(self.giveLayer(i))
         else:
             print("error : this layer doesn't exist : ",label)
@@ -259,7 +259,7 @@ class MultiLayer :
                         multi.addLink(e)
         return(multi)
         
-    def drawML(self):
+    def drawML(self,nameFile=""):
         """
             draw a multilayer graph. Each circle corresponds to one layer.
         """
@@ -268,25 +268,33 @@ class MultiLayer :
         pointsLay=[(np.cos(np.pi *2* k /nl),np.sin(np.pi *2* k /nl)) for k in range(nl)] 
         points=[]
         n=0
+        fig = plt.figure()
+        plt.axis('off')
+        plt.gcf().set_size_inches(20, 20)
+        nlayer=len(self.layers.giveLayerList())
         for l in self.layers.giveLayerList():
             npt=l.giveNodes().length()
             pl=[(np.cos(np.pi *2* k /npt),np.sin(np.pi *2* k /npt)) for k in range(npt)]
-            points.append([(pointsLay[n][0]+0.1*pl[i][0],pointsLay[n][1]+0.1*pl[i][1]) for i in range(npt)])
+            points.append([(pointsLay[n][0]+(1/nlayer)*pl[i][0],pointsLay[n][1]+(1/nlayer)*pl[i][1]) for i in range(npt)])
+            plt.text((1.2+1/nlayer)*pointsLay[n][0],(1.2+1/nlayer)*pointsLay[n][1],l.giveLayerLabel(),fontsize=20)
             n=n+1
         npoints=len(points)
         for l in range(len(points)):
             for j in range(len(points[l])):
                 plt.plot(points[l][j][0],points[l][j][1],'ko')
         print(points)
+        self.em.printLinkList()
         for e in self.em.giveListOfLinks():
             indexLayer1=self.layers.giveIndex(e.giveLabel()[2])
             indexLayer2 = self.layers.giveIndex(e.giveLabel()[3])
             indexNode1 = self.layers.giveLayer(indexLayer1).giveIndex(e.giveNodes()[0].giveNode())
             indexNode2 = self.layers.giveLayer(indexLayer2).giveIndex(e.giveNodes()[1].giveNode())
-            e.printLink()
-            print([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]])
+            #e.printLink()
+            #print([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]])
             plt.plot([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]],'r') 
             #plt.plot([[0,1],[2,3]],'r')
+        if nameFile != "":
+            plt.savefig(nameFile)
         plt.show()
             
             

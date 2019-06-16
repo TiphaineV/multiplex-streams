@@ -16,6 +16,7 @@ from multiLayers import *
 t0=1385982020
 scale = 500
 interval = Interval(0,(1386345580-t0)/scale)
+interval.printInterval()
 """
 Times are taken in seconds, from 1385982020 to 1386345580.
 Measures are taken each 20s.
@@ -23,14 +24,14 @@ Measures are taken each 20s.
 We suppress 1385982020 to each measure of time and divide by 1000.
 """
 
-classe=Aspect("annee",["MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*","MP"])
+classe=Aspect("annee",["MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"])
 sexe = Aspect("sexe",["F","M","U"])
 typeOfRel = Aspect("relation",["face_to_face","facebook","frienship","diaries"])
 
 lycee = LayerStruct([typeOfRel,classe,sexe])
 
 
-m=MultiStream(interval,lycee,LayerList([]),LinkList([]))
+
 
 def readNodes():
     f= open("lycee/metadata_2013.txt","r")
@@ -43,9 +44,9 @@ def readNodes():
         #print(tab)
         #print([tab[1][0],tab[1][1],tab[2][0]])
         layer=Layer(lycee,["face_to_face",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+        #layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
         m.addLayer(layer)
-        m.addLayer(layer2)
+        #m.addLayer(layer2)
         liste[tab[0]]=tab[2][0]
         liste2[tab[0]]=tab[1]
     f.close()
@@ -70,9 +71,11 @@ def chercherAttribut(liste,numero):
 def readLinks(liste):
     fl = open("lycee/High-School_data_2013.csv","r")
     n=0
+    ni=[0]
+    ti=[0]
     for line in fl:
         n=n+1
-        if n<100000:
+        if n<200000:
             tab=line.split(" ")
             tab[4]=tab[4].rstrip('\n')
             int1=Interval((int(tab[0])-t0)/scale,(int(tab[0])+20-t0)/scale)
@@ -85,6 +88,13 @@ def readLinks(liste):
             link=Link((IntervalList([int1])),NodeT(node1,IntervalList([interval])),layer1,NodeT(node2,IntervalList([interval])),layer2)
             m.addLink(link,tolerance=0.2)
             #link.printLink()
+            t=int1.begining()
+            if ti[len(ti)-1]==t:
+                ni[len(ti)-1]=ni[len(ti)-1]+1
+            else:
+                ti.append(t)
+                ni.append(1)
+    return(ti,ni)
 
 
 def readLinks2(liste,liste2):
@@ -93,7 +103,7 @@ def readLinks2(liste,liste2):
     print("readlink2...")
     for line in fl:
         n=n+1
-        if n<10000:
+        if n<1000000000000:
             tab=line.split(" ")
             tab[2]=tab[2].rstrip('\n')
             print(tab)
@@ -106,32 +116,255 @@ def readLinks2(liste,liste2):
                 link=Link(I,NodeT(node1,I),layer1,NodeT(node2,I),layer2)
                 m.addLink(link)
                 print("linkfb")
-                link.printLink()
+                #link.printLink()
             
 
-liste,liste2 = readNodes()
-readLinks(liste)
-readLinks2(liste,liste2)
-#m.printMS()
-#m.drawMS(nameFile2="lycee.fig")
-m2=m.extractLayers([["face_to_face","MP","F"],["facebook","MP","F"]])
-m2.drawMS(nameFile2="ftfMPF.fig",colors="random")
-#ml=m2.multit(16.)
-#ml.drawML()
-#f=m2.computeStrength()
-#p=minimizeStrength(f[0])
-#print(p)
+def layerWithCommonPoint(layerStruct,aspect,elemLayer):
+    liste=[[]]
+    i=0
+    ind=0
+    for asp in layerStruct.giveAspects() :
+        if asp.nameAspect()==aspect :
+            print("name",asp.nameAspect(),i)
+            i=ind
+        else:
+            ind=ind+1
+    print("i",i)
+    j=0
+    for asp in layerStruct.giveAspects() :
+        print(len(liste))
+        for k in range(len(liste)-1,-1,-1):
+            a=liste.pop(k)
+            for elemLayeri in asp.giveElemLayer():
+                if j==i:
+                    if elemLayeri==elemLayer:
+                         a.append(elemLayeri)
+                         liste.append(a)
+                         a=a.copy()
+                         a.pop()
+                else:
+                    a.append(elemLayeri)
+                    liste.append(a)
+                    a=a.copy()
+                    a.pop()
+        j=j+1
+    return(liste)
 
-#f2=[[0,1,0,1],[1,0,1,0],[0,1,0,0],[1,0,0,0]]
-#posi,fi=descentGrad(fonction,f2,gradient,[0,1,2,3],30)
-#print(posi)
-#print(donnerOrdre(posi))
-#affiche(fi)
-#p=minimizeStrength(f2)
-#print(p)
-#print("drax")
-m3=m2.extractML()
-m3.drawML()
-#print(m.computeDensity())
-m4=m2.cut(Interval(0,1))
-m4.drawMS("cut.fig")
+def densityHourPerHour(multistream,step):
+    inte=multistream.interval()
+    b=inte.begining()
+    e=inte.end()
+    dlist=[]
+    tlist=[]
+    while b<e :
+        print(b)
+        mext=m.cut(Interval(b,b+step))
+        tlist.append(b)
+        dlist.append(mext.computeDensity())
+        b=b+step
+    return(tlist,dlist)
+
+
+
+m=MultiStream(interval,lycee,LayerList([]),LinkList([]))
+
+
+liste,liste2 = readNodes()
+ti,ni=readLinks(liste)
+
+
+#dessin
+#axes = plt.gca()
+#axes.grid(True)
+#axes.xaxis.set_ticks(range(0, 750, 10), minor = True)
+#axes.xaxis.grid(True, which = 'both', color = 'red', zorder = 0)
+#plt.gcf().set_size_inches(20, 20)
+#plt.plot(ti,ni)
+#plt.show()
+
+
+
+#readLinks2(liste,liste2)
+
+#llftf = layerWithCommonPoint(lycee, "relation", "face_to_face")
+
+m1=m.cut(Interval(0,40))
+m2=m.cut(Interval(140,210))
+m3=m.cut(Interval(315,380))
+m4=m.cut(Interval(490,560))
+m5=m.cut(Interval(660,730))
+
+
+
+llf=layerWithCommonPoint(lycee, "sexe", "F")
+llh = layerWithCommonPoint(lycee,"sexe","M")
+
+
+#mftf.drawMS("multistream10.fig")
+
+#mftf = m.extractLayers(llftf)
+
+#t,d=densityHourPerHour(mftf,100)
+
+
+
+
+#
+
+#
+
+#
+##m2=m.extractLayers([["face_to_face","2BIO1","F"],["face_to_face","2BIO1","M"],["face_to_face","MP","F"],["face_to_face","MP","M"]])
+##m2.drawMS(nameFile2="ftfMPF.fig",colors="random")
+##ml=m2.multit(16.)
+##ml.drawML()
+##f=m2.computeStrength()
+##p=minimizeStrength(f[0])
+##print(p)
+#
+##f2=[[0,1,0,1],[1,0,1,0],[0,1,0,0],[1,0,0,0]]
+##posi,fi=descentGrad(fonction,f2,gradient,[0,1,2,3],30)
+##print(posi)
+##print(donnerOrdre(posi))
+##affiche(fi)
+##p=minimizeStrength(f2)
+##print(p)
+##print("drax")
+##m3.drawML("fbfillesMP")
+#
+#multi=mftf.extractML()
+#multi.drawML("seulementftf")
+#
+#
+##m.drawMS(nameFile2="lyceeentier.fig")
+##m5=m2.cut(Interval(0,40))
+##m5.drawMS("1jourMP.fig")
+##print("1jour fait")
+##print(m.computeDensity())
+##m4=m.cut(Interval(0,1))
+##m4.drawMS("cut.fig")
+#
+
+
+#jour1
+mu=m1
+
+mf=mu.extractLayers(llf)
+mh=mu.extractLayers(llh)
+mhf=mu.interLayers(llh,llf)
+
+
+df=mf.computeDensity()
+dh=mh.computeDensity()
+#
+dhf = mhf.computeDensityBiparti(llf,llh)
+#
+dtt=mu.computeDensity()
+
+print("jour1")
+print("densite totale",dtt)
+
+print("femmes",df)
+print("hommes",dh)
+print("femmes/hommes",dhf)
+
+
+
+#jour 2
+mu=m2
+
+mf=mu.extractLayers(llf)
+mh=mu.extractLayers(llh)
+mhf=mu.interLayers(llh,llf)
+
+
+df=mf.computeDensity()
+dh=mh.computeDensity()
+#
+dhf = mhf.computeDensityBiparti(llf,llh)
+#
+dtt=mu.computeDensity()
+
+print("jour2")
+print("densite totale",dtt)
+
+print("femmes",df)
+print("hommes",dh)
+print("femmes/hommes",dhf)
+#
+#
+#jour 3
+mu=m3
+
+mf=mu.extractLayers(llf)
+mh=mu.extractLayers(llh)
+mhf=mu.interLayers(llh,llf)
+
+
+df=mf.computeDensity()
+dh=mh.computeDensity()
+#
+dhf = mhf.computeDensityBiparti(llf,llh)
+#
+dtt=mu.computeDensity()
+#
+#
+#multi.drawML("mhf")
+#
+print("jour3")
+print("densite totale",dtt)
+
+print("femmes",df)
+print("hommes",dh)
+print("femmes/hommes",dhf)
+
+#jour 4
+mu=m4
+
+mf=mu.extractLayers(llf)
+mh=mu.extractLayers(llh)
+mhf=mu.interLayers(llh,llf)
+
+
+df=mf.computeDensity()
+dh=mh.computeDensity()
+#
+dhf = mhf.computeDensityBiparti(llf,llh)
+#
+dtt=mu.computeDensity()
+#
+#
+#multi.drawML("mhf")
+#
+print("jour4")
+print("densite totale",dtt)
+
+print("femmes",df)
+print("hommes",dh)
+print("femmes/hommes",dhf)
+
+
+#jour 5
+mu=m5
+
+mf=mu.extractLayers(llf)
+mh=mu.extractLayers(llh)
+mhf=mu.interLayers(llh,llf)
+
+
+df=mf.computeDensity()
+dh=mh.computeDensity()
+#
+dhf = mhf.computeDensityBiparti(llf,llh)
+#
+dtt=mu.computeDensity()
+#
+#
+#multi.drawML("mhf")
+#
+print("jour5")
+print("densite totale",dtt)
+
+print("femmes",df)
+print("hommes",dh)
+print("femmes/hommes",dhf)

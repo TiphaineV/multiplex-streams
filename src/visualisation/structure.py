@@ -56,7 +56,8 @@ class LayerStruct :
     def printLayerStruct(self):
         for i in self.aspects :
             i.printAspect()
-
+    def giveAspects(self):
+        return(self.aspects)
     def buildLayer(self):
         aspect2 = self.aspects.copy()
         def buildLayerRec(listOfAspects):

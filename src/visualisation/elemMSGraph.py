@@ -67,7 +67,7 @@ class NodeTList :
 
     def addNodeT(self,n):
         if self.listOfNodeT.__contains__(n):
-            i = self.listOfNodeT.index(n)
+            index = self.listOfNodeT.index(n)
             for inter in n.giveIntervals():
                 self.listOfNodeT[index].addInterval(inter)
         else :
@@ -195,12 +195,10 @@ class LayerList :
     def giveLayerFromLabel(self,label):
         print(label)
         if self.listOfLayers.contains_label(label):
-            print("slkdsjfs")
-            i=self.listOfLayers.index_label(label)
-            print("coucou")
+            i=self.listOfLayers.index_label(label)#ecrit ?
             return(self.giveLayer(i))
         else:
-            print("error : this layer doesn't exist : ",label)
+            return(0)
             
     def printLayerList(self):
         print("list of layers :")

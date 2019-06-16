@@ -381,7 +381,7 @@ Single\n\
         # Add label if any
         self.f.writelines("\n"+"4 0 " + str(color) + " 50 -1 0 " + str(font) + " 0.0000 4 135 120 " + str(self.offset_x + int(t * self.time_unit) - (2 * font * len(label))) + " " + str(self.offset_y - 175 + int(2 * self.node_unit)) + " " + str(label) + "\\001")
 
-    def addTimeLine(self, ticks=1, marks=None):
+    def addTimeLine(self, ticks=10, marks=None):
         timeline_y = self.node_cpt * self.node_unit + self.layer_cpt*self.node_unit + int(self.node_unit / 2)
 
         vals = []

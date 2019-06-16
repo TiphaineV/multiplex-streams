@@ -125,17 +125,54 @@ class MultiStream :
         
         creates a MS with nodes and links in the list of layerLabels.
         """
+        print("extract")
         multi=MultiStream(self.T,self.layerStruct,LayerList([]),LinkList([]))
         for layerLabel in layerLabels:
             layer=self.layers.giveLayerFromLabel(layerLabel)
-            multi.addLayer(layer)
-            for e in self.em.giveListOfLinks():
-                lay1=e.giveLayers()[0]
-                lay2=e.giveLayers()[1]
-                if lay1 in layerLabels:
-                    if lay2 in layerLabels:
-                        multi.addLink(e)
+            if layer !=0:
+                multi.addLayer(layer)
+        for e in self.em.giveListOfLinks():
+            lay1=e.giveLayers()[0]
+            lay2=e.giveLayers()[1]
+            if lay1 in layerLabels:
+                if lay2 in layerLabels:
+                    multi.addLink(e)
+        print("end")
         return(multi)
+    
+    def interLayers(self,layerLabels1,layerLabels2):
+        """
+        function interLayers 
+        ====
+        class MultiStream
+        ---
+        
+        :type layerLabels1: list[layerLabel]
+        :type layerLabels2: list[layerLabel]
+        
+        creates a MS with nodes and links in the list of layerLabels.
+        """
+        multi=MultiStream(self.T,self.layerStruct,LayerList([]),LinkList([]))
+        for layerLabel in layerLabels1:
+            layer=self.layers.giveLayerFromLabel(layerLabel)
+            if layer !=0:
+                multi.addLayer(layer)
+        for layerLabel in layerLabels2:
+            layer=self.layers.giveLayerFromLabel(layerLabel)
+            if layer !=0:
+                multi.addLayer(layer)
+        for e in self.em.giveListOfLinks():
+            lay1=e.giveLayers()[0]
+            lay2=e.giveLayers()[1]
+            if lay1 in layerLabels1:
+                if lay2 in layerLabels2:
+                    multi.addLink(e)
+            elif lay1 in layerLabels2:
+                if lay2 in layerLabels1:
+                    multi.addLink(e)
+        return(multi)
+        
+        
     
     def multit(self,t):
         """
@@ -212,8 +249,32 @@ class MultiStream :
             for j in self.layers.giveLayers():
                 for k in i.giveNodesT().giveListOfNodes():
                     for l in j.giveNodesT().giveListOfNodes():
-                        durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals()).duration()
+                        durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals2()).duration()
         return(durationLinks/durationNodes)
+    
+    def computeDensityBiparti(self,layerlabels1,layerlabels2):
+        """
+        function computeDensity
+        ===
+        class MultiStream
+        ---
+        
+        :type typeOfMultiStream: str
+        
+        compute the density of the graph . The length of all links/ the lenght of all possible links.
+        """
+        durationLinks=0
+        durationNodes=0
+        for j in self.em.giveListOfLinks():
+            durationLinks=durationLinks+j.giveIntervals2().duration()
+        for i in self.layers.giveLayers():
+            for j in self.layers.giveLayers():
+                if (i.giveLayerLabel() in layerlabels1 and j.giveLayerLabel() in layerlabels2):
+                    for k in i.giveNodesT().giveListOfNodes():
+                        for l in j.giveNodesT().giveListOfNodes():
+                            durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals2()).duration()
+        return(durationLinks/durationNodes)
+    
     
     def cut(self,interval):
         m2=MultiStream(interval,self.layerStruct, LayerList([]),LinkList([]))
