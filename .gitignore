@@ -121,3 +121,5 @@ src/visualisation/ftfMPF.svg
 src/visualisation/lycee.svg
 *.fig
 *.fig
+*.svg
+*.fig
