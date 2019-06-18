@@ -217,7 +217,7 @@ class Link:
     
     todo : Find a better indexing ?
     """
-    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2):
+    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0):
         if node1.giveNode()>node2.giveNode():
             layerLabel1,layerLabel2=layerLabel2,layerLabel1
             node1,node2=node2,node1

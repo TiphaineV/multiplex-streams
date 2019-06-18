@@ -26,7 +26,7 @@ We suppress 1385982020 to each measure of time and divide by 1000.
 
 classe=Aspect("annee",["MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"])
 sexe = Aspect("sexe",["F","M","U"])
-typeOfRel = Aspect("relation",["face_to_face","facebook","frienship","diaries"])
+typeOfRel = Aspect("relation",["face_to_face","facebook","friendship","diaries"])
 
 lycee = LayerStruct([typeOfRel,classe,sexe])
 
@@ -44,9 +44,11 @@ def readNodes():
         #print(tab)
         #print([tab[1][0],tab[1][1],tab[2][0]])
         layer=Layer(lycee,["face_to_face",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        #layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+        layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+        layer3=Layer(lycee,["friendship",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
         m.addLayer(layer)
-        #m.addLayer(layer2)
+        m.addLayer(layer2)
+        m.addLayer(layer3)
         liste[tab[0]]=tab[2][0]
         liste2[tab[0]]=tab[1]
     f.close()
@@ -106,7 +108,7 @@ def readLinks2(liste,liste2):
         if n<1000000000000:
             tab=line.split(" ")
             tab[2]=tab[2].rstrip('\n')
-            print(tab)
+            #print(tab)
             if tab[2]=='1':
                 node1=tab[0]
                 node2=tab[1]
@@ -115,9 +117,27 @@ def readLinks2(liste,liste2):
                 I=IntervalList([interval])
                 link=Link(I,NodeT(node1,I),layer1,NodeT(node2,I),layer2)
                 m.addLink(link)
-                print("linkfb")
+                #print("linkfb")
                 #link.printLink()
-            
+
+def readLinks3(liste,liste2):
+    fl= open("lycee/Friendship-network_data_2013.csv")
+    n=0
+    print("readlink3...")
+    for line in fl:
+        n=n+1
+        if n<1000000000000:
+            tab=line.split(" ")
+            tab[1]=tab[1].rstrip('\n')
+            print(tab)
+            node1=tab[0]
+            node2=tab[1]
+            layer1=["friendship",liste2[node1],liste[node1]]
+            layer2=["friendship",liste2[node2],liste[node2]]
+            I=IntervalList([interval])
+            link=Link(I,NodeT(node1,I),layer1,NodeT(node2,I),layer2)
+            m.addLink(link)
+    print("link3done")
 
 def layerWithCommonPoint(layerStruct,aspect,elemLayer):
     liste=[[]]
@@ -168,13 +188,21 @@ def densityHourPerHour(multistream,step):
 
 m=MultiStream(interval,lycee,LayerList([]),LinkList([]))
 
+liste,liste2 = readNodes()
+ti,ni=readLinks(liste)
+readLinks2(liste,liste2)
+readLinks3(liste,liste2)
+
+llftf=layerWithCommonPoint(lycee,"relation","face_to_face")
+llfb=layerWithCommonPoint(lycee,"relation","facebook")
+llfs=layerWithCommonPoint(lycee,"relation","friendship")
+
 llf=layerWithCommonPoint(lycee, "sexe", "F")
 llh = layerWithCommonPoint(lycee,"sexe","M")
 
+
 m=m.extractLayers(llf+llh)
 
-liste,liste2 = readNodes()
-ti,ni=readLinks(liste)
 
 
 #dessin
@@ -191,12 +219,14 @@ ti,ni=readLinks(liste)
 #readLinks2(liste,liste2)
 
 #llftf = layerWithCommonPoint(lycee, "relation", "face_to_face")
-
+"""
 m1=m.cut(Interval(0,40))
 m2=m.cut(Interval(140,210))
 m3=m.cut(Interval(315,380))
 m4=m.cut(Interval(490,560))
 m5=m.cut(Interval(660,730))
+
+
 
 
 
@@ -209,10 +239,12 @@ dtot=[]
 dmlhL=[]
 dmlfL=[]
 dmlL=[]
+dmlhfL=[]
 
 print("number of nodes=",m.numberOfNodeLayers())
 print("number of womens=",m.extractLayers(llf).numberOfNodeLayers())
 print("number of mens",m.extractLayers(llh).numberOfNodeLayers())
+
 
 
 
@@ -255,15 +287,19 @@ mlh=mh.extractML()
 ml=mu.extractML()
 mlhf=mhf.extractML()
 
-dmlhf=mlhf.computeDensityMulti()
+dmlhf=mlhf.computeDensityMultiBiparti(llf,llh)
 dmlf=mlf.computeDensityMulti()
 dmlh=mlh.computeDensityMulti()
 dml=ml.computeDensityMulti()
+
+print("interval",mu.interval().intervalToString(),mu.interval().printInterval())
 
 dmlhfL.append(dmlhf)
 dmlfL.append(dmlf)
 dmlhL.append(dmlh)
 dmlL.append(dml)
+
+ml.drawML()
 
 #jour 2
 mu=m2
@@ -297,7 +333,7 @@ mlh=mh.extractML()
 ml=mu.extractML()
 mlhf=mhf.extractML()
 
-dmlhf=mlhf.computeDensityMulti()
+dmlhf=mlhf.computeDensityMultiBiparti(llf,llh)
 dmlf=mlf.computeDensityMulti()
 dmlh=mlh.computeDensityMulti()
 dml=ml.computeDensityMulti()
@@ -307,6 +343,7 @@ dmlfL.append(dmlf)
 dmlhL.append(dmlh)
 dmlL.append(dml)
 
+ml.drawML()
 #
 #
 #jour 3
@@ -344,7 +381,7 @@ mlh=mh.extractML()
 ml=mu.extractML()
 mlhf=mhf.extractML()
 
-dmlhf=mlhf.computeDensityMulti()
+dmlhf=mlhf.computeDensityMultiBiparti(llf,llh)
 dmlf=mlf.computeDensityMulti()
 dmlh=mlh.computeDensityMulti()
 dml=ml.computeDensityMulti()
@@ -390,7 +427,7 @@ mlh=mh.extractML()
 ml=mu.extractML()
 mlhf=mhf.extractML()
 
-dmlhf=mlhf.computeDensityMulti()
+dmlhf=mlhf.computeDensityMultiBiparti(llf,llh)
 dmlf=mlf.computeDensityMulti()
 dmlh=mlh.computeDensityMulti()
 dml=ml.computeDensityMulti()
@@ -436,7 +473,7 @@ mlh=mh.extractML()
 ml=mu.extractML()
 mlhf=mhf.extractML()
 
-dmlhf=mlhf.computeDensityMulti()
+dmlhf=mlhf.computeDensityMultiBiparti(llf,llh)
 dmlf=mlf.computeDensityMulti()
 dmlh=mlh.computeDensityMulti()
 dml=ml.computeDensityMulti()
@@ -464,4 +501,50 @@ plt.plot(t,dmlhfL,"g^",label='inter femmes/hommes')
 plt.plot(t,dmlL,'k',label='total')
 plt.legend()
 plt.show()
+"""
 
+print("ftf")
+mftf= m.extractLayers(llftf)
+
+
+tabf=[]
+tabh=[]
+tabhf=[]
+tabtot=[]
+
+tabtot.append(mftf.computeDensity())
+tabf.append(mftf.extractLayers(llf).computeDensity())
+tabh.append(mftf.extractLayers(llh).computeDensity())
+tabhf.append(mftf.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+
+print("llfb")
+mfb=m.extractLayers(llfb)
+
+mfb.printNodes()
+
+tabtot.append(mfb.computeDensity())
+tabf.append(mfb.extractLayers(llf).computeDensity())
+tabh.append(mfb.extractLayers(llh).computeDensity())
+tabhf.append(mfb.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+
+print("friendship")
+mfs = m.extractLayers(llfs)
+
+mfsl=mfs.extractML()
+
+mfsl.drawML()
+
+tabtot.append(mfs.computeDensity())
+tabf.append(mfs.extractLayers(llf).computeDensity())
+tabh.append(mfs.extractLayers(llh).computeDensity())
+tabhf.append(mfs.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+
+t=["face to face","facebook","friendship"]
+
+plt.yscale('log')
+lh=plt.plot(t,tabh,"r--",label='hommes')
+plt.plot(t,tabf,"bs", label='femmes')
+plt.plot(t,tabhf,"g^",label='inter femmes/hommes')
+plt.plot(t,tabtot,'k',label='total')
+plt.legend()
+plt.show()

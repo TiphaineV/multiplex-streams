@@ -261,7 +261,7 @@ class MultiLayer :
                         multi.addLink(e)
         return(multi)
         
-    def drawML(self,nameFile=""):
+    def drawML(self,nameFile="",names=False):
         """
             draw a multilayer graph. Each circle corresponds to one layer.
         """
@@ -274,18 +274,26 @@ class MultiLayer :
         plt.axis('off')
         plt.gcf().set_size_inches(20, 20)
         nlayer=len(self.layers.giveLayerList())
+        texte=[]
         for l in self.layers.giveLayerList():
             npt=l.giveNodes().length()
             pl=[(np.cos(np.pi *2* k /npt),np.sin(np.pi *2* k /npt)) for k in range(npt)]
             points.append([(pointsLay[n][0]+(1/nlayer)*pl[i][0],pointsLay[n][1]+(1/nlayer)*pl[i][1]) for i in range(npt)])
-            plt.text((1.2+1/nlayer)*pointsLay[n][0],(1.2+1/nlayer)*pointsLay[n][1],l.giveLayerLabel(),fontsize=20)
+            plt.text((1.2+1/nlayer)*pointsLay[n][0],(1.2+1/nlayer)*pointsLay[n][1],l.giveLayerLabel(),fontsize=30)
             n=n+1
+            if names==True:
+                textel=[]
+                for node in l.giveNodes().giveListOfNodes():
+                    textel.append(node.giveNode())
+                texte.append(textel)
         npoints=len(points)
         for l in range(len(points)):
             for j in range(len(points[l])):
                 plt.plot(points[l][j][0],points[l][j][1],'ko')
-        print(points)
-        self.em.printLinkList()
+                if names==True:
+                    plt.text(points[l][j][0]+0.01,points[l][j][1]+0.01,texte[l][j],fontsize=30)
+        #print(points)
+        #self.em.printLinkList()
         for e in self.em.giveListOfLinks():
             indexLayer1=self.layers.giveIndex(e.giveLabel()[2])
             indexLayer2 = self.layers.giveIndex(e.giveLabel()[3])
@@ -300,12 +308,22 @@ class MultiLayer :
         plt.show()
     
     def computeDensityMulti(self):
-        ne=(self.em.listOfLinks()).length()
+        ne = self.em.giveListOfLinks().__len__()
         nnodes=0
         for l in self.layers.giveLayerList():
-            nnodes=nnodes+l.giveNodes().__len__()
-        return(2*ne/(l*(l-1)))
-            
+            nnodes=nnodes+l.giveNodes().giveListOfNodes().__len__()
+        return(2*ne/(nnodes*(nnodes-1)))
+    
+    def computeDensityMultiBiparti(self,layerlabels1,layerlabels2):
+        ne = self.em.giveListOfLinks().__len__()
+        nnodes1=0
+        nnodes2=0
+        for i in self.layers.giveLayerList():
+            if (i.giveLayerLabel() in layerlabels1):
+                nnodes1=nnodes1+i.giveNodes().giveListOfNodes().__len__()
+            elif (i.giveLayerLabel() in layerlabels2):
+                nnodes2=nnodes2+i.giveNodes().giveListOfNodes().__len__()
+        return(ne/(nnodes1*nnodes2))
             
             
             

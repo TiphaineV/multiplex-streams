@@ -1,11 +1,11 @@
 <?xml version="1.0" standalone="no"?>
 <!-- Creator: fig2dev Version 3.2.6a WinFIG version 3 (2018-06-22) by Andreas Schmidt -->
-<!-- CreationDate: 2019-06-10 01:21:38 -->
+<!-- CreationDate: 2019-06-18 11:49:26 -->
 <!-- Magnification: 1 -->
 <svg	xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	width="792pt" height="612pt"
-	viewBox="3135 3982 5337 1833">
+	viewBox="3335 3982 5137 1833">
 <g fill="none">
 <!-- Line -->
 <polyline points=" 5950,5550 5950,5580"
@@ -46,7 +46,7 @@
 <!-- Line -->
 <defs>
 <clipPath id="cp0">
-	<path clip-rule="evenodd" d="M 3135,3982 H 8472 V 5815 H 3135 z
+	<path clip-rule="evenodd" d="M 3335,3982 H 8472 V 5815 H 3335 z
 		M 8314,5520 8314,5580 8457,5557 8457,5543z"/>
 </clipPath>
 </defs>
@@ -85,11 +85,11 @@
 <polyline points=" 7950,5550 7950,5580"
 	stroke="#000000" stroke-width="8px"/>
 <!-- Text -->
-<text xml:space="preserve" x="3250" y="4175" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">MB</text>
+<text xml:space="preserve" x="3350" y="4175" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">A</text>
 <!-- Text -->
-<text xml:space="preserve" x="3150" y="4775" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">YYA</text>
+<text xml:space="preserve" x="3350" y="4775" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">B</text>
 <!-- Text -->
-<text xml:space="preserve" x="3150" y="5375" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">MAP</text>
+<text xml:space="preserve" x="3350" y="5375" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="120" text-anchor="start">C</text>
 <!-- Text -->
 <text xml:space="preserve" x="3450" y="5800" fill="#000000" font-family="Times" font-style="normal" font-weight="normal" font-size="240" text-anchor="middle">0</text>
 <!-- Text -->

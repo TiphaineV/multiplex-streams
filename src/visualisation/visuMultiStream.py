@@ -50,6 +50,10 @@ class MultiStream :
     def addLink(self,link,tolerance=0):
         #to do : check intervals coherence
         self.em.addLink(link,tolerance)
+    def printNodes(self):
+        print("layers")
+        for l in self.layers.giveLayers():
+            l.printLayer()
     def printMS(self):
         print("T:",self.T.intervalToString() )
         print("structure")
@@ -261,8 +265,10 @@ class MultiStream :
         ---
         
         :type typeOfMultiStream: str
+        :type layerLabels1: list[layerLabels]
+        :type layerLabels2: list[layerLabels]
         
-        compute the density of the graph . The length of all links/ the lenght of all possible links.
+        compute the density of the bipartite graph . The length of all links/ the lenght of all possible links.
         """
         durationLinks=0
         durationNodes=0
@@ -285,13 +291,13 @@ class MultiStream :
                 m2.addLayer(Layer(self.layerStruct,lay.giveLayerLabel(),int2,NodeTList([])))
                 for n in lay.giveNodesT().giveListOfNodes():
                     int3=n.giveIntervals2().intersection(IntervalList([interval]))
-                    if int3!=IntervalList([]):
+                    if int3.duration() != 0:
                         m2.addLayer(Layer(self.layerStruct,lay.giveLayerLabel(),int2,NodeTList([NodeT(n.giveNode(),int3,nodeLabel=n.giveNodeLabel())])))
         for e in self.em.giveListOfLinks():
             intL4=e.giveIntervals2().intersection(IntervalList([interval]))
             n1,n2,ll1,ll2= e.giveLabel()
             nodes=e.giveNodes()
-            if intL4 != IntervalList([]):
+            if intL4.duration() != 0:
                 m2.addLink(Link(intL4,nodes[0],ll1,nodes[1],ll2))
         return(m2)
         

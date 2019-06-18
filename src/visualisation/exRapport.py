@@ -17,15 +17,18 @@ from multiLayers import *
 
 sg = Drawing(alpha=0, omega=10, nameFile="exampleRapport.fig")
 
-sg.addNode("MB",[(0,10)])
-sg.addNode("YYA",[(0,8)])
-sg.addNode("MAP",[(4,10)])
+sg.addNode("A",[(0,10)])
+sg.addNode("B",[(0,8)])
+sg.addNode("C",[(4,10)])
 
-sg.addLink("MB","YYA",2,6)
-sg.addLink("YYA","MAP",4,8)
+sg.addLink("A","B",2,6)
+sg.addLink("B","C",4,8)
 
 sg.addTimeLine()
 sg.closeFile()
+
+
+
 
 
 t0=0
@@ -33,35 +36,35 @@ tend=10
 scale = 1
 interval = Interval(0,(tend-t0)/scale)
 
-conf = Aspect("conf",["ECCS13","Workshop in Oxford","NetSci13"])
+mil = Aspect("milieu",["plaine","foret"])
 
 
-rel = Aspect("rel",["Talk to each other","Went to a talk by the other"])
+rel = Aspect("type_de_relation",["Collaboration","Combat"])
 
-struct= LayerStruct([conf,rel])
+struct= LayerStruct([mil,rel])
 
-nmap = NodeT("0",IntervalList([Interval(4,10)]),nodeLabel="MAP")
-nmb = NodeT("1",IntervalList([Interval(0,10)]),nodeLabel="MB")
-nyya = NodeT("2",IntervalList([Interval(0,8)]),nodeLabel="YYA")
-nac = NodeT("3",IntervalList([Interval(0,0)]),nodeLabel="AC")
+nA = NodeT("A",IntervalList([Interval(4,10)]),nodeLabel="A")
+nB = NodeT("B",IntervalList([Interval(0,0)]),nodeLabel="B")
+nC = NodeT("C",IntervalList([Interval(0,8)]),nodeLabel="C")
+nD = NodeT("D",IntervalList([Interval(0,10)]),nodeLabel="D")
 
-nl=NodeTList([nmap,nmb,nyya,nac])
+nl=NodeTList([nA,nB,nC,nD])
 
-layer1=Layer(struct,["ECCS13","Talk to each other"],Interval(0,10),nl)
+layer1=Layer(struct,["plaine","Collaboration"],Interval(0,10),nl)
 
-link1= Link(IntervalList([Interval(2,6)]),nmb,["ECCS13","Talk to each other"],nyya,["ECCS13","Talk to each other"])
-link2= Link(IntervalList([Interval(4,8)]),nyya,["ECCS13","Talk to each other"],nmap,["ECCS13","Talk to each other"])
+link1= Link(IntervalList([Interval(2,6)]),nD,["plaine","Collaboration"],nC,["plaine","Collaboration"])
+link2= Link(IntervalList([Interval(4,8)]),nA,["plaine","Collaboration"],nD,["plaine","Collaboration"])
 
-nmap2 = NodeT("0",IntervalList([Interval(4,5), Interval(7,8)]),nodeLabel="MAP")
-nac2 = NodeT("3",IntervalList([Interval(0,10)]),nodeLabel="AC")
-nyya2 = NodeT("2",IntervalList([Interval(3,8)]),nodeLabel="YYA")
-nmb2 = NodeT("1",IntervalList([Interval(0,0)]),nodeLabel="MB")
+nA2 = NodeT("A",IntervalList([Interval(4,5), Interval(7,8)]),nodeLabel="A")
+nB2 = NodeT("B",IntervalList([Interval(0,10)]),nodeLabel="B")
+nC2 = NodeT("C",IntervalList([Interval(3,8)]),nodeLabel="C")
+nD2 = NodeT("D",IntervalList([Interval(0,0)]),nodeLabel="D")
 
-nl2=NodeTList([nmap2,nac2,nyya2,nmb2])
-layer2=Layer(struct,["Workshop in Oxford","Talk to each other"],Interval(0,10),nl2)
+nl2=NodeTList([nA2,nB2,nC2,nD2])
+layer2=Layer(struct,["foret","Collaboration"],Interval(0,10),nl2)
 
-link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nmap2,["Workshop in Oxford","Talk to each other"],nac2,["Workshop in Oxford","Talk to each other"])
-link4= Link(IntervalList([Interval(5,8)]),nac2,["Workshop in Oxford","Talk to each other"],nyya2,["Workshop in Oxford","Talk to each other"])
+link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nA2,["foret","Collaboration"],nB2,["foret","Collaboration"])
+link4= Link(IntervalList([Interval(5,8)]),nB2,["foret","Collaboration"],nC2,["foret","Collaboration"])
 
 
 m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4]))
@@ -69,3 +72,7 @@ m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,l
 m.drawMS("exrap.fig")
 
 print(m.computeDensity())
+
+mt4=m.cut(Interval(0,10))
+ml=mt4.extractML()
+ml.drawML(names=True)

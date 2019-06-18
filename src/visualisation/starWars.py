@@ -125,11 +125,11 @@ def readLinks2(liste,liste2):
                 link=Link(I,NodeT(node1,I),layer1,NodeT(node2,I),layer2)
                 m.addLink(link)
                 print("linkfb")
-                link.printLink()
+                #link.printLink()
 
 sc=makeScenes()
 print("sc len",sc.__len__())
-sc.printsort()
+#sc.printsort()
 readNodes("character")
 #readNodes("face")
 #readNodes("keyword")
