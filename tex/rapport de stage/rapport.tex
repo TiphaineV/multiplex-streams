@@ -50,6 +50,43 @@
 \newcommand{\yslant}{0.5}
 \newcommand{\xslant}{-0.6}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% TIKZ STYLES
+\tikzstyle{every node}=[font=\scriptsize]
+
+\tikzset{RootStyle/.style = {
+						shape          = circle,
+			      draw           = red!50!black!50,
+			      thick,
+			      top color      = white,
+			      bottom color   = red!50!black!20,
+			      text           = black,
+			      inner sep      = .2pt,
+			      outer sep      = 0pt,
+			      minimum size   = 2.5 mm}
+						}
+
+\tikzset{VertexStyle/.style = {
+						shape          = circle,
+			      draw           = black!50,
+			      top color      = white,
+			      bottom color   = black!20,
+			      text           = black,
+			      inner sep      = .2pt,
+			      outer sep      = 0pt,
+			      minimum size   = 1.75 mm}
+						}
+
+\tikzset{EdgeStyle/.style   = {thick,<->}}
+
+\tikzset{LabelStyle/.style =   {
+				  text           = black,
+				  inner sep      = .2pt,
+				  outer sep      = 1pt,
+				  font           =\scriptsize,
+				  minimum size   = 2.15 mm}
+					}
+
+
 
 \newcommand\overmat[3]{%
   \makebox[0pt][l]{$\smash{\color{#3}\overbrace{\phantom{%
@@ -161,11 +198,26 @@ Nous avons donné ici la version la plus simple des graphes, mais il existe de n
 
 	Les paires ordonnées servent à représenter des graphes orientés tandis que les paires non ordonnées servent à représenter des graphes non ordonnées.
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.3\textwidth]{exGraphe.JPG}
-	\caption{Un exemple de graphe de connaissances. Les chercheurs MAP, AC et YYA se connaissent, les chercheurs MB et MAP aussi. En revanche, il n'y a pas de lien entre MB et AC, qui ne se connaissent donc pas.}
+\begin{figure}
+			\begin{center}
+					\begin{tikzpicture}[xscale=2,yscale=2,auto]
+							\draw (2,0) node[VertexStyle]   (A) { A };
+							\draw (0,0) node[VertexStyle] (B) { B };
+							\draw (0,2) node[VertexStyle]   (C) { C };
+							\draw (2,2) node[VertexStyle]   (D) { D };
+
+							\draw[EdgeStyle]				(B) to node[LabelStyle]{}	(A);
+							\draw[EdgeStyle,bend left=40,looseness=1.1]    	(C) to node[LabelStyle]{}   	(A);
+							\draw[EdgeStyle] 	(C) to node[LabelStyle]{}     	(B);
+							\draw[EdgeStyle]  	(C) to node[LabelStyle]{} 		(D);
+							
+
+					\end{tikzpicture}
+			\end{center}
+	\caption{Un exemple de graphe d'interaction, par exemple entre divers individus de la même espèce. Un lien existe entre deux animaux s'ils ont été en contact.}
+	\label{fig:tikzminimal}
 \end{figure}
+
 
 Comme dit en introduction, la théorie des graphes permet de modéliser et de résoudre de nombreux problèmes de la vie réelle, en synthétisant des informations. Ces problèmes sont étudiés depuis plus de 200 ans et nous avons à présent de nombreux outils pour les étudier, même si le domaine est encore en évolution.
 
@@ -291,7 +343,8 @@ La représentation graphique des \stgs{} est une des grandes forces du concept e
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{exStreamGraph.JPG}
-\caption{\textbf{Exemple de stream graph.} Dans cet exemple, on représente les interactions entre chercheurs durant une conférence de 10 heures ($T=[0,10]$). Les nœuds sont les trois chercheurs ($V=($MAP,MB,YYA$)$) et leurs intervalles d'existence sont les suivants $T_{\text{MAP}}=[4,10], T_{\text{MB}}=[0,10], T_{\text{YYA}}=[0,8]$, ils représente les moments où les chercheurs étaient présents à la conférence. Enfin les liens $V=([2,6]\times (\text{MB},\text{YYA})) \cup ([4,8]\times(\text{YYA},\text{MAP}))$ représentent les moments où les chercheurs ont discuté entre eux.}
+\caption{\textbf{Exemple de stream graph.} Dans cet exemple, on représente les interactions entre des animaux durant une expérience de 10 heures ($T=[0,10]$). Les nœuds sont les trois individus ($V=($A,B,C$)$) et leurs intervalles d'existence sont les suivants $T_{\text{C}}=[4,10], T_{\text{A}}=[0,10], T_{\text{B}}=[0,8]$, ils représentent les moments où les individus étaient présents dans le milieu d'observation. Enfin les liens $V=([2,6]\times (\text{A},\text{B})) \cup ([4,8]\times(\text{B},\text{C}))$ représentent les moments où les individus ont interagi.}
+\label{exstreamgraph}
 \end{figure}
 
 
@@ -343,7 +396,8 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\textwidth]{exMultiStream.JPG}
-		\caption{La représentation en multilayer stream graph des couches ["ECCS13","Talk to each other"] et ["Workshop in Oxford","Talk to each other"], générée avec "multiplex-stream" (description du programme en \cref{descode})}
+		\caption{La représentation en multilayer stream graph des couches \texttt{["plaine","Collaboration"]} et \texttt{["foret","Collaboration"]}, générée avec "multiplex-stream" (description du programme en \cref{descode})}
+		\label{exstgm}
 	\end{figure}
 	
 	\begin{rmq}
@@ -364,12 +418,16 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 
    \end{defn}
 
-	\begin{figure}[h]
-		\begin{minipage}{0.49\linewidth}
-			%\includegraphics[width=\textwidth]{schemas/pauset.jpg}
+	\begin{figure}[H]
+		\begin{minipage}{0.45\linewidth}
+			\captionsetup{margin=10pt}
+			\includegraphics[width=\textwidth]{extrt4ex.png}
+			\caption{Extraction du \stgm{} \ref{exstgm} au temps $t=4$}
 		\end{minipage}
-		\begin{minipage}{0.49\linewidth}
-			%\includegraphics[width=\textwidth]{schemas/pausetproj.jpg}
+		\begin{minipage}{0.45\linewidth}
+			\captionsetup{margin=10pt}
+			\includegraphics[width=\textwidth]{extrt7ex.png}
+			\caption{Extraction du \stgm{} \ref{exstgm} au temps $t=7$}
 		\end{minipage}
 		\caption{dessin d'une extraction}
 	\end{figure}
@@ -382,6 +440,12 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
     	E_{M,I} = \bigcup_{t\in T} E_{M,t}\\
     \end{align*}
     \end{defn}
+    
+    \begin{figure}[H]
+    	\centering
+    	\includegraphics[width=0.5\textwidth]{extrt010.png}
+    	\caption{Graphe multicouche induit du \stgm{} \ref{exstgm}.}
+    \end{figure}
 	
 
 
@@ -657,7 +721,7 @@ Nous avons donc choisi une structure de multilayer suivante : \\
   
 	\subsubsection{Représentation graphique}  
   
-  Nous avons tout d'abord tenté de représenter le graphe multicouche en entier (\cref{lyceeentier}). Sa taille le rend difficile à représenter (d'ailleurs, trouver un ordre optimal pour les noeuds qui limite les croisements des liens est un problème d'optimisation qui n'a pas encore été résolu de façon satisfaisante).
+  Nous avons tout d'abord tenté de représenter le graphe multicouche en entier (\cref{lyceeentier}). La taille du jeu de données le rend difficile à représenter du fait que beaucoup de liens s'entrecroisent. (D'ailleurs, trouver un ordre optimal pour les noeuds qui limite les croisements des liens avec d'autres noeuds est un problème d'optimisation qui n'a pas encore été résolu de façon satisfaisante).
 	
 	\begin{figure}[h]
 	\includegraphics[width=\textwidth]{lyceeentier.JPG}
@@ -698,26 +762,46 @@ Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{s
 		\centering
 		\includegraphics[width=\textwidth]{sousmulticlasseftf.png}
 		\captionsetup{margin=10pt}
-		\caption{\textbf{Visualisation du sous graphe induit multicouches des relations \texttt{'face to face'}, entre les élèves de deux classes} : les \texttt{'2BIO1'} et les \texttt{'MP'}.}
+		\caption{\textbf{Visualisation du sous graphe multicouches induit des relations \texttt{'face to face'}, entre les élèves de deux classes} : les \texttt{'2BIO1'} et les \texttt{'MP'}.}
 	\end{minipage}
-	\label{induit}
 	\caption{\textbf{Comparaison entre différents aspects du graphe multicouche. } On peut s'intéresser à la pertinence de séparer filles et garçons en différentes couches. En revanche, la séparation entre différentes classes semble être justifiée.}
+	\label{induit}
 \end{figure}
 	
-	On peut alors se demander en regardant ces interactions, si le partitionnement différentiant les femmes et les hommes est "visible" d'un point de vue des interactions.
+	
+\subsubsection{Etude des densités intra-couches et inter-couches pour plusieurs aspects}
+	On peut alors se demander en regardant ces interactions \cref{induit} et \cref{completinduit} , si le partitionnement différentiant les femmes et les hommes est "visible" d'un point de vue des interactions.
 
-Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes, au fil des jours.
+Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes, au fil des jours. Cette densité correspond à la probabilité, prenant un temps aléatoire et deux noeuds aléatoires, ces noeuds soient reliés par une arête.
 
+Au sein des hommes, des femmes, ou pour la densité totale, on calcule donc :$$
+\delta = \frac{\sum_{u,v \in V\otimes V} |T_{uv}|}{\sum_{u,v \in V \otimes V}|T_u\cap T_v|} = \frac{|E|}{|T|(|V|(|V|-1))}$$
+et dans le graphe biparti des interactions hommes-femmes, la densité est :
+$$\delta_{biparti}=\frac{\sum_{u,v \in V_f \times V_h} |T_{uv}|}{\sum_{u,v \in V_f \times V_h}|T_u\cap T_v|}=\frac{|E|}{|T||V_f||V_h|}$$
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{compfg.png}
-	\caption{Densité des relations au sein des femmes, des hommes, des relations inter-hommes/femmes, et des relations en général}
+	\caption{Densité des relations au sein des femmes, des hommes, des relations inter-hommes/femmes, et des relations en général prise chaque jour de la semaine.}
 	\label{densitesemaine}
 \end{figure}
 
-Nous voyons qu'une tendance se confirme : les relations sont plus denses au sein d'un même sexe qu'en moyenne, et les relations inter-sexes sont moins denses qu'en moyenne.
+Nous voyons qu'une tendance se confirme : les relations sont plus denses au sein d'un même sexe qu'en moyenne, et les relations inter-sexes sont moins denses qu'en moyenne. La question que nous pouvons alors nous poser est "qu'est-ce que nous apporte la vision des \stgm{} ?" Nous avons donc tracé les mêmes densités pour des graphes multicouches sous-jacents correspondant aux jours de la semaine (\cref{dsj}). Nous obtenons les mêmes tendances mais moins "contrastées" puisqu'une relation de longue durée \og pèse \fg{} autant qu'une relation de courte durée qui a pu être enregistrée \og par hasard \fg{}.
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{densitesj.png}
+	\caption{Densité des graphes sous-jacent pour les 5 jours de la semaine.}
+	\label{dsj}
+\end{figure}
 
+Nous avons comparé les différentes densités pour les aspects \texttt{'facebook'} et \texttt{'frienship'}. Nous avons alors relevé les mêmes tendances, et même nettement plus accentuées pour les relations amicales, où les relations intra-hommes passent en dessous de la moyenne. \cref{comp}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{comparatif.png}
+	\caption{Comparatif des densités pour les relations \texttt{'face to face'}, \texttt{'facebook'} et \texttt{'friendship'} en échelle logarithmique, pour les aspects \texttt{'hommes'}, \texttt{'femmes'}, le graphe inter-couche \texttt{'hommes'/'femmes'} et le graphe en entier.}
+	\label{comp}
+\end{figure}  
 
 \subsection{Star Wars}
 
