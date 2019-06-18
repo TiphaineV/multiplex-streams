@@ -67,3 +67,5 @@ link4= Link(IntervalList([Interval(5,8)]),nac2,["Workshop in Oxford","Talk to ea
 m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4]))
 
 m.drawMS("exrap.fig")
+
+print(m.computeDensity())

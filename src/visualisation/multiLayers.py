@@ -129,8 +129,10 @@ class LayerNTList :
         return(self.listOfLayersNT[i])
     def giveLayerFromLabel(self,label):
         #print(label)
+        print("ici ?")
         if self.listOfLayersNT.contains_label(label):
             i=self.listOfLayersNT.index_label(label)
+            print("ici2")
             return(self.giveLayer(i))
         else:
             print("error : this layer doesn't exist : ",label)
@@ -296,8 +298,13 @@ class MultiLayer :
         if nameFile != "":
             plt.savefig(nameFile)
         plt.show()
-            
-            
+    
+    def computeDensityMulti(self):
+        ne=(self.em.listOfLinks()).length()
+        nnodes=0
+        for l in self.layers.giveLayerList():
+            nnodes=nnodes+l.giveNodes().__len__()
+        return(2*ne/(l*(l-1)))
             
             
             

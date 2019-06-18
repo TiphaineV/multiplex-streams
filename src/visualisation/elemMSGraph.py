@@ -193,7 +193,6 @@ class LayerList :
     def giveLayer(self,i):
         return(self.listOfLayers[i])
     def giveLayerFromLabel(self,label):
-        print(label)
         if self.listOfLayers.contains_label(label):
             i=self.listOfLayers.index_label(label)#ecrit ?
             return(self.giveLayer(i))

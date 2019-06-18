@@ -2,36 +2,36 @@
 \babel@toc {french}{}
 \babel@toc {english}{}
 \babel@toc {french}{}
-\contentsline {section}{\numberline {1}Etat de l'art : analyse de deux formalismes sur les graphes}{3}% 
-\contentsline {subsection}{\numberline {1.1}Les graphes multicouches}{3}% 
-\contentsline {subsubsection}{\numberline {1.1.1}D\IeC {\'e}finition g\IeC {\'e}n\IeC {\'e}rale}{3}% 
+\contentsline {section}{\numberline {1}Etat de l'art : deux formalismes sur les graphes}{3}% 
+\contentsline {subsection}{\numberline {1.1}Les graphes multicouches}{4}% 
+\contentsline {subsubsection}{\numberline {1.1.1}D\IeC {\'e}finition g\IeC {\'e}n\IeC {\'e}rale}{4}% 
 \contentsline {subsubsection}{\numberline {1.1.2}Cadres d'utilisation}{4}% 
 \contentsline {subsubsection}{\numberline {1.1.3}Quelques d\IeC {\'e}finitions}{5}% 
-\contentsline {subsubsection}{\numberline {1.1.4}Pourquoi utiliser des graphes multicouches \IeC {\`a} la place de graphes classiques ?}{5}% 
+\contentsline {subsubsection}{\numberline {1.1.4}Pourquoi utiliser des graphes multicouches \IeC {\`a} la place de graphes classiques ?}{6}% 
 \contentsline {paragraph}{Importance de la structure : Isomorphismes de graphes}{6}% 
-\contentsline {paragraph}{Centralit\IeC {\'e}}{6}% 
-\contentsline {paragraph}{}{6}% 
-\contentsline {subsection}{\numberline {1.2}Les stream graphs}{6}% 
+\contentsline {paragraph}{Centralit\IeC {\'e}}{7}% 
+\contentsline {paragraph}{}{7}% 
+\contentsline {subsection}{\numberline {1.2}Les stream graphs}{7}% 
 \contentsline {subsubsection}{\numberline {1.2.1}D\IeC {\'e}finition}{7}% 
-\contentsline {subsubsection}{\numberline {1.2.2}Quelques d\IeC {\'e}finitions}{7}% 
-\contentsline {subsubsection}{\numberline {1.2.3}De l'int\IeC {\'e}r\IeC {\^e}t de l'usage des stream graphs}{7}% 
-\contentsline {section}{\numberline {2}Pr\IeC {\'e}sentation d'un nouvel objet: le stream graph multicouche}{8}% 
-\contentsline {subsection}{\numberline {2.1}Motivations}{8}% 
-\contentsline {subsection}{\numberline {2.2}D\IeC {\'e}finition}{8}% 
-\contentsline {subsection}{\numberline {2.3}Extraction de sous-graphes}{9}% 
-\contentsline {subsubsection}{\numberline {2.3.1}Projection par rapport au temps}{9}% 
-\contentsline {subsubsection}{\numberline {2.3.2}Projection \IeC {\`a} partir de couches}{10}% 
-\contentsline {subsubsection}{\numberline {2.3.3}Remarque sur les extractions}{11}% 
-\contentsline {subsection}{\numberline {2.4}Mesures}{11}% 
-\contentsline {subsubsection}{\numberline {2.4.1}Nombre de n\IeC {\oe }uds}{12}% 
-\contentsline {subsubsection}{\numberline {2.4.2}Uniformit\IeC {\'e} et densit\IeC {\'e}}{13}% 
-\contentsline {section}{\numberline {3}Application \IeC {\`a} des donn\IeC {\'e}es concr\IeC {\`e}tes}{14}% 
-\contentsline {subsection}{\numberline {3.1}Structure de donn\IeC {\'e}es et organisation du code}{14}% 
-\contentsline {subsection}{\numberline {3.2}CPGE : interactions entre \IeC {\'e}l\IeC {\`e}ves d'un m\IeC {\^e}me \IeC {\'e}tablissement}{15}% 
-\contentsline {subsubsection}{\numberline {3.2.1}Repr\IeC {\'e}sentation graphique}{15}% 
+\contentsline {subsubsection}{\numberline {1.2.2}Quelques d\IeC {\'e}finitions}{8}% 
+\contentsline {subsubsection}{\numberline {1.2.3}De l'int\IeC {\'e}r\IeC {\^e}t de l'usage des stream graphs}{8}% 
+\contentsline {section}{\numberline {2}Pr\IeC {\'e}sentation d'un nouvel objet: le stream graph multicouche}{9}% 
+\contentsline {subsection}{\numberline {2.1}Motivations}{9}% 
+\contentsline {subsection}{\numberline {2.2}D\IeC {\'e}finition}{9}% 
+\contentsline {subsection}{\numberline {2.3}Extraction de sous-graphes}{10}% 
+\contentsline {subsubsection}{\numberline {2.3.1}Projection par rapport au temps}{10}% 
+\contentsline {subsubsection}{\numberline {2.3.2}Projection \IeC {\`a} partir de couches}{11}% 
+\contentsline {paragraph}{Remarque sur les extractions}{12}% 
+\contentsline {subsection}{\numberline {2.4}Mesures}{12}% 
+\contentsline {subsubsection}{\numberline {2.4.1}Nombre de n\IeC {\oe }uds}{13}% 
+\contentsline {subsubsection}{\numberline {2.4.2}Uniformit\IeC {\'e} et densit\IeC {\'e}}{14}% 
+\contentsline {paragraph}{}{15}% 
+\contentsline {section}{\numberline {3}Application \IeC {\`a} des donn\IeC {\'e}es concr\IeC {\`e}tes}{15}% 
+\contentsline {subsection}{\numberline {3.1}Structure de donn\IeC {\'e}es et organisation du code}{15}% 
+\contentsline {subsection}{\numberline {3.2}CPGE : interactions entre \IeC {\'e}l\IeC {\`e}ves d'un m\IeC {\^e}me \IeC {\'e}tablissement}{16}% 
+\contentsline {subsubsection}{\numberline {3.2.1}Repr\IeC {\'e}sentation graphique}{16}% 
 \contentsline {subsubsection}{\numberline {3.2.2}Sous-graphes, sous-streams et sous graphes multicouches}{16}% 
-\contentsline {paragraph}{Graphe induit}{16}% 
-\contentsline {subsubsection}{\numberline {3.2.3}Densit\IeC {\'e} : Rep\IeC {\'e}rer des "moments" importants}{16}% 
-\contentsline {subsection}{\numberline {3.3}Star Wars}{16}% 
-\contentsline {subsection}{\numberline {3.4}Avions ?}{16}% 
-\contentsline {section}{\numberline {4}Conclusions et perspectives}{16}% 
+\contentsline {paragraph}{Graphe induit}{17}% 
+\contentsline {subsection}{\numberline {3.3}Star Wars}{18}% 
+\contentsline {subsection}{\numberline {3.4}Avions ?}{19}% 
+\contentsline {section}{\numberline {4}Conclusions et perspectives}{19}% 

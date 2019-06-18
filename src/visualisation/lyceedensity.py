@@ -206,9 +206,6 @@ dfemmes=[]
 dinter=[]
 dtot=[]
 
-dmlhL=[]
-dmlfL=[]
-dmlL=[]
 
 print("number of nodes=",m.numberOfNodeLayers())
 print("number of womens=",m.extractLayers(llf).numberOfNodeLayers())
@@ -226,9 +223,7 @@ mhf=mu.interLayers(llh,llf)
 
 df=mf.computeDensity()
 dh=mh.computeDensity()
-
-
-
+#
 print("j1 nn", mf.numberOfNodeLayers())
 
 dhf = mhf.computeDensityBiparti(llf,llh)
@@ -242,28 +237,10 @@ print("femmes",df)
 print("hommes",dh)
 print("femmes/hommes",dhf)
 
-print("fml",)
-
 dhommes.append(dh)
 dfemmes.append(df)
 dinter.append(dhf)
 dtot.append(dtt)
-
-
-mlf=mf.extractML()
-mlh=mh.extractML()
-ml=mu.extractML()
-mlhf=mhf.extractML()
-
-dmlhf=mlhf.computeDensityMulti()
-dmlf=mlf.computeDensityMulti()
-dmlh=mlh.computeDensityMulti()
-dml=ml.computeDensityMulti()
-
-dmlhfL.append(dmlhf)
-dmlfL.append(dmlf)
-dmlhL.append(dmlh)
-dmlL.append(dml)
 
 #jour 2
 mu=m2
@@ -291,22 +268,6 @@ dhommes.append(dh)
 dfemmes.append(df)
 dinter.append(dhf)
 dtot.append(dtt)
-
-mlf=mf.extractML()
-mlh=mh.extractML()
-ml=mu.extractML()
-mlhf=mhf.extractML()
-
-dmlhf=mlhf.computeDensityMulti()
-dmlf=mlf.computeDensityMulti()
-dmlh=mlh.computeDensityMulti()
-dml=ml.computeDensityMulti()
-
-dmlhfL.append(dmlhf)
-dmlfL.append(dmlf)
-dmlhL.append(dmlh)
-dmlL.append(dml)
-
 #
 #
 #jour 3
@@ -339,22 +300,6 @@ dfemmes.append(df)
 dinter.append(dhf)
 dtot.append(dtt)
 
-mlf=mf.extractML()
-mlh=mh.extractML()
-ml=mu.extractML()
-mlhf=mhf.extractML()
-
-dmlhf=mlhf.computeDensityMulti()
-dmlf=mlf.computeDensityMulti()
-dmlh=mlh.computeDensityMulti()
-dml=ml.computeDensityMulti()
-
-dmlhfL.append(dmlhf)
-dmlfL.append(dmlf)
-dmlhL.append(dmlh)
-dmlL.append(dml)
-
-
 #jour 4
 mu=m4
 
@@ -384,22 +329,6 @@ dhommes.append(dh)
 dfemmes.append(df)
 dinter.append(dhf)
 dtot.append(dtt)
-
-mlf=mf.extractML()
-mlh=mh.extractML()
-ml=mu.extractML()
-mlhf=mhf.extractML()
-
-dmlhf=mlhf.computeDensityMulti()
-dmlf=mlf.computeDensityMulti()
-dmlh=mlh.computeDensityMulti()
-dml=ml.computeDensityMulti()
-
-dmlhfL.append(dmlhf)
-dmlfL.append(dmlf)
-dmlhL.append(dmlh)
-dmlL.append(dml)
-
 
 #jour 5
 mu=m5
@@ -431,22 +360,6 @@ dfemmes.append(df)
 dinter.append(dhf)
 dtot.append(dtt)
 
-mlf=mf.extractML()
-mlh=mh.extractML()
-ml=mu.extractML()
-mlhf=mhf.extractML()
-
-dmlhf=mlhf.computeDensityMulti()
-dmlf=mlf.computeDensityMulti()
-dmlh=mlh.computeDensityMulti()
-dml=ml.computeDensityMulti()
-
-dmlhfL.append(dmlhf)
-dmlfL.append(dmlf)
-dmlhL.append(dmlh)
-dmlL.append(dml)
-
-
 t=[1,2,3,4,5]
 #plt.figure(figsize=(15,10))
 lh=plt.plot(t,dhommes,"r--",label='hommes')
@@ -455,13 +368,3 @@ plt.plot(t,dinter,"g^",label='inter femmes/hommes')
 plt.plot(t,dtot,'k',label='total')
 plt.legend()
 plt.show()
-
-print("multilayer")
-
-lh=plt.plot(t,dmlhL,"r--",label='hommes')
-plt.plot(t,dmlfL,"bs", label='femmes')
-plt.plot(t,dmlhfL,"g^",label='inter femmes/hommes')
-plt.plot(t,dmlL,'k',label='total')
-plt.legend()
-plt.show()
-

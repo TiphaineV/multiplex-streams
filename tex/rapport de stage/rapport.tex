@@ -8,7 +8,6 @@
 \usepackage{url}
 \usepackage{amsmath}
 \usepackage{amsthm}
-\usepackage{tikz}
 \usepackage{amssymb}
 \usepackage[french,english]{babel}
 \usepackage[french]{cleveref}
@@ -29,18 +28,25 @@
 \theoremstyle{remark}
 \newtheorem{ex}{Exemple}
 
+\def \stg {stream graph}
+\def \Stg {Stream graph}
+\def \stgm {stream graph multicouche}
+\def \Stgm {Stream graph multicouches}
+\def \stgs {stream graphs}
+\def \stgms {stream graphs multicouches}
+\def \Stgms {Stream graphs multicouches}
+
+
+%tikz 
 \usepackage{tikz}
+\usepackage{pgfplots}
 \usepackage{amsmath}
-
 \usetikzlibrary{decorations.pathmorphing, positioning}
-
 \definecolor{echoreg}{HTML}{2cb1e1}
 \definecolor{echodrk}{HTML}{0099cc}
-
 \tikzstyle{mybox} = [text=black, very thick,
     rectangle, rounded corners, inner sep=10pt, inner ysep=20pt]
 \tikzstyle{fancytitle} =[text=black]
-
 \newcommand{\yslant}{0.5}
 \newcommand{\xslant}{-0.6}
 
@@ -75,7 +81,7 @@ PARMENTIER Pimprenelle
 \vspace{1cm}
 \hrule % Horizontal line
 \vspace{0.4cm}
-{\huge \bfseries Stream graphes multicouches \par}\vspace{0.4cm} % Thesis title
+{\huge \bfseries \Stgms \par}\vspace{0.4cm} % Thesis title
 \hrule 
 \vspace{1cm}
 \textsc{\Large Rapport non confidentiel}
@@ -86,10 +92,10 @@ PARMENTIER Pimprenelle
 \noindent
 \textit{Option:} Département de Mathématiques appliquées\\
 \textit{Champ:} Etude de graphes\\
-\textit{Enseignant référent:} Xavier ALLAMIGEON\\
-\textit{Tuteur de stage dans l'organisme:} Tiphaine VIARD\\
-\textit {Co-tuteurs de stage hors organisme:} Benjamin RENOUST (Université d'Osaka)\\
-\hspace*{6.1cm} Jean-François Baffier (JSPS)\\
+\textit{Enseignant référent:} Xavier \textsc{Allamigeon}\\
+\textit{Tuteur de stage dans l'organisme:} Tiphaine \textsc{Viard}\\
+\textit {Co-tuteurs de stage hors organisme:} Benjamin \textsc{Renoust} (Université d'Osaka)\\
+\hspace*{6.1cm} Jean-François \textsc{Baffier} (JSPS)\\
 \textit{Dates du stage:} 8 avril 2019 - 23 aout 2019\\
 \textit{Adresse de l'organisme:}\\
 RIKEN AIP\\
@@ -128,19 +134,32 @@ Chuo-ku, Tokyo\\
 	
 	La théorie des graphes est utilisée dans de nombreux domaines, que ce soit en informatique (analyse de réseaux sociaux, PageRanking \cite{pr}), en biologie, ou dans l'étude des transports par exemple.
 	
-	Cependant, une partie de l'information est alors perdue, notamment le fait que les interactions entre différents individus dépendent souvent du temps. On "lisse" volontairement les différences au sein des noeuds et des liens, mais une fois encore, on simplifie beaucoup la représentations de nos données.
+	Cependant, une partie de l'information est alors perdue, notamment le fait que les interactions entre différents individus dépendent souvent du temps. On "lisse" volontairement les différences au sein des noeuds et des liens, mais une fois encore, on simplifie beaucoup la représentations de nos données. C'est cette \og simplification \fg{}  qui permet de synthétiser un problème pour y trouver des solutions.
 	
-	Notre objectif ici est, en partant de formalismes déjà construits, de créer un nouvel objet nous permettant de représenter des graphes dépendant du temps et prenant en compte les différences au sein des noeuds et des liens. Dans une première partie, nous établirons un état de l'art en rappelant les définitions des graphes, des graphes multicouches et des stream graphes, nous donnerons une bibliographie associée et une analyse critique de ces formalismes. Ensuite, nous présenterons notre nouvel objet, le \og stream graphe multicouche \fg , les définitions associées.
+	Notre objectif ici est, en partant de formalismes déjà construits, de créer un nouvel objet nous permettant de représenter des graphes dépendant du temps et prenant en compte les différences au sein des noeuds et des liens : le \stgm. Dans une première partie, nous établirons un état de l'art en rappelant les définitions des graphes, des graphes multicouches et des stream graphes, nous donnerons une bibliographie associée et une analyse critique de ces formalismes. Ensuite, nous présenterons notre nouvel objet, le \og stream graphe multicouche \fg{} , les définitions associées. Nous expliquerons comment retrouver les graphes \og classiques\fg{} à partir de ce nouvel objet, grâce à diverses projections.
+	
 	Nous présenterons enfin la bibliothèque que nous avons créée pour étudier les stream graph multicouche ainsi que quelques exemples de bases de données pour lesquelles il est judicieux d'utiliser notre outil et les résultats que nous avons obtenus sur ces bases. 
 	
 	
 	
-\section{Etat de l'art : analyse de deux formalismes sur les graphes}
+\section{Etat de l'art : deux formalismes sur les graphes}
 \indent
 
-
+Dans cette partie, nous allons présenter les objets qui ont servi à construire les \stgms{} : tout d'abord les graphes, puis les graphes multilayer qui servent à différentier les noeuds et les arêtes, et les stream graphes qui permettent de modéliser des graphes dépendant du temps.
 
 Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des interactions (arêtes : ensemble $E$) entre des entités (nœuds: ensemble $V$). 
+
+Nous avons donné ici la version la plus simple des graphes, mais il existe de nombreuses variantes, comme les graphes orientés, les graphes pondérés ou les graphes colorés, entre autres.
+
+\begin{defn}{Paires ordonnées et non ordonnées.}
+	$A$ et $B$ sont deux ensembles non vides.
+	
+	On appelle ensemble des paires ordonnées de $A$ et $B$ l'ensemble $\{ (a,b) | a \in A \text{ et } b \in B\}$. L'ensemble est appelé $A \times B$.
+	
+	On appelle ensemble des paires non ordonnées de $A$ et $B$ l'ensemble $\{(u,v) | u \in A \text{ et } v\in B \textbf{ ou } u \in B \text{ et } v\in A\}$. L'ensemble est appelé $A\otimes B$.
+\end{defn}
+
+	Les paires ordonnées servent à représenter des graphes orientés tandis que les paires non ordonnées servent à représenter des graphes non ordonnées.
 
 \begin{figure}[H]
 	\centering
@@ -148,8 +167,13 @@ Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des int
 	\caption{Un exemple de graphe de connaissances. Les chercheurs MAP, AC et YYA se connaissent, les chercheurs MB et MAP aussi. En revanche, il n'y a pas de lien entre MB et AC, qui ne se connaissent donc pas.}
 \end{figure}
 
+Comme dit en introduction, la théorie des graphes permet de modéliser et de résoudre de nombreux problèmes de la vie réelle, en synthétisant des informations. Ces problèmes sont étudiés depuis plus de 200 ans et nous avons à présent de nombreux outils pour les étudier, même si le domaine est encore en évolution.
 
 \subsection{Les graphes multicouches}
+
+Les graphes permettent de synthétiser et de représenter des interactions entre individus. Nous choisissons donc de ne représenter qu'un seul type de relations entre un seul type d'individus, soit en ignorant leurs différences, soit en ne représentant qu'une partie des relations et des noeuds. 
+
+Pour pallier à cette \og approximation\fg{}, l'objet graphe multicouche a été créé.
 
 \subsubsection{Définition générale}
 
@@ -157,9 +181,13 @@ Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des int
  
  Une définition très générale des graphes multicouches est donnée dans le papier \cite{mlkiv}, nous la résumons ici.
  
- La structure d'un graphe multicouches est décrite par le k-uplet d'ensembles ${\cal L} = L_1, \dots , L_k$. Chaque $L_i$ est un ensemble d'attributs que peut avoir une couche, appelés "couches élémentaires". Chaque couche correspond donc à un élément de $L=L_1\times L_2 \times \dots \times L_k$.
+ \begin{defn}{Graphe multicouche}
  
- Un graphe multicouches s'écrit alors $M = (V_M, E_M, V, L)$. $V$ est l'ensemble de ses noeuds, $L$ la structure des couches, $V_M$ sont les noeuds-couches, qui comme leur nom l'indique, sont les éléments de $V\times L$. Enfin $E_M \subseteq V_M \times V_M $ est l'ensemble des liens, un lien pouvant relier deux noeuds-couches entre eux. 
+ La structure d'un graphe multicouches est décrite par le k-uplet d'ensembles ${\cal L} = L_1, \dots , L_k$. Chaque $L_i$, appelé {\em aspect}, est un ensemble d'attributs, appelés {\em couches élémentaires}. Chaque {\em couche} correspond à un élément de $L=L_1\times L_2 \times \dots \times L_k$.
+ 
+ Un graphe multicouches s'écrit alors $M = (V_M, E_M, V, L)$. $V$ est l'ensemble de ses {\em noeuds}, $L$ la {\em structure} des couches, $V_M$ sont les {\em noeuds-couches}, qui comme leur nom l'indique, sont les éléments de $V\times L$. Enfin $E_M \subseteq V_M \times V_M $ est l'ensemble des {\em arêtes}, une arête pouvant relier deux noeuds-couches entre eux. 
+
+	\end{defn}
  
  On peut trouver un exemple de graphe multicouche \cref{exmulti}.
 
@@ -234,7 +262,7 @@ Deux graphes $G_1$ et $G_2$ sont dits isomorphes quand on peut trouver une bijec
 Dans le cadre des multicouches, Kivelä et Porter \cite{isoMulti} définissent l'automorphisme de graphe (sans perte de généralité) par une permutation des arêtes, des couches élémentaires et des couches qui préserve les liens.
 
 
-Kiveä et Porter démontrent qu'il n'est pas équivalent de dire que deux graphes multicouches sont isomorphes et leurs graphes sous-jacent sont équivalents. En effet, il ne faut pas perdre de vue que la structure "arborescente" des couches, doit être conservée, et pas seulement l'idée de "partition" des nœuds en différentes couches. Ils présentent un algorithme permettant de vérifier si deux graphes multicouches sont isomorphes.
+Kiveä et Porter démontrent qu'il n'est pas équivalent de dire que deux graphes multicouches sont isomorphes et leurs graphes sous-jacent sont équivalents. En effet, il ne faut pas perdre de vue que la structure \og arborescente \fg{} des couches, doit être conservée, et pas seulement l'idée de \og partition \fg{} des nœuds en différentes couches. Ils présentent un algorithme permettant de vérifier si deux graphes multicouches sont isomorphes.
 
 \paragraph{Centralité}
 
@@ -246,22 +274,19 @@ De Domenico montre que le fait de conserver l'information multicouche permet de 
 
 \paragraph{}
 
-Nous avons présenté ici deux exemples pour lesquels il a été judicieux de conserver l'aspect mutlicouche des graphes, parce qu'il contient plus d'informations, et qu'elles ont une structure particulière.
+Nous avons présenté ici deux exemples pour lesquels il a été judicieux de conserver l'aspect mutlicouche des graphes, parce qu'il contient plus d'informations, et qu'elles ont une structure particulière. Nous avons également montré comment contruire des graphes \og classiques \fg{} à partir de projections sur graphes multicouches, et donc que les graphes multicouches sont une généralisation des graphes.
 
 
-\subsection{Les stream graphs}
+\subsection{Les \stgs }
 
-
-
-Les stream graphs ont été créés dans le but de pouvoir mieux étudier les graphes dynamiques, c'est à dire des graphes dont les nœuds et les liens peuvent apparaitre et disparaitre au fil du temps.
-
+Nous présentons maintenant un autre outil récemment créé permettant de traiter de la temporalité dans les graphes : les \stgs .
 \subsubsection{Définition}
 
-\begin{defn}{\textbf{Stream graph}}
-Un stream graph s'écrit $S=(T,W,V,E)$. $T$ représente l'intervalle de temps d'étude de notre graphe. $V$ est l'ensemble des nœuds, et $W \subseteq T \times V$ est l'ensemble des nœuds de $V$ apparaissant en fonction du temps. Enfin, $E \subseteq T \times V \times V$ est l'ensemble des liens dont l'existence dépend également du temps. Étant donné un noeud $u$, on appelle $T_u$ l'union des intervalles pendant lesquels $u$ apparait, de même que $T_{u,v}$ décrit les temps d'apparition du lien $(u,v)$.
+\begin{defn}{\textbf{\Stg}}
+Un \stg{} s'écrit $S=(T,W,V,E)$. $T$ représente l'intervalle de temps d'étude de notre graphe. $V$ est l'ensemble des nœuds, et $W \subseteq T \times V$ est l'ensemble des nœuds de $V$ apparaissant en fonction du temps. Enfin, $E \subseteq T \times V \times V$ est l'ensemble des arêtes dont l'existence dépend également du temps. Étant donné un nœud $u$, on appelle $T_u$ l'union des intervalles pendant lesquels $u$ apparait, de même que $T_{u,v}$ décrit les temps d'apparition du lien $(u,v)$.
 \end{defn}
 
-La représentation graphique des stream graphes est une des grandes forces du concept et permet de visualiser l'évolution des graphes au fil du temps.
+La représentation graphique des \stgs{} est une des grandes forces du concept et permet de visualiser l'évolution des graphes au fil du temps avec une représentation statique.
 
 \begin{figure}[H]
 \centering
@@ -284,7 +309,7 @@ La notion de stream graphe est très récente (2017)\cite{stream} et ce n'est é
 Par exemple on peut citer la représentation souvent utilisée en recherche opérationnelle, en "snapshot". Le nombre de noeuds d'un système est multiplié par un nombre de pas de temps discrets $n=\frac{t}{T}$. On crée ensuite un graphe temporel dont les noeuds sont étiquetés $(v,t_i)$, $v$ étant les noeuds et $t_i$ les temps auxquels ils sont considérés. Les liens peuvent être présents entre différents noeuds du même pas de temps, et on ajoute à cela une arête entre tous les couples de noeuds de la forme $(v,t_i),(v,t_{i+1})$. 
 Dans ces cas-là les liens sont très souvent orientés pour indiquer le sens du temps. Ces graphes sont utilisés pour des calculs de flots optimaux \cite{map}. On peut d'ailleurs raccrocher cette représentation à la théorie des graphes multicouches, chaque couche correspondant à un pas de temps.
 
-La notion de stream graph permet de "se libérer" de la vision discrétisée des snapshots. Même si dans l'absolu, les deux visions permettent de stocker les mêmes informations et de faire les mêmes choses (il suffit pour cela de choisir un pas de discrétisation assez petit), la vision stream graph permet d'aborder le problème sous un autre angle, plus orienté sur l'étude des ensembles d'intervalles qui caractérisent les liens et les nœuds.
+La notion de stream graph permet de "se libérer" de la vision discrétisée des snapshots. Même si dans l'absolu, les deux visions permettent de stocker les mêmes informations et de faire les mêmes choses (il suffit pour cela de choisir un pas de discrétisation assez petit), la vision stream graph permet d'aborder le problème sous un autre angle, plus orienté sur l'étude des interactions elles-mêmes.
 
 \begin{figure}
 \centering
@@ -304,13 +329,13 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 \subsection{Motivations}
 \subsection{Définition}
 
-\begin{defn}[\textbf{Stream graph multicouche}]
+\begin{defn}[\textbf{\Stgm}]
     
-    Soit $T$ un intervalle de temps, ${\cal L}$ une structure de couches définie comme dans le cadre des graphes multicouches simples, et $V$ un ensemble de noeuds. 
+    Soit $T$ un intervalle de temps, ${\cal L}$ une structure de couches définie comme dans le cadre des graphes multicouches, et $V$ un ensemble de noeuds. 
     
-    $T_M$ est un ensemble d'intervalles inclus dans $T$, indexé par les couches de $L$ et représente le temps d'existence de ces couches, avec pour contrainte que $\cup_{\alpha \in L} T_{\alpha} = T$ . $W_M$ est inclus dans $T \times V \times L$, et contient les temps d'existence de chaque nœud couche, sachant que le temps d'existence d'un nœud couche est forcément inclus dans le temps d'existence de la couche. Enfin, $E_M \subseteq T \times V \times L \times V \times L$ donne les liens entre les nœuds couches et leurs temps d'existence, sachant qu'un lien ne peut exister que pendant l'intersection des temps d'existence des nœuds-couches qu'il relie.
+    $T_M$ est un ensemble d'intervalles inclus dans $T$, indexé par les couches de $L$ et représente le temps d'existence de ces couches, avec pour contrainte que $\cup_{\alpha \in L} T_{\alpha} = T$ . $W_M$ est un sous ensemble de $T \times V \times L$, et contient les temps d'existence de chaque nœud couche, sachant que le temps d'existence d'un nœud-couche est forcément inclus dans le temps d'existence de la couche. Enfin, $E_M \subseteq T \times V \times L \times V \times L$ donne les liens entre les nœuds couches et leurs temps d'existence, sachant qu'un lien ne peut exister que pendant l'intersection des temps d'existence des nœuds-couches qu'il relie.
     
-    L'objet $S_M = (T,T_M,V,W_M,E_M,{\cal L})$ est alors appelé \textbf{stream graph multicouches } (ou multilayer stream graph en anglais).
+    L'objet $S_M = (T,T_M,V,W_M,E_M,{\cal L})$ est alors appelé \textbf{\stgm } (ou multilayer stream graph en anglais).
     
     On définit également les temps d'existence des noeuds-couches $T_{u,\alpha}$ et les temps d'existence des liens $T_{(u,\alpha),(v,\beta)}$ qui sont des unions d'intervalles.
 	\end{defn}
@@ -318,7 +343,7 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\textwidth]{exMultiStream.JPG}
-		\caption{La représentation en multilayer stream graph des couches ["ECCS13","Talk to each other"] et ["Workshop in Oxford","Talk to each other"], générée avec "multiplex-stream" (description du programme en partie \cref{descode})}
+		\caption{La représentation en multilayer stream graph des couches ["ECCS13","Talk to each other"] et ["Workshop in Oxford","Talk to each other"], générée avec "multiplex-stream" (description du programme en \cref{descode})}
 	\end{figure}
 	
 	\begin{rmq}
@@ -331,7 +356,7 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 \subsubsection{Projection par rapport au temps}
 	Nous définissons ici deux moyens d'extraire des graphes multicouches en s'affranchissant du temps.
 	
-	Le premier est de "prendre une photo" au temps $t$ :
+	Le premier est de \og prendre une photo \fg{} au temps $t$ :
 	\begin{defn}[Graphe multicouche au temps t]
    	Le {\em graphe multicouche au temps t} $M_t$ s'écrit $M_t = (V_{M,t}, E_{M,t},V,{\cal L})$ avec $V_{M,t}$ et $E_{M,t}$ contenant les noeuds-couches et les arrêtes apparaissant au temps $t$.
    	$$ V_{M,t} = \{ (u,\alpha) | (t,u,\alpha) \in W_M\} $$
@@ -349,13 +374,14 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 		\caption{dessin d'une extraction}
 	\end{figure}
 
-    
+    Le second consiste à \og enregistrer \fg{} toutes les interactions pendant un laps de temps.
+    \begin{defn}
     Le {\em graphe multicouche induit} $M_I(S_M) = (V_{M,I}, E_{M,I}, V,L)$ de $S_M$ est le graphe multicouche qui rassemble toutes les couches, noeuds couches et noeuds qui ont apparu durant $T$.
     \begin{align*}
     	V_{M,I} = \bigcup_{t\in T} V_{M,t}\\
     	E_{M,I} = \bigcup_{t\in T} E_{M,t}\\
     \end{align*}
-    
+    \end{defn}
 	
 
 
@@ -388,7 +414,7 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	Un {\em stream graph multiplexe} est un graphe dans lequel chaque arête est une arête intra-couche ou une arête de couplage.
 	\end{defn}
 	
-	
+	Il peut être intéressant d'extraire certaines couches du \stgm{}, ou au contraire de se focaliser sur des interactions entre couches.
 	 
 	\begin{defn}[Stream graph intra-couche]
 	Pour chaque couche $\alpha \in L_1 \times \dots \times L_d$, le {\em stream graph intra-couche} $S^{\alpha}$ est le stream graph $S^{\alpha}=(T^{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ tel que $T^{\alpha} = T_{\alpha} \in T_M$ est l'intervalle d'existence de $\alpha$. $V^{\alpha}$ est l'ensemble des nœuds couches dans la couche $\alpha$ et $W^{\alpha}$ représente leurs temps d'apparence dans la couche $\alpha$. $E^{\alpha}$ est le sous-ensemble $E_M$ contenant seulement les arêtes entre les noeuds-couches de $\alpha$.
@@ -430,48 +456,52 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	\end{defn}
 	
 	
-	\begin{defn}[Underlying stream]
-		The {\em underlying stream } $S_U(S_M)$ of $S_M$ is $(T,V_M,W_M,E_M)$. Its is the stream graph in which the nodes are the node-layers. It could be shared into clusters corresponding to the different layers. This definition is a generalisation to the one defined on \cite{mlkiv} for simple multilayer graphs.
+
+	
+	\begin{defn}[\Stg{} sous-jacent]
+	Le {\em \stg{} sous-jacent} $S_U(S_M)$ de $S_M$ est $(T,V_M,W_M,E_M)$. C'est un \stg{} dans lequel les noeuds sont les noeuds-couches de $S_M$. Il peut être partitionné selon les différentes couches.
 	\end{defn}
 	
-	\begin{defn}[Aggregated stream]
-		
-		The {\em aggregated stream} $S_A(S_M)$ has the same $T$ as $S_M$. Its nodes are the nodes of $S_M$ and a link exists between two nodes if and only a link exist between two correspondent node-layers.	This definition is a generalisation to the one defined on \cite{mldd} for simple multilayer graphs.
-	
+	\begin{defn}[\Stg aggrégé]
+		Le {\em \stg{} aggrégé} $S_A(S_M)$ a le même intervalle d'étude $T$ que $S_M$. Ses noeuds sont les mêmes que ceux de $S_M$ et une arête existe entre deux noeuds de $S_A(S_M)$ si elle existe au même temps entre deux neouds-couches correspondants de $S_M$. 
 	\end{defn}
 	
 	We can now demonstrate that the underlying stream graph is the union of all the intra and inter layer stream graphs.
 	
+	Nous pouvons à présent démontrer que le \stg{} sous-jacent est égal à l'union de tous les \stg{} inter et intra couches.
+	
+		
 	\begin{prop}
 		\[
 			\bigcup_{(\alpha,\beta) \in L^2} S^{(\alpha,\beta)} = S_U(M_S)
 		\]
 	\end{prop}
 	\begin{proof}
-	We call $S=\bigcup_{(\alpha,\beta) \in L^2} S^{(\alpha,\beta)}=(T^{*},V^{*},W^{*},E^{*})$ and we want to show that $S=S_U(M_S)=S_U(M) = (T_U,V_U,W_U,E_U)$.
+	On appelle $S=\bigcup_{(\alpha,\beta) \in L^2} S^{(\alpha,\beta)}=(T^{*},V^{*},W^{*},E^{*})$. Montrons que $S=S_U(M_S)= (T_U,V_U,W_U,E_U)$.
 	
-	$T=T_U$ by definition of $S_U$. By construction of multilayer stream graphs, at each $t\in T$, at least one layer $\alpha$ is existing. Then as $T* = [\min_{\alpha \in L} (T^{\alpha}),max_{\alpha \in L} (T^{\alpha})]$, $t$ is included in $T*$. Each $T^{\alpha}$ is included in $T$, so $T^* \subseteq T$, which leads us to $T^*=T_U=T$.
+	$T=T_U$ par définition de $S_U$. Par construction des \stgms{}, pour tout $t$ dans $T$, il existe au moins une couche $\alpha$. Comme $T* = [\min_{\alpha \in L} (T^{\alpha}),max_{\alpha \in L} (T^{\alpha})]$, $t$ est forcément inclus dans $T*$. Chaque $T^{\alpha}$ est inclus dans $T$, donc $T^* \subseteq T$, donc $T^*=T_U=T$.
 	
-	$V_M = V_U$ by definition of $V_U$.$V^{*}=\bigcup_{(\alpha,\beta) \in L^2} V^{\alpha,\beta} \subseteq V_M$. All the nodes of all the layers are included in $\bigcup_{(\alpha) \in L^2} V^{\alpha,\alpha} \subseteq V^{*}$, so we obtain the equality $V_M=V_U=V^*$.
-	With the same argument we find that $W_M=W_U=W^*$.
+	$V_M = V_U$ par définition de $V_U$.$V^{*}=\bigcup_{(\alpha,\beta) \in L^2} V^{\alpha,\beta} \subseteq V_M$. Tous les noeuds de toutes les couches sont inclues dans $\bigcup_{(\alpha) \in L^2} V^{\alpha,\alpha} \subseteq V^{*}$, on obtient donc l'égalité $V_M=V_U=V^*$.
+	Avec le même raisonnement, nous trouvons $W_M=W_U=W^*$.
 	
-	$E_U=E_M$ and $E^{*}=\bigcup_{\alpha,\beta \in L^2}(E^{\alpha,\beta})$ by definition. So as $E^{\alpha,\beta}$ is a subset of $E_M$ for every couple of layers $\alpha,\beta$, $E^{*} \subset E_M$. We notice too that for every $e =(t,u,\alpha,v,\beta) \in E_M$, $e$ belongs to $E^{\alpha,\beta}$. So $\mathbf{E_M=E^{*}}$.
-					
+	$E_U=E_M$ et $E^{*}=\bigcup_{\alpha,\beta \in L^2}(E^{\alpha,\beta})$ par définition. Comme $E^{\alpha,\beta}$ est un sous-ensemble de $E_M$ pour chaque couple de couches $\alpha,\beta$, $E^{*} \subset E_M$. On sait egalement que pour toute arête $e =(t,u,\alpha,v,\beta) \in E_M$, $e$ appartient à $E^{\alpha,\beta}$. Donc $E_M=E^{*}$.
+
+
+On a donc bien une égalité terme à terme entre tous les éléments de $S$ et de $S_U(M_S)$.					
 	\end{proof}
 
-\subsubsection{Remarque sur les extractions}
-On remarque que de nombreux graphes et graphes multicouches sont extraits de stream graphs multicouches.
-
+\paragraph{Remarque sur les extractions}
+Nous avons donc exhibé un certain nombre d'extractions que nous pourrons maintenant combiner pour obtenir des graphes, des \stg{} ou des graphes multiplexes, en fonction des résultats que nous voudrons obtenir.
 
 \subsection{Mesures}
 
 
-Nous avons créé des mesures permettant de mesurer la présence de liens et de nœuds dans les graphes. Nos exigences pour ces mesures sont qu'elles soient adaptées à l'objet spécifique que nous étudions (et qu'elles prennent en compte l'aspect multicouche et l'aspect temporel de façon simultanée), qu'elles aient des noms qui évoquent intuitivement ce qu'elles expriment et qu'elles soient une généralisation des notions utilisées pour les stream graphs, pour les graphes multicouches et pour les graphes.
+Nous avons créé des mesures permettant de mesurer la présence de liens et de nœuds dans les graphes. Nous voulions que ces mesures soient adaptées à l'objet spécifique que nous étudions (et qu'elles prennent en compte l'aspect multicouche et l'aspect temporel de façon simultanée), qu'elles aient des noms qui évoquent intuitivement ce qu'elles expriment et qu'elles soient une généralisation des notions utilisées pour les stream graphs, pour les graphes multicouches et pour les graphes.
 
 	\subsubsection{Nombre de nœuds}
 	Le {\em nombre de noeuds dans un graphe} $G=(V,E)$ est $|V|$ et le nombre d'arêtes est $|E|$.
 	
-	Le {\em nombre de noeuds dans un stream graph} $S=(T,V,W,E)$ est défini dans \cite{stream} comme $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$. $n_v$ est appelé {\em contribution de v} et est égal à $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Remarquons bien qu'ici cette notion est différente {\em du nombre de noeuds dans} $|V|$, sauf quand le stream graphe $S$ est constant au cours du temps.
+	Le {\em nombre de noeuds dans un \stg{}} $S=(T,V,W,E)$ est défini dans \cite{stream} comme $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$ (ce qui est en fait le nombre moyen de noeuds au cours du temps). $n_v$ est appelé {\em contribution de v} et est égal à $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Remarquons bien qu'ici cette notion est différente {\em du nombre de noeuds dans} $|V|$, sauf quand le stream graphe $S$ est constant au cours du temps.
 	\newline
 	
 	Dans les graphes multicouches, une telle notion n'a pas été définie explicitement.
@@ -479,7 +509,7 @@ Nous avons créé des mesures permettant de mesurer la présence de liens et de 
 	\begin{align*}
 		\hat{N}_n^L(M_l) = \frac{\text{nombre de noeud-couches}}{\text{nombre de couches}}=\frac{|V_M|}{|L|}
 	\end{align*}	    
-	Remarquons que dans le cas d'un monocouche, nous retrouvons le nombre de noeuds classique, ce qui signifie que nous pouvons choisir cette mesure comme une généralisation du {\em nombre de nœuds} dans un graphe, comme cela a été fait dans \cite{stream} pour les stream graphs.
+	Remarquons que dans le cas d'un monocouche, nous retrouvons le nombre de noeuds classique, ce qui signifie que nous pouvons choisir cette mesure comme une généralisation du {\em nombre de nœuds} dans un graphe, comme cela a été fait dans \cite{stream} pour les \stg{}.
 		
 	
 	\begin{defn}[Contribution des couches]
@@ -552,23 +582,27 @@ $
 		\[
 			d(G) = \frac{|E|}{|V\otimes V|} = \frac{2\times |E|}{|V|(|V|-1)}
 		\]
-	Dans les stream graphs, la notion définie dans \cite{stream} est la même , en prenant un temps et deux noeuds au hasard existant à ce temps. 	
+	Dans les \stg{}, la notion définie dans \cite{stream} est la même , en prenant un temps aléatoire, et deux noeuds au hasard existant à ce temps. 	
 
 		\begin{align*}
 			\delta_s(G) = & \mathbb{P}((t,u,v)\in E| (t,u),(t,v) \in W) \\
 			 =  & \frac{\sum_{uv \in V \otimes V}{|T_{uv}|}}{\sum_{uv \in V\otimes V}{|T_u\cap T_v|}}= \frac{\int_{t\in T}{|E_t|dt}}{\int_{t\in T}{|V_t\otimes V_t|dt}}
 		\end{align*}
 		
-	Nous pouvons ensuite définir la densité dans les stream graphs multicouches. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont \og automatiques\fg ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
+	Nous pouvons ensuite définir la densité dans les \stgm{}. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. 
 
+\begin{defn}[Densité d'un \stgm{}]	
+	Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont \og automatiques\fg ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
 
+	La {\em densité du \stgm{}} s'écrit alors : 
 	\[
 		\delta_M (M) 
 		= \frac{\int_{t\in T}|E_M,t|}{\int_{t\in T}|C_t|} 
 		= \frac{\sum_{(u,\alpha)(v,\beta) \in E_M}|T_{(u,\alpha)(v,\beta)}|}{|C|}
 	\]
-
-	Par exemple, dans un stream graph multiplexe, les liens possibles sont les liens intra couches et les liens de couplage : $C=\{(t,u,\alpha),(t,v,\beta))| t\in T_{u,\alpha} \cap T_{u,\beta}, u=v \text{or} \alpha = \beta)\}$ :
+\end{defn}	
+	
+	Par exemple, dans un \stg{} multiplexe, les liens possibles sont les liens intra couches et les liens de couplage : $C=\{(t,u,\alpha),(t,v,\beta))| t\in T_{u,\alpha} \cap T_{u,\beta}, u=v \text{or} \alpha = \beta)\}$ :
 
 	\[
 		\delta_M (M) = 
@@ -577,8 +611,16 @@ $
 		{\underbrace{(\sum_{\alpha \in L}\sum_{(u,v) \in V\otimes V}|T_{u,\alpha} \cap T_{v,\alpha}|)}_{\text{arêtes intra-couches}}+\underbrace{( \sum_{u \in V } \sum_{(\alpha,\beta) \in L \otimes L}|T_{u,\alpha}\cap T_{u,\beta}|)}_{\text{arêtes de couplage}}}
 	\]
 
+
+\paragraph{}
+Nous avons donc présenté les bases mathématiques d'un nouvel objet, le \stgm{}, ayant pour but de représenter des interactions de différentes natures, entre différents acteurs, en fonction du temps. Les mesures de nombre de noeuds et de liens, d'uniformité et de densité permettent d'adapter des notions présentes dans les graphes à notre objet. Les outils d'extraction comme le graphe sous-jacent, le graphe aggrégé ou les sous \stg{} inter et intra couches permettent de \og retrouver \fg{} les graphes classiques auxquels nous sommes habitués.
 	
 \section{Application à des données concrètes}
+
+
+Nous avons ensuite construit une bibliothèque Python \cite{github} pour mettre en application les notions que nous avons présentées.
+
+Nous avons ensuite utilisé plusieurs jeux de données pour tester cette bibliothèque. Le premier jeu de données recense les interactions au sein de classes préparatoires françaises, le second recense les interactions entre les personnages, les lieux, les mots-clés des films \og Star Wars \fg{}. Le dernier recense tous les trajets aériens ainsi que diverses informations supplémentaires aux Etats-Unis.
 
 \subsection{Structure de données et organisation du code} 
 \label{descode}
@@ -637,22 +679,16 @@ Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{s
 \paragraph{Graphe induit}
 	Le graphe multicouche induit des relations de deux classes, filles et garçons, est représenté \cref{completinduit}.
 	
-\begin{figure}[h]
+\begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{tout.png}
 	\caption{\textbf{Graphe induit}}
 	\label{completinduit}
 \end{figure}
 
-	Nous représentons ensuite les sous-graphes multicouches intra-couches et inter-couches des couches de deux classes différentes pour plus de visibilité.
+	Nous représentons ensuite les sous-graphes multicouches intra-couches et inter-couches des couches de deux classes différentes pour plus de visibilité. \cref{induit}
 
-
-	
-	On peut alors se demander en regardant le schéma, si la règle "
-
-
-
-\begin{figure}[h]
+\begin{figure}[H]
 	\begin{minipage}[t]{0.48\textwidth}
 		\captionsetup{margin=10pt}
 		\includegraphics[width=\textwidth]{sousmulticlasse.png}
@@ -667,25 +703,21 @@ Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{s
 	\label{induit}
 	\caption{\textbf{Comparaison entre différents aspects du graphe multicouche. } On peut s'intéresser à la pertinence de séparer filles et garçons en différentes couches. En revanche, la séparation entre différentes classes semble être justifiée.}
 \end{figure}
+	
+	On peut alors se demander en regardant ces interactions, si le partitionnement différentiant les femmes et les hommes est "visible" d'un point de vue des interactions.
 
+Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes, au fil des jours.
 
-Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes.
-
-
-
-
-
-
-
-\begin{figure}
-	\includegraphics[width=\textwidth]{1jourMP.JPG}
-	\caption{Une prise de vue le premier jour, des relations entre élèves féminins et masculins de la classe de MP. Nous y voyons "plus clair", cependant, il devient plus difficile de discerner les pauses.}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\textwidth]{compfg.png}
+	\caption{Densité des relations au sein des femmes, des hommes, des relations inter-hommes/femmes, et des relations en général}
+	\label{densitesemaine}
 \end{figure}
 
+Nous voyons qu'une tendance se confirme : les relations sont plus denses au sein d'un même sexe qu'en moyenne, et les relations inter-sexes sont moins denses qu'en moyenne.
 
 
-
-\subsubsection{Densité : Repérer des "moments" importants}
 
 \subsection{Star Wars}
 

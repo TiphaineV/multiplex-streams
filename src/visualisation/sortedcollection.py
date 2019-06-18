@@ -127,6 +127,9 @@ class SortedCollection(object):
         i = bisect_left(self._keys, k)
         j = bisect_right(self._keys, k)
         return item in self._items[i:j]
+    
+    def length(self):
+        return(self.__len__())
 
     def contains_key(self,item) :
         'added by pimprenelle'

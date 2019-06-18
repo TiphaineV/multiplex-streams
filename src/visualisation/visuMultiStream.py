@@ -249,8 +249,9 @@ class MultiStream :
             for j in self.layers.giveLayers():
                 for k in i.giveNodesT().giveListOfNodes():
                     for l in j.giveNodesT().giveListOfNodes():
-                        durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals2()).duration()
-        return(durationLinks/durationNodes)
+                        if i!=j or k!=l:
+                            durationNodes=durationNodes+k.giveIntervals2().intersection(l.giveIntervals2()).duration()
+        return(2*durationLinks/durationNodes)
     
     def computeDensityBiparti(self,layerlabels1,layerlabels2):
         """
@@ -293,6 +294,22 @@ class MultiStream :
             if intL4 != IntervalList([]):
                 m2.addLink(Link(intL4,nodes[0],ll1,nodes[1],ll2))
         return(m2)
+        
+    def numberOfNodes(self):
+        nnl=0
+        nl=0
+        for l in self.layers.giveLayers():
+            for n in l.giveNodesT().giveListOfNodes():
+                nnl=nnl+n.giveIntervals2().duration()
+            nl=nl+l.giveInterval().length()
+        return(nnl/nl)
+    
+    def numberOfNodeLayers(self):
+        nnl=0
+        for l in self.layers.giveLayers():
+            for n in l.giveNodesT().giveListOfNodes():
+                nnl=nnl+n.giveIntervals2().duration()
+        return(nnl/self.T.length())
 
 #tentative de représentation optimale du graphe en chantier
 
