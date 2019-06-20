@@ -33,6 +33,8 @@ We suppress 1385982020 to each measure of time and divide by 1000.
 
 typeNode=Aspect("type of node",["caption","character","face","keyword","location"])
 
+
+
 class Scene :
     
     def __init__(self,label,interval):
@@ -65,10 +67,7 @@ def makeScenes():
     return(scenes)
         
         
-layerS = LayerStruct([typeNode])
 
-
-m=MultiStream(interval,layerS,LayerList([]),LinkList([]))
 
 def readNodes(typeN):#marche pour tout sauf caption
     f= open("starWars/SW1/NODES/"+typeN+"_nodes.csv","r")
@@ -83,6 +82,19 @@ def readNodes(typeN):#marche pour tout sauf caption
         n=n+1
     f.close()
 
+def readKW():
+    f=open("starWars/SW1/NODES/keyword_nodes.csv","r")
+    n=0
+    l=[]
+    dico=dict()
+    for line in f :
+        if n>0:
+            line=line.replace("\"",'')
+            tab=line.split(",")
+            l.append(tab[0])
+        n=n+1
+    f.close()
+    return(l)
 
 
 
@@ -105,6 +117,16 @@ def readLinks(typeN1,typeN2,sc):
             m.addLink(link,tolerance=0.2)
             #link.printLink()
 
+def readLinksInLayer(typeN1,typeN2,sc,layers):
+    fl = open("starWars/SW1/EDGES/"+typeN1+"_"+typeN2+"_edges.csv","r")
+    n=0
+    dico=dict()
+    for line in fl:
+        n=n+1
+        if n>1:
+            line=line.replace("\"",'')
+            tab=line.split(",")
+            dico[]
 
 def readLinks2(liste,liste2):
     fl = open("lycee/Facebook-known-pairs_data_2013.csv")
@@ -127,14 +149,31 @@ def readLinks2(liste,liste2):
                 print("linkfb")
                 #link.printLink()
 
+
+
+
 sc=makeScenes()
+kw=readKW() 
+
+
+print("kw",kw)
+KW=Aspect("keyword",kw)
+struct=LayerStruct([kw])
+m=MultiStream(interval,struct,LayerList([]),LinkList([]))
+
+readNodes("character")
+
+readLinks("character","keyword",sc)
+
+#m.drawMS("charakw.fig")
+
 print("sc len",sc.__len__())
 #sc.printsort()
-readNodes("character")
+#readNodes("character")
 #readNodes("face")
 #readNodes("keyword")
 #readNodes("location")
-readLinks("character","character",sc)
+#readLinks("character","character",sc)
 #m.printMS()
-m.drawMS("sw.fig")
+#m.drawMS("sw.fig")
 
