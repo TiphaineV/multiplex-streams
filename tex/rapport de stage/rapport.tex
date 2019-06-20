@@ -1,5 +1,6 @@
 \documentclass[11pt,a4paper]{article}
 \usepackage[utf8]{inputenc}
+\usepackage{a4wide}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
@@ -7,9 +8,11 @@
 \usepackage{float}
 \usepackage{url}
 \usepackage{amsmath}
+%\usepackage[T1]{fontenc}
 \usepackage{amsthm}
 \usepackage{amssymb}
 \usepackage[french,english]{babel}
+\usepackage[babel=true,kerning=true]{microtype}
 \usepackage[french]{cleveref}
 \usepackage{svg}
 \usepackage{caption}
@@ -29,6 +32,7 @@
 \newtheorem{ex}{Exemple}
 
 \def \stg {stream graph}
+\def \Stgs {Stream graphs}
 \def \Stg {Stream graph}
 \def \stgm {stream graph multicouche}
 \def \Stgm {Stream graph multicouches}
@@ -86,7 +90,7 @@
 				  minimum size   = 2.15 mm}
 					}
 
-
+\pgfplotsset{compat=1.15}
 
 \newcommand\overmat[3]{%
   \makebox[0pt][l]{$\smash{\color{#3}\overbrace{\phantom{%
@@ -127,12 +131,12 @@ PARMENTIER Pimprenelle
 \end{center}
 
 \noindent
-\textit{Option:} Département de Mathématiques appliquées\\
-\textit{Champ:} Etude de graphes\\
+\textit{Option:} Mathématiques appliquées\\
+\textit{Champ:} Recherche opérationnelle, théorie des graphes\\
 \textit{Enseignant référent:} Xavier \textsc{Allamigeon}\\
 \textit{Tuteur de stage dans l'organisme:} Tiphaine \textsc{Viard}\\
 \textit {Co-tuteurs de stage hors organisme:} Benjamin \textsc{Renoust} (Université d'Osaka)\\
-\hspace*{6.1cm} Jean-François \textsc{Baffier} (JSPS)\\
+\hspace*{3.1cm} Jean-François \textsc{Baffier} (Japan Society for the Promotion of Science)\\
 \textit{Dates du stage:} 8 avril 2019 - 23 aout 2019\\
 \textit{Adresse de l'organisme:}\\
 RIKEN AIP\\
@@ -146,8 +150,15 @@ Chuo-ku, Tokyo\\
 
 \begin{abstract}
 
-	
+Ce rapport de stage traite d'un nouvel objet permettant de traiter de graphes complexes dépendants du temps : les \textbf{\stgms{}}. 
 
+Dans un premier lieu, nous ferons un état de l'art sur les formalismes existant pour traiter de graphes complexes et de graphes temporels. Nous présenterons ainsi les graphes multicouches et les \stgs{} qui nous servirons à construire les \stgms{}. 
+
+Dans un second temps, nous donnerons une définition formelle des \stgms{}, et nous montrerons en quoi ce nouvel objet est une généralisation des objets existants. Puis nous définirons des mesures permettant d'étudier les \stgms{}, qui prennent en compte l'aspect à la fois multicouche et temporel.
+
+Nous présenterons ensuite la bibliothèque python concue pour traiter ce type d'objet, ainsi qu'un exemple d'utilisation avec un jeu de données temporel multicouche.
+
+Enfin, nous donnerons un ensemble de pistes que nous pourrons explorer pour la suite du stage.
 
 \end{abstract}
 
@@ -158,47 +169,62 @@ Chuo-ku, Tokyo\\
 \end{abstract}
 
 \selectlanguage{french}
+
 \newpage 
 
 \tableofcontents
 \newpage
 
 
+\section*{Remerciements}
+
+    En premier lieu, je souhaite remercier ma tutrice Tiphaine \textsc{Viard}, qui a rendu mon stage possible, ainsi que mes co-tuteurs Jean-François \textsc{Baffier} et Benjamin \textsc{Renoust} pour leur accompagnement pendant la durée du stage. Grâce à leurs conseils et leur suivi, j'ai pu apprendre beaucoup de choses dans le domaine des graphes mais également sur la recherche en général.
+    
+    Je remercie également les équipes administratives de Riken et de l'Ecole Polytechnique pour leur support.
+
+\newpage
 
 \section*{Introduction}
-	Le concept de graphe remonterait à Euler \cite{wikigraphes,divin} dans les années 1750, et s'est révélé extrêmement puissant pour résoudre de nombreux problèmes en algorithmique, probabilités, en combinatoire, en optimisation et plus récemment pour traiter des données.
-	La théorie des graphes permet d'exprimer de nombreux problèmes réels dans un même formalisme pour lequel des algorithmes ont été créés.
+	Le concept de graphe remonterait à Euler \cite{wikigraphes,divin} dans les années 1750, qui énonça le problème des ponts de Königsberg. Cet objet s'est par la suite révélé extrêmement puissant pour résoudre de nombreux problèmes en algorithmique, en probabilités, en combinatoire, en optimisation et plus récemment pour traiter des données. Les graphes sont utilisés dans de nombreux domaines appliqués, que ce soit en informatique (analyse de réseaux sociaux, PageRanking \cite{pr}), en biologie, ou dans l'étude des transports par exemple.
 	
-	La théorie des graphes est utilisée dans de nombreux domaines, que ce soit en informatique (analyse de réseaux sociaux, PageRanking \cite{pr}), en biologie, ou dans l'étude des transports par exemple.
+	La puissance de la théorie des graphes vient du fait qu'elle permet d'exprimer des problèmes réels variés dans un même formalisme très simple, pour lequel des algorithmes ont été créés.
 	
-	Cependant, une partie de l'information est alors perdue, notamment le fait que les interactions entre différents individus dépendent souvent du temps. On "lisse" volontairement les différences au sein des noeuds et des liens, mais une fois encore, on simplifie beaucoup la représentations de nos données. C'est cette \og simplification \fg{}  qui permet de synthétiser un problème pour y trouver des solutions.
+	Cependant, une partie de l'information est alors perdue, notamment le fait que les interactions entre différents individus dépendent souvent du temps. On "lisse" volontairement les différences au sein des noeuds et des liens, mais une fois encore, on simplifie beaucoup la représentations de nos données. C'est cette \og simplification \fg{}  qui permet de synthétiser un problème pour y trouver des solutions, mais il pourrait être intéressant de créer un objet plus complexe pour traiter de nouveaux problèmes moins adaptés au formalisme des graphes.
 	
-	Notre objectif ici est, en partant de formalismes déjà construits, de créer un nouvel objet nous permettant de représenter des graphes dépendant du temps et prenant en compte les différences au sein des noeuds et des liens : le \stgm. Dans une première partie, nous établirons un état de l'art en rappelant les définitions des graphes, des graphes multicouches et des stream graphes, nous donnerons une bibliographie associée et une analyse critique de ces formalismes. Ensuite, nous présenterons notre nouvel objet, le \og stream graphe multicouche \fg{} , les définitions associées. Nous expliquerons comment retrouver les graphes \og classiques\fg{} à partir de ce nouvel objet, grâce à diverses projections.
+	Notre objectif ici est, en partant de formalismes déjà construits, de créer un nouvel objet nous permettant de représenter des graphes dépendant du temps et prenant en compte les différences au sein des noeuds et des liens : nous appellerons cet objet le \stgm. Dans une première partie, nous établirons un état de l'art en rappelant les définitions des graphes, des graphes multicouches et des \stgs{}, nous donnerons une bibliographie associée et une analyse critique de ces formalismes. 
 	
-	Nous présenterons enfin la bibliothèque que nous avons créée pour étudier les stream graph multicouche ainsi que quelques exemples de bases de données pour lesquelles il est judicieux d'utiliser notre outil et les résultats que nous avons obtenus sur ces bases. 
+	Ensuite, nous présenterons notre nouvel objet, le \og \stgm{} \fg{} , les définitions associées. Nous expliquerons comment retrouver les graphes \og classiques\fg{} à partir de ce nouvel objet, grâce à diverses projections.
+	
+	Nous présenterons enfin la bibliothèque que nous avons créée pour étudier les \stgms{} ainsi que quelques exemples de bases de données pour lesquelles il est judicieux d'utiliser notre outil et les résultats que nous avons obtenus sur ces bases. 
+	
+	En dernier lieu, nous parlerons des perspectives que ce formalisme ouvre et de nos pistes dans le futur.
 	
 	
 	
 \section{Etat de l'art : deux formalismes sur les graphes}
 \indent
 
-Dans cette partie, nous allons présenter les objets qui ont servi à construire les \stgms{} : tout d'abord les graphes, puis les graphes multilayer qui servent à différentier les noeuds et les arêtes, et les stream graphes qui permettent de modéliser des graphes dépendant du temps.
+Dans cette partie, nous allons présenter les objets qui ont servi à construire les \stgms{} : tout d'abord les \textbf{graphes}, puis les \textbf{graphes multicouches} qui servent à différentier les noeuds et les arêtes, et les \textbf{\stg{}} qui permettent de modéliser des graphes dépendant du temps.
 
-Les graphes s'écrivent sous la forme $G=(V,E)$ et servent à modéliser des interactions (arêtes : ensemble $E$) entre des entités (nœuds: ensemble $V$). 
+\subsection{Les graphes}
+
+\begin{defn}[Graphe]
+Un graphe $G$ est un ensemble de n\oe{}uds $V$ ainsi qu'un ensemble d'arêtes $E$, chaque element de $E$ étant une paire non ordonnée de deux éléments de $V$. Les arêtes représentent une interaction entre deux n\oe{}uds.
+\end{defn}
 
 Nous avons donné ici la version la plus simple des graphes, mais il existe de nombreuses variantes, comme les graphes orientés, les graphes pondérés ou les graphes colorés, entre autres.
 
-\begin{defn}{Paires ordonnées et non ordonnées.}
+\begin{defn}[Paires ordonnées et non ordonnées]
 	$A$ et $B$ sont deux ensembles non vides.
 	
-	On appelle ensemble des paires ordonnées de $A$ et $B$ l'ensemble $\{ (a,b) | a \in A \text{ et } b \in B\}$. L'ensemble est appelé $A \times B$.
+	On appelle ensemble des \textit{paires ordonnées} de $A$ et $B$ l'ensemble $\{ (a,b) | a \in A \text{ et } b \in B\}$. L'ensemble est appelé $A \times B$.
 	
-	On appelle ensemble des paires non ordonnées de $A$ et $B$ l'ensemble $\{(u,v) | u \in A \text{ et } v\in B \textbf{ ou } u \in B \text{ et } v\in A\}$. L'ensemble est appelé $A\otimes B$.
+	On appelle ensemble des \textit{paires non ordonnées} de $A$ et $B$ l'ensemble $\{(u,v) | u \in A \text{ et } v\in B \textbf{ ou } u \in B \text{ et } v\in A\}$. L'ensemble est appelé $A\otimes B$.
 \end{defn}
 
 	Les paires ordonnées servent à représenter des graphes orientés tandis que les paires non ordonnées servent à représenter des graphes non ordonnées.
 
-\begin{figure}
+\begin{figure}[h]
 			\begin{center}
 					\begin{tikzpicture}[xscale=2,yscale=2,auto]
 							\draw (2,0) node[VertexStyle]   (A) { A };
@@ -343,7 +369,7 @@ La représentation graphique des \stgs{} est une des grandes forces du concept e
 \begin{figure}[H]
 \centering
 \includegraphics[width=0.5\textwidth]{exStreamGraph.JPG}
-\caption{\textbf{Exemple de stream graph.} Dans cet exemple, on représente les interactions entre des animaux durant une expérience de 10 heures ($T=[0,10]$). Les nœuds sont les trois individus ($V=($A,B,C$)$) et leurs intervalles d'existence sont les suivants $T_{\text{C}}=[4,10], T_{\text{A}}=[0,10], T_{\text{B}}=[0,8]$, ils représentent les moments où les individus étaient présents dans le milieu d'observation. Enfin les liens $V=([2,6]\times (\text{A},\text{B})) \cup ([4,8]\times(\text{B},\text{C}))$ représentent les moments où les individus ont interagi.}
+\caption{\textbf{Exemple de \stg{}} Dans cet exemple, on représente les interactions entre des animaux durant une expérience de 10 heures ($T=[0,10]$). Les nœuds sont les trois individus ($V=($A,B,C$)$) et leurs intervalles d'existence sont les suivants $T_{\text{C}}=[4,10], T_{\text{A}}=[0,10], T_{\text{B}}=[0,8]$, ils représentent les moments où les individus étaient présents dans le milieu d'observation. Enfin les liens $V=([2,6]\times (\text{A},\text{B})) \cup ([4,8]\times(\text{B},\text{C}))$ représentent les moments où les individus ont interagi.}
 \label{exstreamgraph}
 \end{figure}
 
@@ -352,17 +378,17 @@ La représentation graphique des \stgs{} est une des grandes forces du concept e
 
 \subsubsection{Quelques définitions}
 
-Dans l'article \cite{stream}, de nombreuses notions sont ensuite définies de telle sorte à ce que dans le cas où le stream graph serait statique, on retrouve les mêmes notions que pour un graphe classique.
+Dans l'article \cite{stream}, de nombreuses notions sont ensuite définies de telle sorte à ce que dans le cas où le \stg{} serait statique, on retrouve les mêmes notions que pour un graphe classique.
 
 Nous les évoquerons en temps voulu quand nous nous en servirons pour créer nos propres définitions.
 
-\subsubsection{De l'intérêt de l'usage des stream graphs}
-La notion de stream graphe est très récente (2017)\cite{stream} et ce n'est évidemment pas la première tentative de formalisme pour des graphes dynamiques.
+\subsubsection{De l'intérêt de l'usage des \stgs{}}
+La notion de \stg{} est très récente (2017)\cite{stream} et ce n'est évidemment pas la première tentative de formalisme pour des graphes dynamiques.
 
 Par exemple on peut citer la représentation souvent utilisée en recherche opérationnelle, en "snapshot". Le nombre de noeuds d'un système est multiplié par un nombre de pas de temps discrets $n=\frac{t}{T}$. On crée ensuite un graphe temporel dont les noeuds sont étiquetés $(v,t_i)$, $v$ étant les noeuds et $t_i$ les temps auxquels ils sont considérés. Les liens peuvent être présents entre différents noeuds du même pas de temps, et on ajoute à cela une arête entre tous les couples de noeuds de la forme $(v,t_i),(v,t_{i+1})$. 
 Dans ces cas-là les liens sont très souvent orientés pour indiquer le sens du temps. Ces graphes sont utilisés pour des calculs de flots optimaux \cite{map}. On peut d'ailleurs raccrocher cette représentation à la théorie des graphes multicouches, chaque couche correspondant à un pas de temps.
 
-La notion de stream graph permet de "se libérer" de la vision discrétisée des snapshots. Même si dans l'absolu, les deux visions permettent de stocker les mêmes informations et de faire les mêmes choses (il suffit pour cela de choisir un pas de discrétisation assez petit), la vision stream graph permet d'aborder le problème sous un autre angle, plus orienté sur l'étude des interactions elles-mêmes.
+La notion de \stg{} permet de "se libérer" de la vision discrétisée des snapshots. Même si dans l'absolu, les deux visions permettent de stocker les mêmes informations et de faire les mêmes choses (il suffit pour cela de choisir un pas de discrétisation assez petit), la vision \stg{} permet d'aborder le problème sous un autre angle, plus orienté sur l'étude des interactions elles-mêmes.
 
 \begin{figure}
 \centering
@@ -375,7 +401,7 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 %conclusion partielle : cohérence avec les graphes classiques, à l'utilisateur de choisir ce qu'il veut obtenir
 
  
-\section{Présentation d'un nouvel objet: le stream graph multicouche}
+\section{Présentation d'un nouvel objet: le \stgm{}}
 
 
 
@@ -396,12 +422,12 @@ La notion de stream graph permet de "se libérer" de la vision discrétisée des
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.8\textwidth]{exMultiStream.JPG}
-		\caption{La représentation en multilayer stream graph des couches \texttt{["plaine","Collaboration"]} et \texttt{["foret","Collaboration"]}, générée avec "multiplex-stream" (description du programme en \cref{descode})}
+		\caption{La représentation en \stgm{} des couches \texttt{["plaine","Collaboration"]} et \texttt{["foret","Collaboration"]}, générée avec "multiplex-stream" (description du programme en \cref{descode})}
 		\label{exstgm}
 	\end{figure}
 	
 	\begin{rmq}
-		On peut s'interroger sur le bien-fondé d'utiliser l'objet stream graph pour rajouter l'aspect temporel aux graphes multicouches. En effet, dans \cite{mlkiv}, les auteurs évoquent l'idée d'un aspect "continu", pouvant représenter le temps. Mais cette idée ne semble pas avoir été beaucoup exploitée, car les outils développés pour manipuler les graphes multicouches sont principalement matriciels et donc faits pour traiter un nombre de couches fini. De plus, des outils ont été spécifiquement créés pour traiter les stream graphs et l'idée ici est de les exploiter.
+		On peut s'interroger sur le bien-fondé d'utiliser l'objet \stg{} pour rajouter l'aspect temporel aux graphes multicouches. En effet, dans \cite{mlkiv}, les auteurs évoquent l'idée d'un aspect "continu", pouvant représenter le temps. Mais cette idée ne semble pas avoir été beaucoup exploitée, car les outils développés pour manipuler les graphes multicouches sont principalement matriciels et donc faits pour traiter un nombre de couches fini. De plus, des outils ont été spécifiquement créés pour traiter les \stgs{} et l'idée ici est de les exploiter.
 	
 	\end{rmq}
 
@@ -472,21 +498,21 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	\end{figure}
 	
 	
-	Comme dit précédement, les graphes multiplexes sont présents dans beaucoup de cas concrets et font l'objet d'études qui leur sont particulièrement dédiées. Nous définissons ici de façon formelle les stream graphs multiplexes.
+	Comme dit précédement, les graphes multiplexes sont présents dans beaucoup de cas concrets et font l'objet d'études qui leur sont particulièrement dédiées. Nous définissons ici de façon formelle les \stgs{} multiplexes.
 	
-	\begin{defn}[Stream graph multiplexe]	
-	Un {\em stream graph multiplexe} est un graphe dans lequel chaque arête est une arête intra-couche ou une arête de couplage.
+	\begin{defn}[\Stgs{} multiplexe]	
+	Un {\em \stg{} multiplexe} est un graphe dans lequel chaque arête est une arête intra-couche ou une arête de couplage.
 	\end{defn}
 	
 	Il peut être intéressant d'extraire certaines couches du \stgm{}, ou au contraire de se focaliser sur des interactions entre couches.
 	 
-	\begin{defn}[Stream graph intra-couche]
-	Pour chaque couche $\alpha \in L_1 \times \dots \times L_d$, le {\em stream graph intra-couche} $S^{\alpha}$ est le stream graph $S^{\alpha}=(T^{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ tel que $T^{\alpha} = T_{\alpha} \in T_M$ est l'intervalle d'existence de $\alpha$. $V^{\alpha}$ est l'ensemble des nœuds couches dans la couche $\alpha$ et $W^{\alpha}$ représente leurs temps d'apparence dans la couche $\alpha$. $E^{\alpha}$ est le sous-ensemble $E_M$ contenant seulement les arêtes entre les noeuds-couches de $\alpha$.
+	\begin{defn}[\Stg{} intra-couche]
+	Pour chaque couche $\alpha \in L_1 \times \dots \times L_d$, le {\em \stg{} intra-couche} $S^{\alpha}$ est le \stg{} $S^{\alpha}=(T^{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ tel que $T^{\alpha} = T_{\alpha} \in T_M$ est l'intervalle d'existence de $\alpha$. $V^{\alpha}$ est l'ensemble des nœuds couches dans la couche $\alpha$ et $W^{\alpha}$ représente leurs temps d'apparence dans la couche $\alpha$. $E^{\alpha}$ est le sous-ensemble $E_M$ contenant seulement les arêtes entre les noeuds-couches de $\alpha$.
 	\end{defn}
 	
 	
-	\begin{defn}[Stream graph inter-couches]	
-	Pour chaque doublet de couches $\alpha, \beta \in L_1\times \dots\times L_d$, le {\em stream graph inter-couches} est le stream graph $S^{(\alpha,\beta)} = (T, V^{\alpha,\beta},W^{\alpha,\beta},E^{\alpha,\beta})$ tel que : $T^{\alpha,\beta}=T^{\alpha}\cap T^{\beta}$ est l'intervalle durant lequel $\alpha$ et $\beta$ apparaissent simultanément. $V^{\alpha,\beta}$ sont tous les noeuds-couches du stream graph multicouche qui sont dans les couches $\alpha$ et $\beta$, $W^{\alpha,\beta}$ décrit leurs intervalles d'existence. Enfin, $E^{\alpha,\beta}$ sont les liens non orientés entre les noeuds couches des couches de $\alpha$ et $\beta$ avec leurs temps d'existence.
+	\begin{defn}[\Stg{} inter-couches]	
+	Pour chaque doublet de couches $\alpha, \beta \in L_1\times \dots\times L_d$, le {\em \stg{} inter-couches} est le \stg{} $S^{(\alpha,\beta)} = (T, V^{\alpha,\beta},W^{\alpha,\beta},E^{\alpha,\beta})$ tel que : $T^{\alpha,\beta}=T^{\alpha}\cap T^{\beta}$ est l'intervalle durant lequel $\alpha$ et $\beta$ apparaissent simultanément. $V^{\alpha,\beta}$ sont tous les noeuds-couches du \stgm{} qui sont dans les couches $\alpha$ et $\beta$, $W^{\alpha,\beta}$ décrit leurs intervalles d'existence. Enfin, $E^{\alpha,\beta}$ sont les liens non orientés entre les noeuds couches des couches de $\alpha$ et $\beta$ avec leurs temps d'existence.
 	\end{defn}
 	
 	%english Notice that for any layer $\alpha$,  is equivalent to $S^{(\alpha,\alpha)}$.
@@ -494,18 +520,18 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	On remarque que pour toute couche $\alpha$, $S^{(\alpha)}$ est équivalent à $S^{(\alpha,\alpha)}$.
 
 
-	Après avoir extrait les stream graphes d'intérêt, il nous pouvons effectuer des opérations d'union et d'intersection pour trouver des propriétés intéressantes.
+	Après avoir extrait les \stg{} d'intérêt, il nous pouvons effectuer des opérations d'union et d'intersection pour trouver des propriétés intéressantes.
 	
-	\begin{defn}[Intersection de deux stream graphs]
-	L'{\em intersection} de deux stream graphs $S_1$ et $S_2$ est un stream graph et est définie de la façon suivante :
+	\begin{defn}[Intersection de deux \stg{}]
+	L'{\em intersection} de deux \stg{} $S_1$ et $S_2$ est un \stg{} et est définie de la façon suivante :
 	\[
 		S' = S_1 \cap S_2 = (T_1\cap T_2, V_1 \cap V_2, W_1 \cap W_2, E_1\cap E_2)
 	\]
 	\end{defn}
 	
 
-	\begin{defn}[Union de deux stream graphs]
-	L'{\em union} de deux stream graphs $S_1$ et $S_2$ est un stream graph et est définie de la façon suivante :
+	\begin{defn}[Union de deux \stgs{}]
+	L'{\em union} de deux \stgs{} $S_1$ et $S_2$ est un \stg{} et est définie de la façon suivante :
 	\[
 		S' = S_1 \cup S_2 = (T', V_1 \cup V_2, W_1 \cup W_2, E' \})
 	\]
@@ -529,8 +555,6 @@ Comme dans \cite{mlkiv} pour les graphes multicouches, nous pouvons "classifier"
 	\begin{defn}[\Stg aggrégé]
 		Le {\em \stg{} aggrégé} $S_A(S_M)$ a le même intervalle d'étude $T$ que $S_M$. Ses noeuds sont les mêmes que ceux de $S_M$ et une arête existe entre deux noeuds de $S_A(S_M)$ si elle existe au même temps entre deux neouds-couches correspondants de $S_M$. 
 	\end{defn}
-	
-	We can now demonstrate that the underlying stream graph is the union of all the intra and inter layer stream graphs.
 	
 	Nous pouvons à présent démontrer que le \stg{} sous-jacent est égal à l'union de tous les \stg{} inter et intra couches.
 	
@@ -560,12 +584,12 @@ Nous avons donc exhibé un certain nombre d'extractions que nous pourrons mainte
 \subsection{Mesures}
 
 
-Nous avons créé des mesures permettant de mesurer la présence de liens et de nœuds dans les graphes. Nous voulions que ces mesures soient adaptées à l'objet spécifique que nous étudions (et qu'elles prennent en compte l'aspect multicouche et l'aspect temporel de façon simultanée), qu'elles aient des noms qui évoquent intuitivement ce qu'elles expriment et qu'elles soient une généralisation des notions utilisées pour les stream graphs, pour les graphes multicouches et pour les graphes.
+Nous avons créé des mesures permettant de mesurer la présence de liens et de nœuds dans les graphes. Nous voulions que ces mesures soient adaptées à l'objet spécifique que nous étudions (et qu'elles prennent en compte l'aspect multicouche et l'aspect temporel de façon simultanée), qu'elles aient des noms qui évoquent intuitivement ce qu'elles expriment et qu'elles soient une généralisation des notions utilisées pour les \stg{}, pour les graphes multicouches et pour les graphes.
 
 	\subsubsection{Nombre de nœuds}
 	Le {\em nombre de noeuds dans un graphe} $G=(V,E)$ est $|V|$ et le nombre d'arêtes est $|E|$.
 	
-	Le {\em nombre de noeuds dans un \stg{}} $S=(T,V,W,E)$ est défini dans \cite{stream} comme $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$ (ce qui est en fait le nombre moyen de noeuds au cours du temps). $n_v$ est appelé {\em contribution de v} et est égal à $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Remarquons bien qu'ici cette notion est différente {\em du nombre de noeuds dans} $|V|$, sauf quand le stream graphe $S$ est constant au cours du temps.
+	Le {\em nombre de noeuds dans un \stg{}} $S=(T,V,W,E)$ est défini dans \cite{stream} comme $\hat{N}^T_n=\frac{|W|}{|T|}=\sum_{v\in V} n_v$ (ce qui est en fait le nombre moyen de noeuds au cours du temps). $n_v$ est appelé {\em contribution de v} et est égal à $\hat{N}^T_v=\frac{|T_v|}{|T|}$. Remarquons bien qu'ici cette notion est différente {\em du nombre de noeuds dans} $|V|$, sauf quand le \stg{} $S$ est constant au cours du temps.
 	\newline
 	
 	Dans les graphes multicouches, une telle notion n'a pas été définie explicitement.
@@ -577,18 +601,18 @@ Nous avons créé des mesures permettant de mesurer la présence de liens et de 
 		
 	
 	\begin{defn}[Contribution des couches]
-	On définit la {\em contribution} d'une couche comme suit : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. Le {\em nombre de couche dans un stream graph multicouches} est la somme des contributions. $\hat{N}^T_l = \sum_{\alpha \in L}\frac{ |T_{\alpha}|}{|T|}$.
+	On définit la {\em contribution} d'une couche comme suit : $n_\alpha = \frac{|T_{\alpha}|}{|T|}$. Le {\em nombre de couche dans un \stgms{}} est la somme des contributions. $\hat{N}^T_l = \sum_{\alpha \in L}\frac{ |T_{\alpha}|}{|T|}$.
     \end{defn}
 	
 	\begin{defn}[Contribution et quantité de nœud-couches]
-	La {\em contribution d'un noeud-couche} dans un stream graphe multicouche est $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. Le {\em nombre de nœud-couches} est la somme de leurs contributions $\hat{N}^{T}_{nl}(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
+	La {\em contribution d'un noeud-couche} dans un \stgm{} est $n_{v,\alpha} = \frac{|T_{v,\alpha}|}{|T|}$. Le {\em nombre de nœud-couches} est la somme de leurs contributions $\hat{N}^{T}_{nl}(M) = \underset{(u,\alpha)\in V_M}{\sum} n_{(u,\alpha)} = \frac{|W_M|}{|T|}$.
     \end{defn}
 	
-	Dans le cas d'un stream monocouche, nous retrouvons bien que le nombre de noeuds est égal au nombre de noeuds-couches. En prenant le stream graph sous-jacent du stream graphe multicouche, on retrouve également que le nombre de noeuds est égal au nombre de noeuds couches. Nous avons donc là une généralisation satisfaisante du nombre de noeuds-couches.
+	Dans le cas d'un \stg{} monocouche, nous retrouvons bien que le nombre de noeuds est égal au nombre de noeuds-couches. En prenant le \stg{} sous-jacent du \stgm{}, on retrouve également que le nombre de noeuds est égal au nombre de noeuds couches. Nous avons donc là une généralisation satisfaisante du nombre de noeuds-couches.
     
-   Enfin, nous définissons le \textbf{nombre de noeuds dans un stream graph multicouches} de la façon suivante : 
+   Enfin, nous définissons le \textbf{nombre de noeuds dans un \stgm{}} de la façon suivante : 
     
-    \begin{defn}[Contribution et nombre de noeuds dans un stream graph multicouche]
+    \begin{defn}[Contribution et nombre de noeuds dans un \stgm{}]
     La {\em contribution} d'un noeud décrit le taux d'apparition d'un noeud dans les couches : $n_v = \frac{\sum_{\alpha \in L}|T_{v,\alpha}|}{\sum_{\alpha \in L} |T_{\alpha}|}$.
     
     Le {\em nombre de noeuds} est la somme de ces contributions :
@@ -599,14 +623,14 @@ Nous avons créé des mesures permettant de mesurer la présence de liens et de 
 	
 	\end{defn}
 	
-	Cette définition est cohérente avec les notions des multicouches et des stream graphs : si le noeud apparait dans toutes les couches tout le temps, nous trouvons $n_v=1$ comme dans les multicouches. Si tous les temps d'existence sont égaux, on retrouve $$n_v=\frac{\text{nombre de noeud-couches issus de v}\times |T|}{\text{nombre de couches}\times |T|}$$ Cette définition est donc une bonne généralisation pour tous les concepts.
+	Cette définition est cohérente avec les notions des multicouches et des \stg{} : si le noeud apparait dans toutes les couches tout le temps, nous trouvons $n_v=1$ comme dans les multicouches. Si tous les temps d'existence sont égaux, on retrouve $$n_v=\frac{\text{nombre de noeud-couches issus de v}\times |T|}{\text{nombre de couches}\times |T|}$$ Cette définition est donc une bonne généralisation pour tous les concepts.
 
 	
 
 
 	\subsubsection{Uniformité et densité}
 	
-	Dans les stream graphs \cite{stream}, {\em l'uniformité entre deux nœuds} $u$ et $v$ est le ratio $\Cup (u,v) = \frac{|T_u\cap T_v|}{|T_u \cup T_v|}$, c'est à dire la probabilité, prenant un temps $t$ dans $T_u$ ou $T_v$, que les deux nœuds $u$ et $v$ puissent être reliés entre eux. L'uniformité est définie comme le rapport de tous les temps de co-existence sur les temps d'existence : $
+	Dans les \stgs{} \cite{stream}, {\em l'uniformité entre deux nœuds} $u$ et $v$ est le ratio $\Cup (u,v) = \frac{|T_u\cap T_v|}{|T_u \cup T_v|}$, c'est à dire la probabilité, prenant un temps $t$ dans $T_u$ ou $T_v$, que les deux nœuds $u$ et $v$ puissent être reliés entre eux. L'uniformité est définie comme le rapport de tous les temps de co-existence sur les temps d'existence : $
  \Cup(S)=\sum_{u,v \in V \otimes V}\frac{|T_u\cap T_v|}{|T_u\cup T_v|}
 $
 	
@@ -622,12 +646,12 @@ $
 		\cup(\alpha,\beta) = \frac{|T_{\alpha}\cap T_{\beta}|}{|T_{\alpha}\cup T_{\beta}|}
 	\end{align*}
 
-    L'{\em uniformité des noeuds-couches} mesure le taux d'apparition simultanée des noeuds-couches dans le stream-graphe multicouche :
+    L'{\em uniformité des noeuds-couches} mesure le taux d'apparition simultanée des noeuds-couches dans le \stgm{} :
     \[
     	\Cup(M) = \frac{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\beta)}|}}{\sum_{(u,\alpha),(v,\beta) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\beta)}|}}
     \]
 	
-	Cette définition peut être nuancée en considérant que selon la nature du stream graph multicouche, certains noeuds peuvent ou ne peuvent pas apparaitre simultanément. En particulier, {\em l'uniformité dans un stream graph multiplexe} est définie ainsi:	
+	Cette définition peut être nuancée en considérant que selon la nature du \stgm{}, certains noeuds peuvent ou ne peuvent pas apparaître simultanément. En particulier, {\em l'uniformité dans un \stgm{}} est définie ainsi:	
 	
 	\[
     	\Cup(M) = \frac{1}{|L|}\sum_{\alpha \in L} \frac{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)} \cap T_{(v,\alpha)}|}}{\sum_{(u,\alpha),(v,\alpha) \ V_M \otimes V_M}{|T_{(u,\alpha)}\cup T_{(v,\alpha)}|}}
@@ -636,10 +660,10 @@ $
     On ne prend en compte que les temps d'apparition intra-layer, et on moyenne selon le nombre de couche. 
 
 
-	Quand $\Cup=1$, on dit que le stream graph est uniforme (autrement dit, $T_v = T_u, \forall (u,v) \in V^2$).
+	Quand $\Cup=1$, on dit que le \stg{} est uniforme (autrement dit, $T_v = T_u, \forall (u,v) \in V^2$).
 
 
-    Après avoir mesuré "à quel point le stream graphe multilayer peut être connecté" grâce à l'uniformité, nous allons mesurer à quel point il est effectivement connecté grâce à a notion de \textbf{densité}.
+    Après avoir mesuré "à quel point le \stgm{} peut être connecté" grâce à l'uniformité, nous allons mesurer à quel point il est effectivement connecté grâce à a notion de \textbf{densité}.
     
     Dans les graphes classiques (non pondérés et non directionnel), la {\em densité} est la probabilité, prenant deux noeuds au hasard dans le graphe, qu'une arête existe entre ces noeuds.
     
@@ -656,7 +680,7 @@ $
 	Nous pouvons ensuite définir la densité dans les \stgm{}. Nous remarquons premièrement que la densité mesure le "taux de connectivité", et qu'une fois encore, en fonction du système étudié, la définition peut changer puisque nous voulons que le cas où la densité est égale à 1 corresponde au cas où on ne peut pas rajouter d'arêtes. 
 
 \begin{defn}[Densité d'un \stgm{}]	
-	Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le stream graphe multicouches. Si certaines connections sont \og automatiques\fg ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
+	Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des connections autorisées dans le \stgm{}. Si certaines connections sont \og automatiques\fg ou "sous-entendues" comme par exemple les connections de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
 
 	La {\em densité du \stgm{}} s'écrit alors : 
 	\[
@@ -682,16 +706,17 @@ Nous avons donc présenté les bases mathématiques d'un nouvel objet, le \stgm{
 \section{Application à des données concrètes}
 
 
-Nous avons ensuite construit une bibliothèque Python \cite{github} pour mettre en application les notions que nous avons présentées.
+Nous avons ensuite construit une bibliothèque Python \cite{github} pour mettre en application les notions théoriques que nous avons présentées.
 
-Nous avons ensuite utilisé plusieurs jeux de données pour tester cette bibliothèque. Le premier jeu de données recense les interactions au sein de classes préparatoires françaises, le second recense les interactions entre les personnages, les lieux, les mots-clés des films \og Star Wars \fg{}. Le dernier recense tous les trajets aériens ainsi que diverses informations supplémentaires aux Etats-Unis.
+Nous allons présenter cette bibliothèque ainsi que sa structure. Puis nous allons exhiber un jeu de données qui s'y prête et nous allons donner un exemple d'utilisation concret de la bibliothèque et des notions créées.
+
 
 \subsection{Structure de données et organisation du code} 
 \label{descode}
 
-	La gestion des flots de liens multicouche implique assez rapidement de gérer un grand nombre d'informations "imbriquées" : chaque couche contient des noeuds, qui apparaissent à des temps précis, ces noeud-couches sont reliés par des liens, eux-mêmes apparaissant à des temps précis...
+	La gestion des \stgms{} implique assez rapidement de gérer un grand nombre d'informations "imbriquées" : chaque couche contient des noeuds, qui apparaissent à des temps précis, ces noeud-couches sont reliés par des liens, eux-mêmes apparaissant à des temps précis...
 	
-	J'ai choisi de construire des classes python pour simplifier la gestion de telles données, et pour permettre de vérifier simplement que le stream graph multicouche reste cohérent quand on le modifie.
+	J'ai choisi de construire des classes python pour simplifier la gestion de telles données, et pour permettre de vérifier simplement que le \stgm{} reste cohérent quand on le modifie.
 	
 	
 	
@@ -703,29 +728,40 @@ Nous avons ensuite utilisé plusieurs jeux de données pour tester cette bibliot
 	
 	Toutes les listes sont toujours triées et les listes d'intervalles contiennent seulement des intervalles disjoints (quitte à fusionner certains intervalles).
 	
+	Dans un graphe simple, la {\em taille}, c'est à dire le nombre d'éléments à parcourir dans le graphe, est donnée par $c_G(G)=|V|+|E|$. Ici, nous avons choisi de stocker des couches, elles-mêmes contenant les noeuds-couches (et un intervalle), qui contiennent des listes d'intervalles. Les liens sont caractérisés par deux noeuds-couches et une liste d'intervalle.
+	
+	On appelle $n_I$ le nombre d'intervalle d'un ensemble, si celui-ci contient une liste d'intervalles.
+	
+	Ici la taille du \stgm{} est donc : $c_{MS}(M_S)=\sum_{e \in E_M} n_I(e) + \sum_{\alpha \in L} \sum_{v \in V} n_I((v,\alpha))$. Notons que dans le cas où le \stgm{} est statique et monocouche, on retrouve la taille d'un graphe classique.
+	
+	Pour traiter de graphes classiques, nous avons usuellement le choix entre utiliser une matrice d'adjacence (ce qui nous permet de savoir s'il existe un lien entre deux noeuds en temps 1) ou d'utiliser des listes d'adjacence (ce qui permet d'économiser de la mémoire).
+	
+	Ici, le stockage d'un lien est beaucoup plus coûteux puisqu'il faut stocker tous les intervalles d'existence, nous avons plutôt choisi d'utiliser une liste simple de tous les liens, mais stockés de façon ordonnés grâce à la bibliothèque \texttt{sorted collection}, pour laquelle tous les liens sont 
 	
 
 \subsection{CPGE : interactions entre élèves d'un même établissement}
 
-Nous avons en premier lieu testé notre logiciel avec une base de donnée de SocioPatterns (\cite{cpge}), recensant les interactions de "face à face" entre élèves (enregistrées toutes les 20 secondes grâce à des capteurs de proximité), leurs amitiés sur Facebook, le fait qu'ils connaissent leur numéro de téléphone, et leur réponse à un questionnaire leur demandant s'ils étaient amis.
+    Nous avons en premier lieu testé notre logiciel avec une base de donnée de SocioPatterns (\cite{cpge}), recensant les interactions de "face à face" entre élèves (enregistrées toutes les 20 secondes grâce à des capteurs de proximité), leurs amitiés sur Facebook, et leur réponse à un questionnaire leur demandant s'ils étaient amis.
 
-Nous avons donc choisi une structure de multilayer suivante : \\
-{\tt L=[type de relation,classe,sexe]},\\
- avec\\
-  {\tt type de relation = [face to face, facebook, contact, amitié]},\\
-  {\tt classe = "MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"}.
+    Nous avons donc choisi une structure de couches suivante : \\
+    {\tt L=[type de relation,classe,sexe]},\\
+    avec\\
+    {\tt type de relation = [face to face, facebook, contact, amitié]},\\
+    {\tt classe = "MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"}.
   
-  Le temps de prise a duré 5 jours, les détecteurs s'activant toutes les 20 secondes.
-  
-  Comme les seules interactions dépendantes du temps sont celles de face à face, on peut dire que le jeu de donnée donne forcément lieu à un graphe "hybride".
+    Le temps de prise a duré 5 jours, les détecteurs s'activant toutes les 20 secondes.
+    
+    Comme les seules interactions dépendantes du temps sont celles de face à face, on peut dire que le jeu de donnée donne lieu à un graphe "hybride". Nous avons considéré que les liens Facebook et d'amitié étaient donc constants au cours de l'expérience.
   
 	\subsubsection{Représentation graphique}  
   
   Nous avons tout d'abord tenté de représenter le graphe multicouche en entier (\cref{lyceeentier}). La taille du jeu de données le rend difficile à représenter du fait que beaucoup de liens s'entrecroisent. (D'ailleurs, trouver un ordre optimal pour les noeuds qui limite les croisements des liens avec d'autres noeuds est un problème d'optimisation qui n'a pas encore été résolu de façon satisfaisante).
+  
+  Cependant, grâce à une coloration des liens intercouches, nous pouvons tout de même saisir la structure générale du jeu de données, ainsi que les pauses et les nuits.
 	
 	\begin{figure}[h]
 	\includegraphics[width=\textwidth]{lyceeentier.JPG}
-	\caption{\textbf{Visualisation du stream graphe multilayer du dataset \cite{cpge}.} Les liens intra-couches ont été coloriés dans des couleurs aléatoires. On remarque des apparitions de liens inter-couches assez importants au moment des "pauses" (il y a visiblement une pause le matin, une autre le midi, et à la fin de la journée). On peut également visualiser simplement l'emploi du temps des élèves (représentés par des vides dans le graphe).}
+	\caption{\textbf{Visualisation du \stgm{} du dataset \cite{cpge}.} Les liens intra-couches ont été coloriés dans des couleurs aléatoires. On remarque des apparitions de liens inter-couches assez importants au moment des "pauses" (il y a visiblement une pause le matin, une autre le midi, et à la fin de la journée). On peut également visualiser simplement l'emploi du temps des élèves (représentés par des vides dans le graphe).}
 	\label{lyceeentier}
 \end{figure}
 
@@ -733,15 +769,12 @@ Nous avons donc choisi une structure de multilayer suivante : \\
 
 
 
-\subsubsection{Sous-graphes, sous-streams et sous graphes multicouches}
+\subsubsection{Sous-graphes, sous \stg{} et sous graphes multicouches}
 
 Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{sousgraphes}. Nous avons décidé de nous cantonner aux relations \texttt{'face to face'} et \texttt{'facebook'}, mais ces résultats sont généralisables à plus de couches. 
 
-
-
-
-\paragraph{Graphe induit}
-	Le graphe multicouche induit des relations de deux classes, filles et garçons, est représenté \cref{completinduit}.
+\paragraph{Graphe multicouche induit}
+	Le graphe multicouche induit des relations de deux classes, filles et garçons, est représenté \cref{completinduit}. Ici, chaque cercle correspond à une couche différente.
 	
 \begin{figure}[H]
 	\centering
@@ -750,7 +783,7 @@ Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{s
 	\label{completinduit}
 \end{figure}
 
-	Nous représentons ensuite les sous-graphes multicouches intra-couches et inter-couches des couches de deux classes différentes pour plus de visibilité. \cref{induit}
+	Nous représentons ensuite les sous-graphes multicouches intra-couches et inter-couches induits des couches de deux classes différentes pour plus de visibilité. \cref{induit}
 
 \begin{figure}[H]
 	\begin{minipage}[t]{0.48\textwidth}
@@ -770,7 +803,7 @@ Voici quelques exemples de sous-graphes tels que nous les avons définis \cref{s
 	
 	
 \subsubsection{Etude des densités intra-couches et inter-couches pour plusieurs aspects}
-	On peut alors se demander en regardant ces interactions \cref{induit} et \cref{completinduit} , si le partitionnement différentiant les femmes et les hommes est "visible" d'un point de vue des interactions.
+	On peut alors se demander en regardant ces interactions \cref{induit} et \cref{completinduit} , si le partitionnement différenciant les femmes et les hommes est "visible" d'un point de vue des interactions.
 
 Nous avons donc calculé la densité des relations femmes/hommes comparée aux densité des relations au sein des hommes et des femmes, au fil des jours. Cette densité correspond à la probabilité, prenant un temps aléatoire et deux noeuds aléatoires, ces noeuds soient reliés par une arête.
 
@@ -785,12 +818,12 @@ $$\delta_{biparti}=\frac{\sum_{u,v \in V_f \times V_h} |T_{uv}|}{\sum_{u,v \in V
 	\label{densitesemaine}
 \end{figure}
 
-Nous voyons qu'une tendance se confirme : les relations sont plus denses au sein d'un même sexe qu'en moyenne, et les relations inter-sexes sont moins denses qu'en moyenne. La question que nous pouvons alors nous poser est "qu'est-ce que nous apporte la vision des \stgm{} ?" Nous avons donc tracé les mêmes densités pour des graphes multicouches sous-jacents correspondant aux jours de la semaine (\cref{dsj}). Nous obtenons les mêmes tendances mais moins "contrastées" puisqu'une relation de longue durée \og pèse \fg{} autant qu'une relation de courte durée qui a pu être enregistrée \og par hasard \fg{}.
+Nous voyons qu'une tendance se confirme : les relations sont plus denses au sein d'un même sexe qu'en moyenne, et les relations inter-sexes sont moins denses qu'en moyenne. La question que nous pouvons alors nous poser est "qu'est-ce que nous apporte la vision des \stgm{} ?" Nous avons donc tracé les mêmes densités pour des graphes multicouches sous-jacents correspondant aux jours de la semaine (\cref{dsj}). Nous obtenons les mêmes tendances mais moins "contrastées" puisqu'une relation de longue durée \og pèse \fg{} autant qu'une relation de courte durée qui a pu être enregistrée \og par hasard \fg{}, mais qui ne reflète pas une réelle interaction.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\textwidth]{densitesj.png}
-	\caption{Densité des graphes sous-jacent pour les 5 jours de la semaine.}
+	\caption{Densité des graphes sous-jacents pour les 5 jours de la semaine.}
 	\label{dsj}
 \end{figure}
 
@@ -803,15 +836,18 @@ Nous avons comparé les différentes densités pour les aspects \texttt{'faceboo
 	\label{comp}
 \end{figure}  
 
-\subsection{Star Wars}
+Nous avons donc montré que les outils créés pour les \stgm{} peuvent servir pour analyser des interactions entre individus de façon plus nuancée. La densité associée aux sous-\stg{} inter-couches et intra-couches sert à caractériser des interactions de différents types entre plusieurs groupes d'individus.
 
-Ce jeu de données recense toutes les scènes, les personnages et leurs scènes d'apparition, les dialogues, les mots-clés, les lieux.
-
-Là encore, on peut représenter le graphe : 
-
-\subsection{Avions ?}
 
 \section{Conclusions et perspectives}
+
+    Nous avons donc présenté notre nouvel objet ainsi que les raisons qui ont mené à sa création. Nous avons créé plusieurs notions pour nous permettre d'extraire des graphes d'intérêt et de prendre des mesures, et nous avons montré un exemple d'utilisation de ces notions grâce à un jeu de données.
+    
+    Pour la suite du stage, nous avons trouvé deux jeux de données très différents pouvant se prêter à notre étude, et permettant des applications diverses.
+    Le premier rencense les personnages, dialogues et lieux des films StarWars, ainsi que leurs interactions dans le temps. Le but sera de "trouver" quels sont les personnages, sujets et lieux "principaux" ou "centraux", en adaptant des méthodes d'intrication \cite{intrication}, existantes pour les graphes multicouches, aux \stgm{}.
+    Le second recense tous les vols sur le sol américain entre 1987 et aujourd'hui, pour différentes compagnies aériennes (représentant les différentes couches). Cette fois-ci, il nous faudra adapter le modèle de \stgm{} simple au même objet mais dans lequel les liens sont "instantanés" et coûtent un temps $\gamma$ à être parcourus. Le but sera ensuite d'étudier la "centralité" des aéroports ou des compagnies aériennes, grâce à des mesures multicouches, des simulations de trajets aléatoires et peut-être une adaptation du PageRanking à notre nouvel objet, en nous inspirant de \cite{centraliteMulti}.
+    
+    Bien que la notion de \stgms{} semble naturellement adaptée en théorie à de nombreux jeux de données, peu d'entre eux sont en fait accessibles à l'heure actuelle. En effet, le formalisme n'existant pas, il n'a probablement pas semblé utile de collecter autant d'informations dans un dataset que le type des relations et surtout les temps d'interaction. Mais avec le nombre croissant de "big datas" à notre disposition, il est très probable que nous ayons accès de plus en plus souvent à ce genre de données.
 
     \nocite{*}
     \bibliographystyle{plain}
