@@ -73,6 +73,12 @@ m.drawMS("exrap.fig")
 
 print(m.computeDensity())
 
-mt4=m.cut(Interval(0,10))
+print("l",m.computeLengthEm())
+o=m.ordreAretes()
+
+for n in ordreAretes():
+    n.printNodeT()
+
+mt4=m.cut(Interval(7,7.1))
 ml=mt4.extractML()
 ml.drawML(names=True)

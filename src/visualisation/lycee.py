@@ -44,11 +44,11 @@ def readNodes():
         #print(tab)
         #print([tab[1][0],tab[1][1],tab[2][0]])
         layer=Layer(lycee,["face_to_face",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        layer3=Layer(lycee,["friendship",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+        #layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+        #layer3=Layer(lycee,["friendship",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
         m.addLayer(layer)
-        m.addLayer(layer2)
-        m.addLayer(layer3)
+        #m.addLayer(layer2)
+        #m.addLayer(layer3)
         liste[tab[0]]=tab[2][0]
         liste2[tab[0]]=tab[1]
     f.close()
@@ -190,20 +190,40 @@ m=MultiStream(interval,lycee,LayerList([]),LinkList([]))
 
 liste,liste2 = readNodes()
 ti,ni=readLinks(liste)
-readLinks2(liste,liste2)
-readLinks3(liste,liste2)
-
-llftf=layerWithCommonPoint(lycee,"relation","face_to_face")
-llfb=layerWithCommonPoint(lycee,"relation","facebook")
-llfs=layerWithCommonPoint(lycee,"relation","friendship")
-
-llf=layerWithCommonPoint(lycee, "sexe", "F")
-llh = layerWithCommonPoint(lycee,"sexe","M")
+#readLinks2(liste,liste2)
+#readLinks3(liste,liste2)
 
 
-m=m.extractLayers(llf+llh)
+
+#
+mp=layerWithCommonPoint(lycee,"annee","MP")
 
 
+#llfb=layerWithCommonPoint(lycee,"relation","facebook")
+#llfs=layerWithCommonPoint(lycee,"relation","friendship")
+#
+#llf=layerWithCommonPoint(lycee, "sexe", "F")
+#llh = layerWithCommonPoint(lycee,"sexe","M")
+#
+#
+m=m.extractLayers(mp)
+m=m.cut(Interval(0,40))
+
+m.printNodes()
+
+aretesordo=m.computeLengthEm(layer=["face_to_face","MP","U"])
+#print(m.ordreAretes(layer=["face_to_face","MP","U"]))
+print("ordre")
+o=m.ordreAretes(layer=['face_to_face','MP','U'])
+
+for i in aretesordo:
+    print(m.giveLinks().giveListOfLinks()[i[1]].printLink())
+
+
+for n in o:
+    n.printNodeT()
+    
+m.drawMS("drawordomp.fig")
 
 #dessin
 #axes = plt.gca()
@@ -502,49 +522,49 @@ plt.plot(t,dmlL,'k',label='total')
 plt.legend()
 plt.show()
 """
-
-print("ftf")
-mftf= m.extractLayers(llftf)
-
-
-tabf=[]
-tabh=[]
-tabhf=[]
-tabtot=[]
-
-tabtot.append(mftf.computeDensity())
-tabf.append(mftf.extractLayers(llf).computeDensity())
-tabh.append(mftf.extractLayers(llh).computeDensity())
-tabhf.append(mftf.interLayers(llf,llh).computeDensityBiparti(llf,llh))
-
-print("llfb")
-mfb=m.extractLayers(llfb)
-
-mfb.printNodes()
-
-tabtot.append(mfb.computeDensity())
-tabf.append(mfb.extractLayers(llf).computeDensity())
-tabh.append(mfb.extractLayers(llh).computeDensity())
-tabhf.append(mfb.interLayers(llf,llh).computeDensityBiparti(llf,llh))
-
-print("friendship")
-mfs = m.extractLayers(llfs)
-
-mfsl=mfs.extractML()
-
-mfsl.drawML()
-
-tabtot.append(mfs.computeDensity())
-tabf.append(mfs.extractLayers(llf).computeDensity())
-tabh.append(mfs.extractLayers(llh).computeDensity())
-tabhf.append(mfs.interLayers(llf,llh).computeDensityBiparti(llf,llh))
-
-t=["face to face","facebook","friendship"]
-
-plt.yscale('log')
-lh=plt.plot(t,tabh,"r--",label='hommes')
-plt.plot(t,tabf,"bs", label='femmes')
-plt.plot(t,tabhf,"g^",label='inter femmes/hommes')
-plt.plot(t,tabtot,'k',label='total')
-plt.legend()
-plt.show()
+#
+#print("ftf")
+#mftf= m.extractLayers(llftf)
+#
+#
+#tabf=[]
+#tabh=[]
+#tabhf=[]
+#tabtot=[]
+#
+#tabtot.append(mftf.computeDensity())
+#tabf.append(mftf.extractLayers(llf).computeDensity())
+#tabh.append(mftf.extractLayers(llh).computeDensity())
+#tabhf.append(mftf.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+#
+#print("llfb")
+#mfb=m.extractLayers(llfb)
+#
+#mfb.printNodes()
+#
+#tabtot.append(mfb.computeDensity())
+#tabf.append(mfb.extractLayers(llf).computeDensity())
+#tabh.append(mfb.extractLayers(llh).computeDensity())
+#tabhf.append(mfb.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+#
+#print("friendship")
+#mfs = m.extractLayers(llfs)
+#
+#mfsl=mfs.extractML()
+#
+#mfsl.drawML()
+#
+#tabtot.append(mfs.computeDensity())
+#tabf.append(mfs.extractLayers(llf).computeDensity())
+#tabh.append(mfs.extractLayers(llh).computeDensity())
+#tabhf.append(mfs.interLayers(llf,llh).computeDensityBiparti(llf,llh))
+#
+#t=["face to face","facebook","friendship"]
+#
+#plt.yscale('log')
+#lh=plt.plot(t,tabh,"r--",label='hommes')
+#plt.plot(t,tabf,"bs", label='femmes')
+#plt.plot(t,tabhf,"g^",label='inter femmes/hommes')
+#plt.plot(t,tabtot,'k',label='total')
+#plt.legend()
+#plt.show()

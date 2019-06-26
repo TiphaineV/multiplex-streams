@@ -35,6 +35,8 @@ class MultiStream :
 
     def interval(self):
         return(self.T)
+    def giveLayers(self):
+        return(self.layers)
     def addLayer(self, layer):
         '''
         function addLayer(layer)
@@ -50,6 +52,8 @@ class MultiStream :
     def addLink(self,link,tolerance=0):
         #to do : check intervals coherence
         self.em.addLink(link,tolerance)
+    def giveLinks(self):
+        return(self.em)
     def printNodes(self):
         print("layers")
         for l in self.layers.giveLayers():
@@ -85,12 +89,14 @@ class MultiStream :
             #f.printLayer() : todo
             lay=self.layers.giveLayer(i).giveLayerLabel()
             newlay=1
+            ordre=self.ordreAretes(lay)
             if colors=="byLayer":
                 col=7
                 while col==7:
                     col=int(uniform(1,30))
                 color[str(lay)]=col
-            for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
+            #for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
+            for j in ordre:
                 times=[]
                 for k in j.giveIntervals():
                     times.append((k.begining(),k.end()))
@@ -117,6 +123,7 @@ class MultiStream :
                     f.addLink( u, v, b, e, layer1=lay1, layer2=lay2,color=c)
             f.addTimeLine()
         f.closeFile()
+    
     
     def extractLayers(self,layerLabels):
         """
@@ -226,8 +233,10 @@ class MultiStream :
         for i in range(self.layers.length()):
             nodel = []
             lay=self.layers.giveLayer(i).giveLayerLabel() 
+            print("layer",lay)
             for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():#on sélectionne les noeuds apparaissant à t
                 nodel.append(Node(j.giveNode()))
+            nu=NodeList(nodel)
             multi.addLayer(LayerNT(self.layerStruct,lay,NodeList(nodel)))
         for j in self.em.giveListOfLinks():
             tab=j.giveLabel()
@@ -318,17 +327,103 @@ class MultiStream :
         return(nnl/self.T.length())
 
 #tentative de représentation optimale du graphe en chantier
+        
+    def computeLengthEm(self,layer=""):
+        """
+            compute the duration of the links, sorts it and return a list of all the durations and the links
+        """
+        liste=[]
+        i=0
+        for e in self.em.giveListOfLinks():
+            if layer=="":
+                liste.append([e.giveLength(),i])
+                i=i+1
+            elif e.giveLayers()[0]==e.giveLayers()[1] and e.giveLayers()[0]==layer:
+                liste.append([e.giveLength(),i])
+                i=i+1
+            else:
+                i=i+1
+        liste.sort()
+        liste.reverse()
+        return(liste)
+    
+    def ordreAretes(self,layer=""):
+        liste=self.computeLengthEm(layer=layer)
+        ordre=[]
+        for i in range(len(liste)):
+            arete=self.em.giveListOfLinks()[liste[i][1]]
+            noeud1,noeud2=arete.giveNodes()[0],arete.giveNodes()[1]
+            i1=-1
+            i2=-1
+            pi=0
+            for p in ordre:
+                for n in p:
+                    if n.giveNode()==noeud2.giveNode():
+                        i2=pi
+                    if n.giveNode()==noeud1.giveNode():
+                        i1=pi
+                pi=pi+1
+            if i1==-1 and i2==-1:
+                print("a")
+                ordre.append([noeud1,noeud2])
+            elif i1==-1:
+                print("b")
+                ordre[i2]=ajouter(ordre[i2],noeud2,noeud1)
+            elif i2==-1:
+                print("c")
+                ordre[i1]=ajouter(ordre[i1],noeud1,noeud2)
+            elif i1!=i2 :
+                print("d")
+                nouv=joindre(ordre[i1],noeud1,ordre[i2],noeud2)
+                elem1=ordre[i1]
+                elem2=ordre[i2]
+                ordre.remove(elem1)
+                ordre.remove(elem2)
+                ordre.append(nouv)
+            else:
+                print("e")
+        ordref=[]
+        for o in ordre :
+            ordref=ordref+o
+        return(ordref)
 
-    def computeStrength(self):
-        a=[]
-        for i in self.layers.giveLayers() :
-            tab=i.computeStrengthBetweenNodes(self.em)
-            a.append(tab)
-        return(a)
 
+#    def computeStrength(self):
+#        a=[]
+#        for i in self.layers.giveLayers() :
+#            tab=i.computeStrengthBetweenNodes(self.em)
+#            a.append(tab)
+#        return(a)
 
+def indice(liste,elem1):
+    i=0
+    ind=0
+    for n in liste:
+        if n.giveNode()==elem1.giveNode():
+            ind=i
+        i=i+1
+    return(ind)
+        
+def ajouter(liste,elem1,elem2):
+    """
+    element1 is on liste, elem2 is to add to list, but at the to or at the bottom ?
+    """
+    index1=indice(liste,elem1)
+    if index1>=len(liste)/2:
+        liste.append(elem2)
+    else:
+        liste.insert(0,elem2)
+    return(liste)
 
-
+def joindre(liste1,elem1,liste2,elem2):
+    index1=indice(liste1,elem1)
+    index2=indice(liste2,elem2)
+    if index1<len(liste1)/2:
+        liste1.reverse()
+    if index2>len(liste2)/2:
+        liste2.reverse()
+    return(liste1+liste2)
+    
 
 def minimizeStrength(f):
     n=len(f)

@@ -191,6 +191,7 @@ Single\n\
     def addContinuousLink(self, u, v,layer1,layer2, b, e, curving=0.0, color=0, height=0.5, width=3):
         if color in self.colors:
             color = self.colors[color]
+        #print("dictionnaire",self.nodes)
         if self.nodes[u+layer1] > self.nodes[v+layer2]:
             (u,v) = (v,u)
             (layer1,layer2)=(layer2,layer1)

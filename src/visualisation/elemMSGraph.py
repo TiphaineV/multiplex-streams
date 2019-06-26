@@ -247,6 +247,8 @@ class Link:
         
     def addInterval(self,i,tolerance=0):
         self.intervals.addInterval(i,tolerance)
+    def giveLength(self):
+        return(self.intervals.duration())
     def giveNodes(self):
         return([self.node1,self.node2])
     def giveLayers(self):

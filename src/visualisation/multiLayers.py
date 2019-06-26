@@ -4,6 +4,7 @@ import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
+import numpy as np
 
 #matplotlib.use('AGG')
 
@@ -29,7 +30,13 @@ class NodeList :
     The listOfNodeT contains each layer once, and inside each layer, we find each node once maximum.
     """
     def __init__(self,liste, key=lambda node : node.giveNode()):
-        self.listOfNode = SortedCollection(iterable=liste,key=key)
+        a=[]
+        keya=[]
+        for i in liste :
+            if not(key(i) in keya):
+                a.append(i)
+                keya.append(key(i))
+        self.listOfNode = SortedCollection(iterable=a,key=key)
 
     def addNode(self,n):
         if self.listOfNode.__contains__(n)==False : 
@@ -200,6 +207,8 @@ class LinkNTList:
     def printListLabels(self):
         for l in self.listOfLinks:
             print(l.giveLabel())
+    def length(self):
+        return(self.listOfLinks.__len__())
 
             
 
@@ -279,7 +288,7 @@ class MultiLayer :
             npt=l.giveNodes().length()
             pl=[(np.cos(np.pi *2* k /npt),np.sin(np.pi *2* k /npt)) for k in range(npt)]
             points.append([(pointsLay[n][0]+(1/nlayer)*pl[i][0],pointsLay[n][1]+(1/nlayer)*pl[i][1]) for i in range(npt)])
-            plt.text((1.2+1/nlayer)*pointsLay[n][0],(1.2+1/nlayer)*pointsLay[n][1],l.giveLayerLabel(),fontsize=30)
+            plt.text((1.2+1/nlayer)*pointsLay[n][0],(1.2+1/nlayer)*pointsLay[n][1],l.giveLayerLabel(),fontsize=50)
             n=n+1
             if names==True:
                 textel=[]
@@ -291,7 +300,7 @@ class MultiLayer :
             for j in range(len(points[l])):
                 plt.plot(points[l][j][0],points[l][j][1],'ko')
                 if names==True:
-                    plt.text(points[l][j][0]+0.01,points[l][j][1]+0.01,texte[l][j],fontsize=30)
+                    plt.text(points[l][j][0]+0.01,points[l][j][1]+0.01,texte[l][j],fontsize=50)
         #print(points)
         #self.em.printLinkList()
         for e in self.em.giveListOfLinks():
@@ -324,6 +333,35 @@ class MultiLayer :
             elif (i.giveLayerLabel() in layerlabels2):
                 nnodes2=nnodes2+i.giveNodes().giveListOfNodes().__len__()
         return(ne/(nnodes1*nnodes2))
-            
-            
-            
+
+    def computeIntrication(self):
+        n=self.layers.length()
+        mat=np.zeros((n,n))
+        i1=0
+        j1=0
+        ne=self.em.length()
+        N=0
+        for i in self.layers.giveLayerList():
+            j1=0
+            for j in self.layers.giveLayerList():
+                if i1==j1:
+                    mat[i1][i1]=i.giveNodes().length()
+                    N=N+mat[i1][i1]
+                else:
+                    #rechercher combien on a dans l'intersection
+                    s=0
+                    for nodesi in i.giveNodes().giveListOfNodes():
+                        print("nodei",nodesi)
+                        if nodesi.contains_key(nodesi.giveNode()):
+                            s=s+1
+                    mat[i1][j1]=s
+                j1=j1+1
+            i1=i1+1   
+        matc=np.zeros((n,n))
+        for i in range(n):
+            for j in range(n):
+                if i==j:
+                    matc[i][i]=mat[i][i]/N
+                else :
+                    matc[i][j]=mat[i][j]/mat[j][j]
+        return(matc)
