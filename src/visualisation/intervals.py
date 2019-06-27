@@ -144,7 +144,7 @@ class IntervalList :
                 i=i+1
 
 
-    def addInterval(self,interval,tolerance=0):
+    def addInterval(self,interval,tolerance=0.1):
         #b=interval.begining()
         #self.printIntervals()
         k=self.listOfIntervals.index_key(interval)

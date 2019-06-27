@@ -33,7 +33,8 @@ lycee = LayerStruct([typeOfRel,classe,sexe])
 
 
 
-def readNodes():
+def readNodes(typen=["face_to_face"]):
+    
     f= open("lycee/metadata_2013.txt","r")
     n=0
     liste={}
@@ -41,14 +42,9 @@ def readNodes():
     for line in f :
         n=n+1
         tab=line.split("\t")
-        #print(tab)
-        #print([tab[1][0],tab[1][1],tab[2][0]])
-        layer=Layer(lycee,["face_to_face",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        #layer2=Layer(lycee,["facebook",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        #layer3=Layer(lycee,["friendship",tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
-        m.addLayer(layer)
-        #m.addLayer(layer2)
-        #m.addLayer(layer3)
+        for ty in typen :
+            layer=Layer(lycee,[ty,tab[1],tab[2][0]],interval,NodeTList([NodeT(tab[0],IntervalList([interval]))]))
+            m.addLayer(layer)
         liste[tab[0]]=tab[2][0]
         liste2[tab[0]]=tab[1]
     f.close()
@@ -145,11 +141,9 @@ def layerWithCommonPoint(layerStruct,aspect,elemLayer):
     ind=0
     for asp in layerStruct.giveAspects() :
         if asp.nameAspect()==aspect :
-            print("name",asp.nameAspect(),i)
             i=ind
         else:
             ind=ind+1
-    print("i",i)
     j=0
     for asp in layerStruct.giveAspects() :
         print(len(liste))
@@ -206,8 +200,8 @@ mp=layerWithCommonPoint(lycee,"annee","MP")
 #llh = layerWithCommonPoint(lycee,"sexe","M")
 #
 #
-m=m.extractLayers(mp)
-m=m.cut(Interval(0,40))
+#m=m.extractLayers(mp)
+#m=m.cut(Interval(0,40))
 
 m.printNodes()
 

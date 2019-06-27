@@ -66,7 +66,7 @@ class MultiStream :
         print("EM")
         for e in self.em.giveListOfLinks():
             e.printLink()
-    def drawMS(self,nameFile2="default.fig",colors="byLayer",neglect=-1):
+    def drawMS(self,nameFile2="default.fig",colors="byLayer",neglect=-1,ordonne=False):
         """
             function drawMS :
             =====
@@ -76,11 +76,12 @@ class MultiStream :
             :type nameFile2: string
             :type colors: string
             :type neglect: int
+            :type ordonne: boolean
             
             draw the mulitlayer into a .fig file.  (name of the file nameFile2)
             If colors = byLayers, the link are colored the same color in each layer, black interlayer.
             If neglect >0, we don't draw the link that last less than neglect.
-        
+            If ordonne=true, optimizes the order of the nodes inside each layer
         """
         f=Drawing(alpha=self.T.begining(),omega=self.T.end(),nameFile=nameFile2)
         if colors=="byLayer":
@@ -89,19 +90,27 @@ class MultiStream :
             #f.printLayer() : todo
             lay=self.layers.giveLayer(i).giveLayerLabel()
             newlay=1
-            ordre=self.ordreAretes(lay)
+            if ordonne==True :
+                ordre=self.ordreAretes(lay)
             if colors=="byLayer":
                 col=7
                 while col==7:
                     col=int(uniform(1,30))
                 color[str(lay)]=col
-            #for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
-            for j in ordre:
-                times=[]
-                for k in j.giveIntervals():
-                    times.append((k.begining(),k.end()))
-                f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
-                newlay=0
+            if ordonne==True :
+                for j in ordre:
+                    times=[]
+                    for k in j.giveIntervals():
+                        times.append((k.begining(),k.end()))
+                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
+                    newlay=0
+            else :
+                for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
+                    times=[]
+                    for k in j.giveIntervals():
+                        times.append((k.begining(),k.end()))
+                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
+                    newlay=0
         for j in self.em.giveListOfLinks():
             for inte in j.giveIntervals():
                 b=inte.begining()
@@ -136,7 +145,6 @@ class MultiStream :
         
         creates a MS with nodes and links in the list of layerLabels.
         """
-        print("extract")
         multi=MultiStream(self.T,self.layerStruct,LayerList([]),LinkList([]))
         for layerLabel in layerLabels:
             layer=self.layers.giveLayerFromLabel(layerLabel)
@@ -148,7 +156,6 @@ class MultiStream :
             if lay1 in layerLabels:
                 if lay2 in layerLabels:
                     multi.addLink(e)
-        print("end")
         return(multi)
     
     def interLayers(self,layerLabels1,layerLabels2):
