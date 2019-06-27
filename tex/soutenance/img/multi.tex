@@ -1,0 +1,131 @@
+
+%0.58
+\begin{tikzpicture}[scale=0.30,every node/.style={minimum size=1cm},on grid]
+
+	\node [mybox, scale=1.0] at (10.5, 2) (box){%
+		\begin{minipage}{0.6\textwidth}
+			
+    	\end{minipage}
+	};
+	
+	
+	% etage 2
+	\begin{scope}[
+		yshift=-210,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	] 
+		%\draw[black, dashed, thin] (0,0) rectangle (7,7); 
+		\fill[olive,fill opacity=.75] (0,0) rectangle (7,7);
+		
+		\fill[orange,fill opacity=.75] (10,0) rectangle (17,7);
+		%\draw[black, dashed, thin] (10,0) rectangle (17,7); 
+		
+		\draw[fill=echoreg]  %foret, collabo
+			(5,2) node(111){} circle (.1) %A
+			(2,2) circle (.1) %B
+			(2,5) circle (.1); %C
+			%(5,5) circle (.1); %D
+		
+		\draw[fill=echoreg]  %plaine, collabo
+			(15,2) node(111){} circle (.1) %A
+			%(12,2) circle (.1) %B
+			(12,5) circle (.1) %C
+			(15,5) circle (.1); %D
+		 
+		\draw[ thin, color=echodrk]%foret collab
+			(2,4.9) to (2,2.1); %C->B
+		\draw[ thin, color=echodrk]
+			(2.1,2) to (4.9,2);%B->A
+		
+		\draw[thin, color=echodrk]%plaine collab
+			(12,5) to (15,2);%C->A
+		\draw[thin, color=echodrk]
+			(12,5) to (15,5);
+			
+		\fill[black]
+			(0.5,6.5) node[right, scale=.7] {Forêt, Collaboration}	
+			(5.1,1.9) node[right,scale=.7]{\bf A}
+			(1.9,1.9) node[left,scale=.7]{\bf B}
+			(2,5.2) node[left,scale=.7]{\bf C};
+			%(5.2,5.1) node[right,scale=.7]{\bf D}; 
+			
+		\fill[black]
+			(10.5,6.5) node[right, scale=.7] {Plaine, Collaboration}	
+			(15.1,1.9) node[right,scale=.7]{\bf A}
+			%(11.9,1.9) node[left,scale=.7]{\bf B}
+			(12,5.2) node[left,scale=.7]{\bf C}
+			(15.2,5.1) node[right,scale=.7]{\bf D}; 
+		
+		
+	\end{scope}
+	
+	% Interlayer crossconnections
+	% vertical
+	\draw[thick,  dashed, decorate] (3.8, 4) to (3.8, -3.5);%A
+	\draw[thick, dashed, decorate] (.8,2.4) to (.8,-5);%B
+	\draw[thick,  dashed, decorate] (-1, 4.5) to (-1, -2.8);%C
+	
+1	\draw[thick,  dashed, decorate] (13.8,9) to (13.8, 1.5);%A
+	\draw[thick, dashed, decorate] (12,11) to (12,3.6);%D
+	\draw[thick,  dashed, decorate] (9, 9.5) to (9, 2.1);%c
+	
+	%horizontal
+	
+	
+	\draw[thick, dashed, decorate] (-1,-2.8) to[bend left] (9,2.1);
+	\draw[thick, dashed, decorate] (3.8,-3.5) to[bend left] (13.8,1.5);
+	
+	
+	% etage 1
+	\begin{scope}[
+		yshift=0,
+		every node/.append style={yslant=\yslant,xslant=\xslant},
+		yslant=\yslant,xslant=\xslant
+	]
+		\fill[olive,fill opacity=.85] (0,0) rectangle (7,7); 
+		%\draw[black, dashed, thin] (0,0) rectangle (7,7); 
+		
+		\fill[orange,fill opacity=.85] (10,0) rectangle (17,7);
+		%\draw[black, dashed, thin] (10,0) rectangle (17,7); 
+		
+		\draw [fill=red]
+			(5,2) node(111){} circle (.1)%A %foret, combat
+			(2,2) circle (.1)%B
+			(2,5) circle (.1)%C
+			(5,5) circle (.1);%D
+
+		\draw[fill=red]  
+			(15,2) node(111){} circle (.1) %A % plaine combat
+			%(12,2) circle (.1) %B
+			(12,5) circle (.1) %C
+			(15,5) circle (.1); %D
+		
+		\draw[thin, color=red]%foret combat
+			(2,2.1) to (2,4.9);%B->C
+			
+		\draw[thin, color=red]%plaine combat
+			(12,5) to (15,5);%C->D
+		
+		
+		\fill[black]
+			(0.5,6.5) node[right, scale=.7] {Forêt, Combat}
+			(5.1,1.9) node[right,scale=.7]{\bf A}
+			(1.9,1.9) node[left,scale=.7]{\bf B}
+			(1.9,5) node[left,scale=.7]{\bf C}
+			(5.2,5.1) node[right,scale=.7]{\bf D}; 
+			
+		\fill[black]
+			(10.5,6.5) node[right, scale=.7] {Plaine, Combat}
+			(15.1,1.9) node[right,scale=.7]{\bf A}
+			%(11.9,1.9) node[left,scale=.7]{\bf B}
+			(12,5.2) node[left,scale=.7]{\bf C}
+			(15.2,5.1) node[right,scale=.7]{\bf D};
+			
+	\end{scope} 
+	
+	%interlayer
+	\draw[thick, dashed, decorate] (-1,4.5) to[bend left] (9,9.5);
+	\draw[thick, dashed, decorate] (3.8,4) to[bend left] (13.8,9);
+	\draw[thick, dashed, decorate] (2.1,6.1) to[bend left] (12,11);
+\end{tikzpicture}
