@@ -36,7 +36,7 @@ tend=10
 scale = 1
 interval = Interval(0,(tend-t0)/scale)
 
-mil = Aspect("milieu",["plaine","foret"])
+mil = Aspect("milieu",["plaine","montagne"])
 
 
 rel = Aspect("type_de_relation",["Collaboration","Combat"])
@@ -61,10 +61,10 @@ nC2 = NodeT("C",IntervalList([Interval(3,8)]),nodeLabel="C")
 nD2 = NodeT("D",IntervalList([Interval(0,0)]),nodeLabel="D")
 
 nl2=NodeTList([nA2,nB2,nC2,nD2])
-layer2=Layer(struct,["foret","Collaboration"],Interval(0,10),nl2)
+layer2=Layer(struct,["montagne","Collaboration"],Interval(0,10),nl2)
 
-link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nA2,["foret","Collaboration"],nB2,["foret","Collaboration"])
-link4= Link(IntervalList([Interval(5,8)]),nB2,["foret","Collaboration"],nC2,["foret","Collaboration"])
+link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nA2,["montagne","Collaboration"],nB2,["montagne","Collaboration"])
+link4= Link(IntervalList([Interval(5,8)]),nB2,["montagne","Collaboration"],nC2,["montagne","Collaboration"])
 
 
 m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4]))
@@ -76,7 +76,7 @@ print(m.computeDensity())
 print("l",m.computeLengthEm())
 o=m.ordreAretes()
 
-for n in ordreAretes():
+for n in o:
     n.printNodeT()
 
 mt4=m.cut(Interval(7,7.1))

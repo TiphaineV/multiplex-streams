@@ -168,7 +168,7 @@
 
 \title{\Stgms{}} % The short title appears at the bottom of every slide, the full title is only on the title page
 \subtitle{Soutenance de stage de recherche}
-\author{Pimprenelle Parmentier (X16) \\ Stage de recherche\\ Riken AIP} % Your name
+\author{Pimprenelle Parmentier (X16) \\ Stage de recherche\\ Riken AIP, Tokyo} % Your name
 
 %\logo{} 
 \date{} 
@@ -230,16 +230,16 @@ $\Rightarrow$ {\large Comment prendre en compte...}
 \end{frame}
 
 \section{Présentation de l'objet mathématique}
-\subsection{Méthodologie}
-\begin{frame}{Méthodologie}
+\subsection{Nos critères}
+\begin{frame}{Nos critères}
 	\begin{itemize}
 		\item utile : \begin{itemize}
 							\item applicable
 							\item resultats exploitables
 						\end{itemize}		 \pause
-		\item efficace \begin{itemize}
+		\item efficace : \begin{itemize}
 							\item manipulable \og facilement \fg{} : unifier les notations
-							\item complexité optimale
+							\item adapté aux grandes données
 						\end{itemize}\pause
 		\item cohérent \pause
 		\item généralisation de l'existant : 
@@ -251,14 +251,14 @@ $\Rightarrow$ {\large Comment prendre en compte...}
 \end{frame}
 
 \subsection{Graphes multicouches}
-\begin{frame}{Graphes multicouches : structures complexes}
+\begin{frame}{Graphes multicouches : structures complexes\footnote{Kivela M., Arenas A., Barthelemy M., Gleeson J.P., Moreno Y., and Porter M.A.Multilayer networks.\textit{Journal of Complex Networks}, 2014}}
 
 \begin{minipage}{0.4\textwidth}
 	$$\mathbf{M=(V_M,E_M,V,L)}$$
 \begin{footnotesize}
 $V = \{A,B,C,D\}$\\
 $L = \{$milieu, type de relation$\}$\\
-$V_M = \{(A,[$forêt,combat$]), \dots \}$\\
+$V_M = \{(A,[$Montagne,combat$]), \dots \}$\\
 $E_M = \{$Arêtes entre les éléments de $V_M \}$
 \end{footnotesize}
 \end{minipage}
@@ -281,7 +281,7 @@ $$
 
 \subsection{Stream graphs}
 
-\begin{frame}{\Stgs{} : modéliser les interactions dépendant du temps}
+\begin{frame}{\Stgs{}\footnote{Latapy M., Viard T., and Magnien C. Stream graphs and link streams for the modeling of interactions over time. 2017.} : modéliser les interactions dépendant du temps}
 
 
 \medskip
@@ -293,8 +293,8 @@ $$
 \begin{footnotesize}
 $T=[0,10]$\\
 $V=\{A,B,C\}$\\
-$W = \{(t,u) | u \text{ existe à t } t\}$\\
-$E = \{(t,(u,v)) | (u,v) \text{ existe à t } t\}$
+$W = \{(t,u) | u \text{ existe à } t\}$\\
+$E = \{(t,(u,v)) | (u,v) \text{ existe à } t\}$
 \end{footnotesize}
 \end{minipage}
 \begin{minipage}[r]{0.55\textwidth}
@@ -324,7 +324,7 @@ $\rightarrow \textbf{Modélisation d'interactions au cours du temps}$
 \subsection{\Stgms{}}
 \begin{frame}{Le \stgm{}}
 \[
-G=(T,T_M,V,W_M,E_M,\cal{L})
+S_M=(T,T_M,V,W_M,E_M,\cal{L})
 \]
 
 \begin{figure}
@@ -334,7 +334,7 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 \end{frame}
 \begin{frame}{Le \stgm{}}
 	\[
-		G=(T,T_M,V,W_M,E_M,\cal{L})
+		S_M=(T,T_M,V,W_M,E_M,\cal{L})
 	\]
 	\begin{minipage}{0.59\linewidth}
 		\begin{figure}
@@ -360,19 +360,23 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 
 \section{Implémentation: bibliothèque et exemples d'utilisation}
 \subsection{Une bibliothèque Python pour les \stgms{}}
-\begin{frame}{Une bibliothèque Python pour les \stgms{}}
+
+
+\begin{frame}{Une bibliothèque Python\footnote{\url{https://github.com/TiphaineV/multiplex-streams}} pour les \stgms{}}
     \begin{figure}
         \centering
-        \includegraphics[width=0.7\textwidth]{img/codeStructure.JPG}
+        \includegraphics[width=0.6\textwidth]{img/codeStructure.JPG}
         \label{fig:my_label}
     \end{figure}
 \end{frame}
+
 \begin{frame}{Jeu de données: interactions entre élèves d'un même lycée}
+    $$S_M=(T,T_M,V,W_M,E_M,{\cal L})$$
     \begin{itemize}
-        \item durée : 5 jours
+        \item durée : $T$ = 5 jours
         \item fréquence : 20 secondes
-        \item nombre de d'élèves (noeuds) : 329
-        \item aspects: \begin{itemize}
+        \item nombre de d'élèves (noeuds) $V=$ : 329
+        \item aspects: ${\cal L} =$ \begin{itemize}
             \item classes (9)
             \item sexe (M/F)
             \item types de relations : face à face, facebook, amitié
@@ -406,21 +410,20 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{img/tout.png}
+    \includegraphics[width=0.5\textwidth]{img/induitzoom.JPG}
     \caption{Le graphe induit des relations de face à face et facebook.}
     \label{fig:my_label}
 \end{figure}
     Le {\em graphe multicouches induit sur l'intervalle $I$} $M_I(S_M) = (V_{M,I}, E_{M,I}, V,L)$ de $S_M$ est le graphe multicouche qui rassemble toutes les couches, n\oe{}uds couches et n\oe{}uds qui apparaissent durant $I$.
-    \begin{align*}
-    	V_{M,I} = \bigcup_{t\in I} V_{M,t}\\
-    	E_{M,I} = \bigcup_{t\in I} E_{M,t}\\
-    \end{align*}
 \end{frame}
 
 \subsection{Densités}
 
 \begin{frame}{Calcul des densités}
-    Densité: probabilité, prenant deux sommets ``joignables", qu'elles soient joins par une arête.
+    Densité: probabilité, prenant deux sommets ``joignables", qu'ils soient joints par une arête.
+    
+    \vspace{1cm}
+    
     La {\em densité du \stgm{}} s'écrit: 
 	\[
 		\delta_M (M) 
@@ -428,12 +431,26 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
 		= \frac{\sum_{(u,\alpha)(v,\beta) \in E_M}|T_{(u,\alpha)(v,\beta)}|}{|C|}
 	\]	
 	avec $C=\{$Ensemble des relations possibles$\}$
-    
-    Ici, $$C=\{(t,(eleve1,[classe1,relation1,sexe1]),$$ $$(eleve2,[classe2,relation2,sexe2])) \text{ avec } relation2=relation1\}$$
+
 \end{frame}
 
-\begin{frame}{Densité d'intérêt dans notre jeu de données}
+\begin{frame}{Densités d'intérêt dans notre jeu de données}
+
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{img/sousmulticlasseftf.png}
+        \caption{Graphe induit des relations de face à face entre élèves des classes \texttt{2BIO1} et \texttt{MP} }
+        \label{fig:my_label}
+    \end{figure}
+    \pause
     Question: la séparation hommes/femmes est-elle \og visible \fg{} dans les relations ?
+    
+    
+\end{frame}
+
+\begin{frame}{Densités d'intérêt dans notre jeu de données}
+    Question: la séparation hommes/femmes est-elle \og visible \fg{} dans les relations ?
+    \pause
     
     Calcul des densités:
     \begin{itemize}
@@ -442,11 +459,11 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
         \item densité totale
     \end{itemize}
     $$\delta = \frac{\sum_{u,v \in V\otimes V} |T_{uv}|}{\sum_{u,v \in V \otimes V}|T_u\cap T_v|} = \frac{2|E|}{|T|(|V|(|V|-1))}$$
+    \pause
     \begin{itemize}
         \item densité inter hommes/femmes: graphe biparti
     \end{itemize}
     $$\delta_{biparti}=\frac{\sum_{u,v \in V_f \times V_h} |T_{uv}|}{\sum_{u,v \in V_f \times V_h}|T_u\cap T_v|}=\frac{|E|}{|T||V_f||V_h|}$$
-    
 \end{frame}
 
 \begin{frame}{Comparaison des densités}
@@ -496,7 +513,12 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
     
     \textbf{Algorithme:} \begin{itemize}
         \item trier les liens par ordre décroissants de durées
-        \item ajouter les n\oe{}uds à une liste en suivant l'ordre des liens
+        \item ajouter les n\oe{}uds à des liste en suivant l'ordre des liens: 
+        \begin{itemize}
+            \item si les deux n\oe{}uds du lien sont dans la même liste, on ne fait rien
+            \item si un des n\oe{}uds est dans une liste et pas l'autre, on ajoute ce n\oe{}ud en haut ou en bas de la liste pour minimiser la distance entre les deux n\oe{}uds.
+            \item si les deux n\oe{}uds sont dans deux listes différentes, on retourne les listes de façon à ce qu'on lorsqu'on les assemble, les deux n\oe{}uds soient les plus proches possibles.
+        \end{itemize}
     \end{itemize}
     
     \textbf{A faire:} prouver l'algorithme.
@@ -548,19 +570,36 @@ G=(T,T_M,V,W_M,E_M,\cal{L})
     \end{itemize}
     Problématiques:
     \begin{itemize}
-        \item calculs d'itinéraires
-        \item calculs de n\oe{}uds influents
+        \item centralité: quels sont les aéroports susceptibles d'être congestionnés ? Quels sont les aéroports permettant de passer d'une compagnie à l'autre ? Quelles sont les compagnies les plus centrales ?
+        \item calculs d'itinéraires: minimiser le temps de trajet, l'heure d'arrivée, le nombre de changements, de changements de compagnie...
     \end{itemize}
 \end{frame}
 
 \begin{frame}{Merci !}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.5\textwidth]{img/lyceeentier.JPG}
+    \end{figure}
 	Résumé: 
 	\begin{itemize}
 	    \item les \stgms{}, un outil pour modéliser des graphes aux structures complexes, avec une composante temporelle
-	    \item extraction de graphes multicouches, de stream graphs et de graphes à partir des \stgms{}
-	    \item mesure de la densité
-	    \item Pour la suite : ordonnement, intrication et diffusion
+	    \item exemple d'utilisation sur les classes prépa
+	    \item Pour la suite : 
+	    \begin{itemize}
+	        \item ordonnement, intrication et diffusion
+	        \item d'autres jeux de données
+	    \end{itemize}
 	\end{itemize}
 \end{frame}
 
+
+\begin{frame}{Calculs des probabilités sur les densités}
+    \begin{align*}
+        \delta_{tot}&=&P((t,u,v) \in E_M)\\
+        &= &P((t,u,v) \in E_M | (u,v) \in H\otimes H)P((u,v)\in H\otimes H) \\
+        &&+ P((t,u,v) \in E_M | (u,v) \in F\otimes F)P((u,v)\in F\otimes F) \\
+        &&+2P((t,u,v) \in E_M | (u,v) \in H\times F)P((u,v)\in H\otimes F)\\
+        &=& \delta_h \frac{|T||H|(|H|-1)}{|T||V|(|V|-1)} + \delta_f \frac{|T||F|(|F|-1)}{|T||V|(|V|-1)} + 2 \delta_{hf} \frac{|T||H||F|}{|V||V-1|} 
+    \end{align*}  
+\end{frame}
 \end{document}

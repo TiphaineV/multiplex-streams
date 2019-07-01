@@ -1,6 +1,6 @@
 \babel@toc {french}{}
 \beamer@sectionintoc {2}{Pr\IeC {\'e}sentation de l'objet math\IeC {\'e}matique}{7}{0}{1}
-\beamer@subsectionintoc {2}{1}{M\IeC {\'e}thodologie}{7}{0}{1}
+\beamer@subsectionintoc {2}{1}{Nos crit\IeC {\`e}res}{7}{0}{1}
 \beamer@subsectionintoc {2}{2}{Graphes multicouches}{11}{0}{1}
 \beamer@subsectionintoc {2}{3}{Stream graphs}{12}{0}{1}
 \beamer@subsectionintoc {2}{4}{Stream graphs multicouches{}}{13}{0}{1}
@@ -9,7 +9,7 @@
 \beamer@subsectionintoc {3}{2}{Visualisation}{22}{0}{2}
 \beamer@subsectionintoc {3}{3}{Extractions}{24}{0}{2}
 \beamer@subsectionintoc {3}{4}{Densit\IeC {\'e}s}{25}{0}{2}
-\beamer@sectionintoc {4}{Travaux en cours et projets futurs}{30}{0}{3}
-\beamer@subsectionintoc {4}{1}{Ordre des n\oe {}uds}{30}{0}{3}
-\beamer@subsectionintoc {4}{2}{Star Wars et l'intrication }{33}{0}{3}
-\beamer@subsectionintoc {4}{3}{Avions aux US et calculs de diffusion}{34}{0}{3}
+\beamer@sectionintoc {4}{Travaux en cours et projets futurs}{34}{0}{3}
+\beamer@subsectionintoc {4}{1}{Ordre des n\oe {}uds}{34}{0}{3}
+\beamer@subsectionintoc {4}{2}{Star Wars et l'intrication }{37}{0}{3}
+\beamer@subsectionintoc {4}{3}{Avions aux US et calculs de diffusion}{38}{0}{3}

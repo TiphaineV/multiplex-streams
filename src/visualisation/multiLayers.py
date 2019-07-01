@@ -313,7 +313,7 @@ class MultiLayer :
             plt.plot([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]],'r') 
             #plt.plot([[0,1],[2,3]],'r')
         if nameFile != "":
-            plt.savefig(nameFile)
+            plt.savefig(nameFile+".pdf")
         plt.show()
     
     def computeDensityMulti(self):

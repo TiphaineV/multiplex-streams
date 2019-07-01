@@ -117,16 +117,38 @@ def readLinks(typeN1,typeN2,sc):
             m.addLink(link,tolerance=0.2)
             #link.printLink()
 
-def readLinksInLayer(typeN1,typeN2,sc,layers):
-    fl = open("starWars/SW1/EDGES/"+typeN1+"_"+typeN2+"_edges.csv","r")
+def readLinksInLayer(interval,kw,sc):
+    fl = open("starWars/SW1/EDGES/character_keyword_edges.csv","r")
     n=0
     dico=dict()
+    asp=Aspect("keyword",kw)
+    struct=LayerStruct([asp])
+    m=MultiStream(interval,struct,LayerList([]),LinkList([]))
     for line in fl:
         n=n+1
         if n>1:
             line=line.replace("\"",'')
             tab=line.split(",")
-            dico[]
+            intNode=sc[sc.index_label(int(tab[2]))].giveInterval()
+            node = NodeT((tab[0]),IntervalList([intNode]))
+            layer=Layer(struct,[tab[1]],interval,NodeTList([node]))
+            print("readnode")
+            node.printNodeT()
+            m.addLayer(layer)
+    for l in m.giveLayers().giveLayers():
+        for n in l.giveNodesT().giveListOfNodes():
+            for k in l.giveNodesT().giveListOfNodes():
+                if n.giveNode()<k.giveNode():
+                    interval1=n.giveIntervals2()
+                    interval2=k.giveIntervals2()
+                    interval3= interval1.intersection(interval2)
+                    if interval3.duration() != 0:
+                        link=Link(interval3,n,l.giveLayerLabel(),k,l.giveLayerLabel())
+                        m.addLink(link,tolerance=0.2)
+    return(m)
+                
+
+
 
 def readLinks2(liste,liste2):
     fl = open("lycee/Facebook-known-pairs_data_2013.csv")
@@ -155,19 +177,30 @@ def readLinks2(liste,liste2):
 sc=makeScenes()
 kw=readKW() 
 
-
-print("kw",kw)
 KW=Aspect("keyword",kw)
 struct=LayerStruct([kw])
 m=MultiStream(interval,struct,LayerList([]),LinkList([]))
 
-readNodes("character")
+#readNodes("character")
 
-readLinks("character","keyword",sc)
+#readLinks("character","keyword",sc)
 
 #m.drawMS("charakw.fig")
 
 print("sc len",sc.__len__())
+
+m1=readLinksInLayer(interval,kw,sc)
+#m1.printMS()
+
+
+print("************************************************")
+m1.printMS()
+m2=m1.extractML()
+m2.drawML()
+print(m2.computeIntrication())
+#m2.drawML()
+#m1.drawMS("multiplexSW.fig")
+
 #sc.printsort()
 #readNodes("character")
 #readNodes("face")
