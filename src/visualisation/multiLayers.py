@@ -193,11 +193,13 @@ class LinkNTList:
     """
     
     def __init__(self,liste,key=lambda link: link.giveLabel()):
-        self.listOfLinks = SortedCollection(iterable=liste,key=key)
-    
-    def addLink(self,l,tolerance=0):
+        self.listOfLinks = SortedCollection(iterable=liste,key=key)    
+    def addLink(self,l):
         if self.listOfLinks.contains_key(l)==False:
             self.listOfLinks.insert(l)
+    def addLinks(self,links):
+        for l in links.giveListOfLinks():
+            self.addLink(l)
     def giveListOfLinks(self):
         return(self.listOfLinks)
     def printLinkList(self):
@@ -237,9 +239,10 @@ class MultiLayer :
         - add node in a layer
         '''
         self.layers.addLayer(layer)
-    def addLink(self,link,tolerance=0):
-        #to do : check intervals coherence
-        self.em.addLink(link,tolerance)
+    def addLink(self,link):
+        self.em.addLink(link)
+    def addLinks(self,links):
+        self.em.addLinks(links)
     def printML(self):
         print("layers and nodes")
         self.layers.printLayerList()
@@ -309,7 +312,6 @@ class MultiLayer :
             indexNode1 = self.layers.giveLayer(indexLayer1).giveIndex(e.giveNodes()[0].giveNode())
             indexNode2 = self.layers.giveLayer(indexLayer2).giveIndex(e.giveNodes()[1].giveNode())
             #e.printLink()
-            #print([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]])
             plt.plot([points[indexLayer1][indexNode1][0],points[indexLayer2][indexNode2][0]],[points[indexLayer1][indexNode1][1],points[indexLayer2][indexNode2][1]],'r') 
             #plt.plot([[0,1],[2,3]],'r')
         if nameFile != "":
@@ -334,29 +336,34 @@ class MultiLayer :
                 nnodes2=nnodes2+i.giveNodes().giveListOfNodes().__len__()
         return(ne/(nnodes1*nnodes2))
 
-    def computeIntrication(self):
-        n=self.layers.length()
+    def computeIntricationMatrixBurt(self):
+        n=self.layers.length()    
         mat=np.zeros((n,n))
         i1=0
         j1=0
         ne=self.em.length()
         N=0
-        for i in self.layers.giveLayerList():
-            j1=0
-            for j in self.layers.giveLayerList():
-                if i1==j1:
-                    mat[i1][i1]=i.giveNodes().length()
-                    N=N+mat[i1][i1]
-                else:
-                    #rechercher combien on a dans l'intersection
-                    s=0
-                    for nodesi in i.giveNodes().giveListOfNodes():
-                        print("nodei",nodesi)
-                        if nodesi.contains_key(nodesi.giveNode()):
-                            s=s+1
-                    mat[i1][j1]=s
-                j1=j1+1
-            i1=i1+1   
+        ind=0
+        liste=[]
+        em2=self.em.giveListOfLinks().copy()
+        while em2.__len__()!=0:
+            link=em2[0]
+            em2.remove(link)
+            N=N+1
+            if link.giveLabel()[2]==link.giveLabel()[3]:
+                n1=link.giveLabel()[0]
+                n2=link.giveLabel()[1]
+                indice=self.layers.giveIndex(link.giveLabel()[2])
+                mat[indice][indice]=mat[indice][indice]+1
+                liste=[]
+                for link2 in em2:
+                    if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2) or(link2.giveLabel()[0]==n2 and link2.giveLabel()[1]==n1):
+                        if link2.giveLabel()[2]==link2.giveLabel()[3]:
+                            link2.printLink()
+                            indice2=self.layers.giveIndex(link2.giveLabel()[2])
+                            mat[indice][indice2]=mat[indice][indice2]+1
+                            mat[indice2][indice]=mat[indice2][indice]+1
+                            liste.append(link2)
         matc=np.zeros((n,n))
         for i in range(n):
             for j in range(n):
@@ -365,3 +372,17 @@ class MultiLayer :
                 else :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
+
+def valeurPropreMax(matrice,iterations):
+    n=len(matrice)
+    x=np.array([1 for i in range(n)])
+    q=0
+    A=np.eye(n)
+    for i in range(iterations):
+        A=np.dot(A,matrice)
+    Anx=np.dot(A,x)
+    vectpropre=Anx/np.linalg.norm(Anx,2)
+    matx=np.dot(matrice,vectpropre)
+    normevectpropre=np.linalg.norm(vectpropre)
+    valeurPropre=np.linalg.norm(matx)/normevectpropre
+    return(valeurPropre,vectpropre)

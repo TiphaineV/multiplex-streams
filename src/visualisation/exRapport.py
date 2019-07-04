@@ -44,7 +44,7 @@ rel = Aspect("type_de_relation",["Collaboration","Combat"])
 struct= LayerStruct([mil,rel])
 
 nA = NodeT("A",IntervalList([Interval(4,10)]),nodeLabel="A")
-nB = NodeT("B",IntervalList([Interval(0,0)]),nodeLabel="B")
+nB = NodeT("B",IntervalList([Interval(0,10)]),nodeLabel="B")
 nC = NodeT("C",IntervalList([Interval(0,8)]),nodeLabel="C")
 nD = NodeT("D",IntervalList([Interval(0,10)]),nodeLabel="D")
 
@@ -53,21 +53,24 @@ nl=NodeTList([nA,nB,nC,nD])
 layer1=Layer(struct,["plaine","Collaboration"],Interval(0,10),nl)
 
 link1= Link(IntervalList([Interval(2,6)]),nD,["plaine","Collaboration"],nC,["plaine","Collaboration"])
-link2= Link(IntervalList([Interval(4,8)]),nA,["plaine","Collaboration"],nD,["plaine","Collaboration"])
+link2= Link(IntervalList([Interval(5,8)]),nA,["plaine","Collaboration"],nD,["plaine","Collaboration"])
+linkplus= Link(IntervalList([Interval(4,8)]),nA,["plaine","Collaboration"],nB,["plaine","Collaboration"])
+
 
 nA2 = NodeT("A",IntervalList([Interval(4,5), Interval(7,8)]),nodeLabel="A")
 nB2 = NodeT("B",IntervalList([Interval(0,10)]),nodeLabel="B")
 nC2 = NodeT("C",IntervalList([Interval(3,8)]),nodeLabel="C")
-nD2 = NodeT("D",IntervalList([Interval(0,0)]),nodeLabel="D")
+nD2 = NodeT("D",IntervalList([Interval(0,10)]),nodeLabel="D")
 
 nl2=NodeTList([nA2,nB2,nC2,nD2])
 layer2=Layer(struct,["montagne","Collaboration"],Interval(0,10),nl2)
 
 link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nA2,["montagne","Collaboration"],nB2,["montagne","Collaboration"])
-link4= Link(IntervalList([Interval(5,8)]),nB2,["montagne","Collaboration"],nC2,["montagne","Collaboration"])
+linkplus2= Link(IntervalList([Interval(4,8)]),nC2,["montagne","Collaboration"],nB2,["montagne","Collaboration"])
+link4= Link(IntervalList([Interval(5,8)]),nD2,["montagne","Collaboration"],nC2,["montagne","Collaboration"])
 
 
-m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4]))
+m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4,linkplus,linkplus2]))
 
 m.drawMS("exrap.fig")
 
@@ -82,3 +85,6 @@ for n in o:
 mt4=m.cut(Interval(7,7.1))
 ml=mt4.extractML()
 ml.drawML(names=True)
+
+matriceIntrication=m.comupteIntricationMatrixBurtMS()
+print(valeurPropreMax(matriceIntrication,100))

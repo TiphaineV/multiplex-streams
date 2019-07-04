@@ -394,13 +394,47 @@ class MultiStream :
             ordref=ordref+o
         return(ordref)
 
+    def comupteIntricationMatrixBurtMS(self):
+        n=self.layers.length()
+        mat=np.zeros((n,n))
+        matIntervales=[[[]for i in range(n)]for i in range(n)]
+        i1=0
+        j1=0
+        ne=self.em.length()
+        N=0
+        ind=0
+        liste=[]
+        em2=self.em.giveListOfLinks().copy()
+        while em2.__len__()!=0:
+            link=em2[0]
+            em2.remove(link)
+            N=N+link.giveIntervals2().duration()
+            if link.giveLabel()[2]==link.giveLabel()[3]:
+                n1=link.giveLabel()[0]
+                n2=link.giveLabel()[1]
+                indice=self.layers.giveIndex(link.giveLabel()[2])
+                mat[indice][indice]=mat[indice][indice]+link.giveIntervals2().duration()
+                liste=[]
+                for link2 in em2:
+                    if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2) or(link2.giveLabel()[0]==n2 and link2.giveLabel()[1]==n1):
+                        if link2.giveLabel()[2]==link2.giveLabel()[3]:
+                            link2.printLink()
+                            indice2=self.layers.giveIndex(link2.giveLabel()[2])
+                            nnodescroises=link2.giveIntervals2().intersection(link.giveIntervals2()).duration()
+                            mat[indice][indice2]=mat[indice][indice2]+nnodescroises
+                            mat[indice2][indice]=mat[indice2][indice]+nnodescroises
+                            liste.append(link2)
+        print(mat)
+        matc=np.zeros((n,n))
+        for i in range(n):
+            for j in range(n):
+                if i==j:
+                    matc[i][i]=mat[i][i]/N
+                else :
+                    matc[i][j]=mat[i][j]/mat[j][j]
+        return(matc)
 
-#    def computeStrength(self):
-#        a=[]
-#        for i in self.layers.giveLayers() :
-#            tab=i.computeStrengthBetweenNodes(self.em)
-#            a.append(tab)
-#        return(a)
+
 
 def indice(liste,elem1):
     i=0
@@ -432,143 +466,3 @@ def joindre(liste1,elem1,liste2,elem2):
     return(liste1+liste2)
     
 
-def minimizeStrength(f):
-    n=len(f)
-    print("f",f)
-    pos=[i for i in range(0,n)]#!!! chaque case indique la position du noeud
-    grad=[0 for i in range(0,n)]
-    fx=0
-    for i in range(0,n):
-        g=0
-        for j in range(0,n):
-            #print("i",pos[i],"j",pos[j],"f[pos(i)][pos(j)]",f[pos[i]][pos[j]],"dif",(pos[i]-pos[j])*((pos[i]-pos[j])**2-1))
-            g=g+2*f[i][j]*(pos[i]-pos[j])
-            fx=fx+f[i][j]*(pos[i]-pos[j])**2
-        print("gi",g,"i",pos[i])
-        grad[i]=g
-    oldfx=fx+1
-    print("--",fx)
-    print("***",grad)
-    while fx<oldfx:
-        print("fx",fx)
-        oldfx=fx
-        oldpos=pos
-        noeudDepl1,move=findDepl(grad,pos)
-        print("gradient",grad)
-        print("deplacement",findDepl(grad,pos))
-        noeudDepl2=pos.index(pos[noeudDepl1]+move)
-        pos[noeudDepl1],pos[noeudDepl2]=pos[noeudDepl2],pos[noeudDepl1]
-        fx=0
-        print("po",pos)
-        for i in range(0,n):
-            g=0
-            for j in range(0,n):
-                print("i",pos[i],"j",pos[j],"f[i][j]",f[i][j],"dif",(pos[i]-pos[j]))
-                g=g+2*f[i][j]*(pos[i]-pos[j])
-                fx=fx+f[i][j]*(pos[i]-pos[j])**2
-                print((pos[i]-pos[j])**2)
-            print("gi",g)
-            print("fx",fx)
-            grad[i]=g
-        print("fxold",oldfx)
-        print("fxend=",fx)
-    return(oldpos)
-
-def fonction(pos,f):
-    n=len(pos)
-    eps=0.1
-    fx=0
-    for i in range(0,n):
-        for j in range(0,n):
-            fx=fx+f[i][j]*((pos[i]-pos[j])**2-1)**2
-            fx=fx+0.01*1/(pos[i]-pos[j]+eps)**2
-    return fx
-
-def gradient(pos,f):
-    n=len(pos)
-    g=[0]
-    eps=0.1
-    for i in range(1,n):
-        gi=0
-        for j in range(0,n):
-            gi=gi+4*f[i][j]*(pos[i]-pos[j])*((pos[i]-pos[j])**2-1)
-            gi=gi-0.01*1/(pos[i]-pos[j]+eps)**3
-        g.append(gi)
-    return(g)
-
-def descentGrad(fonction,f,der,posini,iterations):
-    h=0.01
-    n=len(posini)
-    pos=posini
-    listefi=[]
-    for i in range(0,iterations):
-        affiche(pos)
-        fi=fonction(pos,f)
-        grad=der(pos,f)
-        pos=[pos[j]-h*grad[j] for j in range(0,n)]
-        listefi.append(fi)
-    return(pos,listefi)
-
-def affiche(liste):
-    n=len(liste)
-    tab=[i for i in range(0,n)]
-    plt.plot(tab,liste,'ro')
-    plt.show()
-    
-def findDepl(liste,pos):
-    n=len(liste)
-    m=0
-    nm=0
-    M=0
-    nM=0
-    ancm=0
-    ancnm=0
-    ancM=0
-    ancnM=0
-    print("lenliste",len(liste))
-    p=0
-    for i in range(0,len(liste)):
-        print("liste",liste[i])
-        if liste[i]>M:
-            ancM=M
-            ancnM=nM
-            nM=i
-            M=liste[i]
-        elif liste[i]<=m:
-            ancm=m
-            ancnm=m
-            nm = i 
-            m=liste[i]
-    if abs(M)>=abs(m) and pos[nM]>0:
-        print("cas1")
-        print("M",M,"depl",nM,nM-1)
-        return(nM,-1)
-    elif abs(M)<abs(m) and pos[nm]<n-1:
-        print("cas2")
-        print("m",m,"depl",nm,+1)
-        return(nm,+1)
-    elif abs(M)>=abs(m) :
-        if abs(ancM)<abs(m) and pos[nm]<n-1:
-            print("cas3")
-            return(nm,+1)
-    else:
-        if abs(ancm)<abs(M) and pos[nM]>0:
-            print("cas4")
-            return(nM,-1)
-    if abs(ancm)>abs(ancM):
-        print("cas5")
-        return(ancnM,-1)
-    else :
-        print("cas6")
-        return(ancnm,+1)
-
-def donnerOrdre(pos):
-    n=len(pos)
-    pos2=pos.copy()
-    pos2.sort()
-    posfin=[]
-    for i in range(0,n):
-        ind=pos.index(pos2[i])
-        posfin.append(ind)
-    return posfin
-    

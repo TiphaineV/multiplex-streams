@@ -68,8 +68,11 @@ class SortedCollection(object):
      ('david', 'thomas', 32),
      ('roger', 'young', 30)]
 
+    
+    !!!!! NB : keys must be distincts for each elements if the elements are not comparable.
     '''
-
+    
+    
     def __init__(self, iterable=(), key=None):
         self._given_key = key
         key = (lambda x: x) if key is None else key

@@ -204,7 +204,8 @@ class LayerList :
         for l in self.listOfLayers :
             l.printLayer()
 
-    
+    def giveIndex(self,label):
+        return(self.listOfLayers.index_label(label))
 
 class Link:
     """
@@ -292,6 +293,15 @@ class LinkList:
         print("list of link")
         for n in self.listOfLinks :
             n.printLink()
+    
     def printListLabels(self):
         for l in self.listOfLinks:
             print(l.giveLabel())
+    
+    def length(self):
+        return(self.listOfLinks.__len__())
+    
+    def giveIndex(self,label):
+        return(self.listOfLinks.index_label(label))
+        
+        
