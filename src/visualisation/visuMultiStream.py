@@ -480,7 +480,7 @@ class MultiStream :
                 dens2=subgraph.computeDensityBiparti(labs,labs2)
                 mat[i][j]=dens2
                 mat[j][i]=dens2
-        return(mat,listeElemLay)
+        return([mat,listeElemLay])
 
 def indice(liste,elem1):
     i=0

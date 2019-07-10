@@ -236,7 +236,9 @@ plt.show()
 
 ##########################
 
-normaliser(d[0])
+li=normaliser(d[0])
+d[0]=li[0]
+s=li[1]
 
 
 plt.matshow(np.log((d[0])))

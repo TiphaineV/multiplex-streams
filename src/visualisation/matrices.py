@@ -7,9 +7,10 @@ Created on Wed Jul 10 10:16:32 2019
 import matplotlib
 import matplotlib.pyplot as plt
 
-def normaliser(matrice):
+def normaliser(mat):
     s=[]
-    n=len(matrice)
+    n=len(mat)
+    matrice=mat.copy()
     for i in range(n):
         sommel=0
         for j in range(n):
@@ -21,4 +22,4 @@ def normaliser(matrice):
     plt.plot(s,'ro')
     plt.show()
     print(s)
-    return(matrice)
+    return([matrice,s])
