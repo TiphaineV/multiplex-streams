@@ -1,11 +1,9 @@
 from sortedcollection import *
-
+import random
 import scipy
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
-import numpy as np
-
 #matplotlib.use('AGG')
 
 """
@@ -148,6 +146,9 @@ class LayerNTList :
         print("list of layers :")
         for l in self.listOfLayersNT :
             l.printLayer()
+    def removeLayer(self,layer):
+        self.listOfLayersNT.remove(layer)
+    
 
 class LinkNT:
     """
@@ -372,6 +373,73 @@ class MultiLayer :
                 else :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
+    def cleanML(self):
+        layersVides=[]
+        for lay in self.layers.giveLayerList():
+            lien=False
+            for e in self.em.giveListOfLinks():
+                if e.giveLayers()[0]==lay.giveLayerLabel():
+                    lien=True
+                    break
+            if lien==False:
+                layersVides.append(lay)
+        for l in layersVides:
+            self.layers.removeLayer(l)
+        print("ML graph cleaned")
+    def matriceAdjacenceL(self,layerLabel):
+        lay=self.layers.giveLayerFromLabel(layerLabel)
+        nl=lay.giveNodes().length()
+        listeNoeuds= (lay.giveNodes().giveListOfNodes())
+        matAdj=np.zeros((nl,nl))
+        for e in self.em.giveListOfLinks():
+            if e.giveLayers()[0]==e.giveLayers()[1] and e.giveLayers()[0]==layerLabel:
+                listeNoeuds.printsort()
+                print(e.giveNodes()[0].printNode())
+                print(e.giveNodes()[1].printNode())
+                n1=listeNoeuds.index_label(e.giveNodes()[0].giveNode())
+                n2=listeNoeuds.index_label(e.giveNodes()[1].giveNode())
+                matAdj[n1][n2]=1
+                matAdj[n2][n1]=1
+        return(matAdj)
+    
+    def fichierTulip(self,nameFile=""):
+        """
+        !!! fonctionne pour le moment uniquement sur des partitions des noeuds couches !
+        """
+        file=open(nameFile+".tlp","w")
+        file.write("(tlp \"2.0\")\n")
+        file.write("(date \"12-15-2008\")\n")
+        file.write("(author \"pp\") \n")
+        file.write("(comments \"graph multilayer\")\n")
+        file.write(";(nodes <node_id> <node_id> ...)\n")
+        file.write("(nodes ")
+        for lay in self.layers.giveLayerList():
+            for nod in lay.giveNodes().giveListOfNodes():
+                file.write(str(nod.giveNode())+" ")
+        file.write(")\n")
+        file.write(";(edge <edge_id> <source_id> <target_id>)\n")
+        i=0
+        for edge in self.em.giveListOfLinks():
+                i=i+1
+                file.write("(edge ")
+                file.write(str(i)+" ")
+                file.write(str(edge.giveNodes()[0].giveNode())+" "+str(edge.giveNodes()[1].giveNode()))
+                file.write(")\n")
+        file.write("(property  0 color \"viewColor\" ")
+        for lay in self.layers.giveLayerList():
+            couleur1 = random.randint(0,255)
+            couleur2 = random.randint(0,255)
+            couleur3 = random.randint(0,255)
+            couleur4 = 255
+            for nod in lay.giveNodes().giveListOfNodes():
+                file.write("(node ")
+                file.write(str(nod.giveNode())+" ")
+                file.write("\"("+str(couleur1)+","+str(couleur2)+","+str(couleur3)+","+str(couleur4)+ ")\"")
+                file.write(")\n")
+        file.write(")")
+        file.write("(property  0 size \"viewSize\"\n (default \"(2,2,2)\" \"(2,2,2)\"")
+        file.close()
+        print("done")
 
 def valeurPropreMax(matrice,iterations):
     n=len(matrice)

@@ -88,3 +88,5 @@ ml.drawML(names=True)
 
 matriceIntrication=m.comupteIntricationMatrixBurtMS()
 print(valeurPropreMax(matriceIntrication,100))
+
+print(m.elemLayerDensitiesMat(mil))

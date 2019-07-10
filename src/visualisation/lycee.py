@@ -10,7 +10,9 @@ from intervals import *
 from structure import *
 from elemMSGraph import *
 from multiLayers import *
-
+from matrices import *
+import matplotlib
+import matplotlib.pyplot as plt
 
 #A CORRIGER : ECRITURE DES LIENS EN ENTIER...!
 t0=1385982020
@@ -24,7 +26,7 @@ Measures are taken each 20s.
 We suppress 1385982020 to each measure of time and divide by 1000.
 """
 
-classe=Aspect("annee",["MP","MP*1","MP*2","2BIO1","2BIO2","2BIO3","PSI*","PC","PC*"])
+classe=Aspect("annee",["MP","MP*1","MP*2","PSI*","2BIO1","2BIO2","2BIO3","PC","PC*"])
 sexe = Aspect("sexe",["F","M","U"])
 typeOfRel = Aspect("relation",["face_to_face","facebook","friendship","diaries"])
 
@@ -188,36 +190,88 @@ ti,ni=readLinks(liste)
 #readLinks3(liste,liste2)
 
 
-
+ftf=layerWithCommonPoint(lycee,"relation","face_to_face")
 #
-mp=layerWithCommonPoint(lycee,"annee","MP")
+m=m.extractLayers(ftf)
+femmes=layerWithCommonPoint(lycee,"sexe","F")
 
+hommes= layerWithCommonPoint(lycee,"sexe","M")
 
+m2=m.cut(Interval(0,40))
+
+d=m2.elemLayerDensitiesMat(classe)
 #llfb=layerWithCommonPoint(lycee,"relation","facebook")
 #llfs=layerWithCommonPoint(lycee,"relation","friendship")
 #
 #llf=layerWithCommonPoint(lycee, "sexe", "F")
 #llh = layerWithCommonPoint(lycee,"sexe","M")
 #
+
 #
 #m=m.extractLayers(mp)
 #m=m.cut(Interval(0,40))
 
-m.printNodes()
+#m.printNodes()
+#ml=m.extractML()
+#ml.extractLayers([["face_to_face","MP","U"]])
 
-aretesordo=m.computeLengthEm(layer=["face_to_face","MP","U"])
+#matadj=ml.matriceAdjacenceL(["face_to_face","MP","U"])
+
+#print(matadj)
+
+
+
+print((d))
+#print("normaliser:",normaliser(d[0]))
+
+vp,vectp=(valeurPropreMax(np.transpose(100*d[0]),1000))
+print(vp,vectp)
+plt.matshow(np.log(d[0]))
+plt.xticks(range(9), classe.giveElemLayer())
+plt.yticks(range(9), classe.giveElemLayer())
+plt.show()
+
+plt.plot(classe.giveElemLayer(),np.log(vectp),'o')
+plt.show()
+
+##########################
+
+normaliser(d[0])
+
+
+plt.matshow(np.log((d[0])))
+plt.xticks(range(9), classe.giveElemLayer())
+plt.yticks(range(9), classe.giveElemLayer())
+plt.show()
+
+vp,vectp=(valeurPropreMax(np.transpose(d[0]),1000))
+print(np.transpose(d[0]))
+print(vp,vectp)
+
+plt.plot(classe.giveElemLayer(),vectp,'o')
+plt.show()
+
+tab=[d[0][i][i] for i in range(0,len(d[0]))]
+
+plt.plot(tab,'bo')
+
+for i in range(len(s)):
+    print(s[i]/vectp[i])
+
+#aretesordo=m.computeLengthEm(layer=["face_to_face","MP","U"])
 #print(m.ordreAretes(layer=["face_to_face","MP","U"]))
-print("ordre")
-o=m.ordreAretes(layer=['face_to_face','MP','U'])
+#print("ordre")
+#o=m.ordreAretes(layer=['face_to_face','MP','U'])
 
-for i in aretesordo:
-    print(m.giveLinks().giveListOfLinks()[i[1]].printLink())
+#for i in aretesordo:
+ #   print(m.giveLinks().giveListOfLinks()[i[1]].printLink())
 
 
-for n in o:
-    n.printNodeT()
+
+#for n in o:
+ #   n.printNodeT()
     
-m.drawMS("drawordomp.fig")
+#perm.drawMS("drawordomp.fig")
 
 #dessin
 #axes = plt.gca()

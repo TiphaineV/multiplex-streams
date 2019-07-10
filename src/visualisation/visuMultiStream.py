@@ -13,6 +13,35 @@ import matplotlib.pyplot as plt
 Final structure : MultiStream
 """
 
+def layerWithCommonPoint(layerStruct,aspect,elemLayer):
+    liste=[[]]
+    i=0
+    ind=0
+    for asp in layerStruct.giveAspects() :
+        if asp.nameAspect()==aspect :
+            i=ind
+        else:
+            ind=ind+1
+    j=0
+    for asp in layerStruct.giveAspects() :
+        for k in range(len(liste)-1,-1,-1):
+            a=liste.pop(k)
+            for elemLayeri in asp.giveElemLayer():
+                if j==i:
+                    if elemLayeri==elemLayer:
+                         a.append(elemLayeri)
+                         liste.append(a)
+                         a=a.copy()
+                         a.pop()
+                else:
+                    a.append(elemLayeri)
+                    liste.append(a)
+                    a=a.copy()
+                    a.pop()
+        j=j+1
+    return(liste)
+
+
 
 class MultiStream :
     """
@@ -433,8 +462,25 @@ class MultiStream :
                 else :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
-
-
+        
+    def elemLayerDensitiesMat(self,aspect):
+        n=len(aspect.giveElemLayer())
+        mat=np.zeros((n,n))
+        listeElemLay= aspect.giveElemLayer().copy()
+        for i in range(len(listeElemLay)):
+            asp=listeElemLay[i]
+            labs=layerWithCommonPoint(self.layerStruct,aspect.nameAspect(),asp)
+            subgraph=self.extractLayers(labs)
+            dens=subgraph.computeDensity()
+            mat[i][i]=dens
+            for j in range(i+1,len(listeElemLay)):
+                asp2=listeElemLay[j]
+                labs2=layerWithCommonPoint(self.layerStruct,aspect.nameAspect(),asp2)
+                subgraph=self.interLayers(labs,labs2)
+                dens2=subgraph.computeDensityBiparti(labs,labs2)
+                mat[i][j]=dens2
+                mat[j][i]=dens2
+        return(mat,listeElemLay)
 
 def indice(liste,elem1):
     i=0

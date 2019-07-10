@@ -78,6 +78,8 @@ class NodeTList :
         print("listOfNodes")
         for n in self.listOfNodeT :
             n.printNodeT()
+    def length(self):
+        return(self.listOfNodeT.__len__())
 
 class Layer :
     """
@@ -206,7 +208,9 @@ class LayerList :
 
     def giveIndex(self,label):
         return(self.listOfLayers.index_label(label))
-
+    def removeLayer(self,layer):
+        self.listOfLayers.remove(layer)
+    
 class Link:
     """
     class Link : 
@@ -259,10 +263,10 @@ class Link:
     def printLink(self):
         print("Link : ")
         self.node1.printNodeT()
-        print("from"+str(self.layerLabel1))
+        print(","+str(self.layerLabel1))
         print("--->")
         self.node2.printNodeT()
-        print("from"+str(self.layerLabel2))
+        print(","+str(self.layerLabel2))
         print("intervalLinks")
         self.intervals.printIntervals()
         print("endlink")

@@ -52,3 +52,4 @@ m=mlgraph.computeIntricationMatrixBurt()
 print(m)
 
 print(valeurPropreMax(m,100))
+
