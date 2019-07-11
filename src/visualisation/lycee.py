@@ -231,34 +231,38 @@ plt.xticks(range(9), classe.giveElemLayer())
 plt.yticks(range(9), classe.giveElemLayer())
 plt.show()
 
-plt.plot(classe.giveElemLayer(),np.log(vectp),'o')
+plt.plot(classe.giveElemLayer(),(vectp),'o')
 plt.show()
 
 ##########################
 
-li=normaliser(d[0])
-d[0]=li[0]
-s=li[1]
+#li=normaliser(d[0])
+#d[0]=li[0]
+#s=li[1]
+#
+#
+#plt.matshow(np.log((d[0])))
+#plt.xticks(range(9), classe.giveElemLayer())
+#plt.yticks(range(9), classe.giveElemLayer())
+#plt.show()
+#
+#vp,vectp=(valeurPropreMax(np.transpose(d[0]),1000))
+#print(np.transpose(d[0]))
+#print(vp,vectp)
+#
+#plt.plot(classe.giveElemLayer(),vectp,'o')
+#plt.show()
+#
+#tab=[d[0][i][i] for i in range(0,len(d[0]))]
+#
+#plt.plot(tab,'bo')
+#
+#for i in range(len(s)):
+#    print(s[i]/vectp[i])
 
 
-plt.matshow(np.log((d[0])))
-plt.xticks(range(9), classe.giveElemLayer())
-plt.yticks(range(9), classe.giveElemLayer())
-plt.show()
+##################################
 
-vp,vectp=(valeurPropreMax(np.transpose(d[0]),1000))
-print(np.transpose(d[0]))
-print(vp,vectp)
-
-plt.plot(classe.giveElemLayer(),vectp,'o')
-plt.show()
-
-tab=[d[0][i][i] for i in range(0,len(d[0]))]
-
-plt.plot(tab,'bo')
-
-for i in range(len(s)):
-    print(s[i]/vectp[i])
 
 #aretesordo=m.computeLengthEm(layer=["face_to_face","MP","U"])
 #print(m.ordreAretes(layer=["face_to_face","MP","U"]))
