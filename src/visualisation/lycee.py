@@ -224,7 +224,7 @@ d=m2.elemLayerDensitiesMat(classe)
 print((d))
 #print("normaliser:",normaliser(d[0]))
 
-vp,vectp=(valeurPropreMax(np.transpose(100*d[0]),1000))
+vp,vectp=(valeurPropreMax((100*d[0]),1000))
 print(vp,vectp)
 plt.matshow(np.log(d[0]))
 plt.xticks(range(9), classe.giveElemLayer())

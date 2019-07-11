@@ -481,6 +481,25 @@ class MultiStream :
                 mat[i][j]=dens2
                 mat[j][i]=dens2
         return([mat,listeElemLay])
+    
+    def elemLayerDensitiesMatDiag0(self,aspect):
+        n=len(aspect.giveElemLayer())
+        mat=np.zeros((n,n))
+        listeElemLay= aspect.giveElemLayer().copy()
+        for i in range(len(listeElemLay)):
+            asp=listeElemLay[i]
+            labs=layerWithCommonPoint(self.layerStruct,aspect.nameAspect(),asp)
+            subgraph=self.extractLayers(labs)
+            dens=subgraph.computeDensity()
+            mat[i][i]=0
+            for j in range(i+1,len(listeElemLay)):
+                asp2=listeElemLay[j]
+                labs2=layerWithCommonPoint(self.layerStruct,aspect.nameAspect(),asp2)
+                subgraph=self.interLayers(labs,labs2)
+                dens2=subgraph.computeDensityBiparti(labs,labs2)
+                mat[i][j]=dens2
+                mat[j][i]=dens2
+        return([mat,listeElemLay])
 
 def indice(liste,elem1):
     i=0
