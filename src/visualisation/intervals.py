@@ -113,7 +113,7 @@ class IntervalList :
     def giveListOfIntervals(self):
         return(self.listOfIntervals)
 
-    def condensateIntervals(self,index=0,tolerance=0):
+    def condensateIntervals(self,index=0,tolerance=0,superpos=0):
         """
             method condensateIntervals(self,index=0):
             =====
@@ -138,18 +138,20 @@ class IntervalList :
                 #print("fusion")
                 #self.listOfIntervals[i].printInterval()
                 #self.listOfIntervals[i+1].printInterval()
+                print("condddd")
                 inte=self.listOfIntervals.pop(i+1)
                 self.listOfIntervals[i].setEnd(max(inte.end(),self.listOfIntervals[i].end()))
             else :
                 i=i+1
 
 
-    def addInterval(self,interval,tolerance=0.1):
+    def addInterval(self,interval,tolerance=0.1,cond=1):
         #b=interval.begining()
         #self.printIntervals()
         k=self.listOfIntervals.index_key(interval)
         self.listOfIntervals.insert(interval)
-        self.condensateIntervals(index=max(k-1,0),tolerance=tolerance)
+        if cond==1:
+            self.condensateIntervals(index=max(k-1,0),tolerance=tolerance)
 
     def printIntervals(self):
         print("list of intervals")

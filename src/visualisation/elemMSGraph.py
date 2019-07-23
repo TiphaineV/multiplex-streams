@@ -222,10 +222,11 @@ class Link:
     
     todo : Find a better indexing ?
     """
-    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0):
-        if node1.giveNode()>node2.giveNode():
-            layerLabel1,layerLabel2=layerLabel2,layerLabel1
-            node1,node2=node2,node1
+    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0,directed=1):
+        if directed==1:
+            if node1.giveNode()>node2.giveNode():
+                layerLabel1,layerLabel2=layerLabel2,layerLabel1
+                node1,node2=node2,node1
         self.intervals=intervals
         self.node1=node1
         self.node2=node2
@@ -250,8 +251,8 @@ class Link:
         return the list of intervals of type IntervalList
         """
         
-    def addInterval(self,i,tolerance=0):
-        self.intervals.addInterval(i,tolerance)
+    def addInterval(self,i,tolerance=0,cond=1):
+        self.intervals.addInterval(i,tolerance,cond=cond)
     def giveLength(self):
         return(self.intervals.duration())
     def giveNodes(self):
@@ -280,14 +281,14 @@ class LinkList:
     
     """
     
-    def __init__(self,liste,key=lambda link: link.giveLabel()):
+    def __init__(self,liste,key=lambda link: link.giveLabel(),directed=1):
         self.listOfLinks = SortedCollection(iterable=liste,key=key)
     
-    def addLink(self,l,tolerance=0):
+    def addLink(self,l,tolerance=0,cond=1):
         if self.listOfLinks.contains_key(l):
             i = self.listOfLinks.index_key(l)
             for inter in l.giveIntervals():
-                self.listOfLinks[i].addInterval(inter,tolerance=tolerance)
+                self.listOfLinks[i].addInterval(inter,tolerance=tolerance,cond=cond)
         else : 
             self.listOfLinks.insert(l)
     def giveListOfLinks(self):

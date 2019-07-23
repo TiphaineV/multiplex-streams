@@ -14,6 +14,9 @@ from matrices import *
 import matplotlib
 import matplotlib.pyplot as plt
 
+import seaborn as sns
+
+
 #A CORRIGER : ECRITURE DES LIENS EN ENTIER...!
 t0=1385982020
 scale = 500
@@ -198,8 +201,9 @@ femmes=layerWithCommonPoint(lycee,"sexe","F")
 hommes= layerWithCommonPoint(lycee,"sexe","M")
 
 m2=m.cut(Interval(0,40))
-
-d=m2.elemLayerDensitiesMat(classe)
+d0=0.00001*np.ones((9,9))
+#d=m2.elemLayerDensitiesMatDiag0(classe)
+d=m2.elemLayerDensitiesMatDiag0(classe)
 #llfb=layerWithCommonPoint(lycee,"relation","facebook")
 #llfs=layerWithCommonPoint(lycee,"relation","friendship")
 #
@@ -222,13 +226,13 @@ d=m2.elemLayerDensitiesMat(classe)
 
 
 print((d))
+
+print("+d0",d[0])
 #print("normaliser:",normaliser(d[0]))
 
-vp,vectp=(valeurPropreMax((100*d[0]),1000))
+vp,vectp=(valeurPropreMax((1000*d[0]+d0),1000))
 print(vp,vectp)
-plt.matshow(np.log(d[0]))
-plt.xticks(range(9), classe.giveElemLayer())
-plt.yticks(range(9), classe.giveElemLayer())
+sns.heatmap((d[0]),cmap="YlGnBu",xticklabels= classe.giveElemLayer(),yticklabels=classe.giveElemLayer())
 plt.show()
 
 plt.plot(classe.giveElemLayer(),(vectp),'o')

@@ -86,15 +86,16 @@ def readKW():
     f=open("starWars/SW1/NODES/keyword_nodes.csv","r")
     n=0
     l=[]
-    dico=dict()
+    dicokw=dict()
     for line in f :
         if n>0:
             line=line.replace("\"",'')
             tab=line.split(",")
             l.append(tab[0])
+            dicokw[tab[0]]=tab[1]
         n=n+1
     f.close()
-    return(l)
+    return(l,dicokw)
 
 
 
@@ -175,7 +176,7 @@ def readLinks2(liste,liste2):
 
 
 sc=makeScenes()
-kw=readKW() 
+kw,dicokw=readKW() 
 
 KW=Aspect("keyword",kw)
 struct=LayerStruct([kw])
@@ -195,9 +196,26 @@ m1=readLinksInLayer(interval,kw,sc)
 
 print("************************************************")
 m1.printMS()
+m1.drawMS("starintric.fig")
 m2=m1.extractML()
-m2.drawML()
-print(m2.computeIntrication())
+m2.cleanML()
+m2.drawML("coucheskw")
+
+matIntric=m2.computeIntricationMatrixBurt()
+
+
+
+fichier=open("matriceadjsw","w")
+for l in matIntric:
+    fichier.write(str(l))
+    fichier.write('\n')
+fichier.close()
+
+print(valeurPropreMax(matIntric,100))
+
+
+
+
 #m2.drawML()
 #m1.drawMS("multiplexSW.fig")
 
