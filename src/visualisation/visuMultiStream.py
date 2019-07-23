@@ -78,9 +78,9 @@ class MultiStream :
         - add node in a layer
         '''
         self.layers.addLayer(layer)
-    def addLink(self,link,tolerance=0):
+    def addLink(self,link,tolerance=0,cond=1):
         #to do : check intervals coherence
-        self.em.addLink(link,tolerance)
+        self.em.addLink(link,tolerance,cond)
     def giveLinks(self):
         return(self.em)
     def printNodes(self):
@@ -90,6 +90,7 @@ class MultiStream :
     def printMS(self):
         print("T:",self.T.intervalToString() )
         print("structure")
+        self.layerStruct.printLayerStruct()
         print("layers and nodes")
         self.layers.printLayerList()
         print("EM")

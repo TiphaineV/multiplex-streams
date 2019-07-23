@@ -250,7 +250,11 @@ class MultiLayer :
         print("EM")
         for e in self.em.giveListOfLinks():
             e.printLink()
-    
+    def giveLayersLabels(self):
+        lablist=[]
+        for i in self.layers.giveLayerList():
+            lablist.append(str(i.giveLayerLabel()))
+        return(lablist)
     def extractLayers(self,layerLabels):
         """
             function extractLayers
@@ -360,17 +364,15 @@ class MultiLayer :
                 for link2 in em2:
                     if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2) or(link2.giveLabel()[0]==n2 and link2.giveLabel()[1]==n1):
                         if link2.giveLabel()[2]==link2.giveLabel()[3]:
-                            link2.printLink()
                             indice2=self.layers.giveIndex(link2.giveLabel()[2])
                             mat[indice][indice2]=mat[indice][indice2]+1
                             mat[indice2][indice]=mat[indice2][indice]+1
                             liste.append(link2)
         matc=np.zeros((n,n))
         for i in range(n):
-            for j in range(n):
-                if i==j:
-                    matc[i][i]=mat[i][i]/N
-                else :
+            matc[i][i]=mat[i][i]/N
+            for j in range(n):                    
+                if i!=j :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
     def cleanML(self):
@@ -441,16 +443,3 @@ class MultiLayer :
         file.close()
         print("done")
 
-def valeurPropreMax(matrice,iterations):
-    n=len(matrice)
-    x=np.array([1 for i in range(n)])
-    q=0
-    A=np.eye(n)
-    for i in range(iterations):
-        A=np.dot(A,matrice)
-    Anx=np.dot(A,x)
-    vectpropre=Anx/np.linalg.norm(Anx,2)
-    matx=np.dot(matrice,vectpropre)
-    normevectpropre=np.linalg.norm(vectpropre)
-    valeurPropre=np.linalg.norm(matx)/normevectpropre
-    return(valeurPropre,vectpropre)

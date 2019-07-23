@@ -87,7 +87,8 @@ class SortedCollection(object):
     def printsort(self):
         for i in self._items:
             print(i, self.key(i))
-
+    def listsSorted(self):
+        return(self._items,self._keys)
     def _getkey(self):
         return self._key
 
