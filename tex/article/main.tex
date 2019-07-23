@@ -1,0 +1,150 @@
+%%%%%%%%%%%%%%%%%%%% author.tex %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% sample root file for your "contribution" to a proceedings volume
+%
+% Use this file as a template for your own input.
+%
+%%%%%%%%%%%%%%%% Springer %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%8 à 10 pages (12 avec biblio)
+
+
+\documentclass{svproc}
+%
+% RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+
+% to typeset URLs, URIs, and DOIs
+\usepackage{url}
+\def\UrlFont{\rmfamily}
+
+\begin{document}
+\mainmatter              % start of a contribution
+%
+\title{Different centralities in multilayer stream graphs}
+%
+\titlerunning{Centralities in Multilayer stream graphs}  % abbreviated title (for running head)
+%                                     also used for the TOC unless
+%                                     \toctitle is used
+%
+\author{Pimprenelle Parmentier\inst{1} \and Tiphaine Viard\inst{1}
+Jean-François Baffier\inst{2} \and Benjamin Renoust\inst{3}}
+%
+\authorrunning{Pimprenelle Parmentier et al.} % abbreviated author list (for running head)
+%
+%%%% list of authors for the TOC (use if author list has to be modified)
+\tocauthor{Pimprenelle Parmentier, Tiphaine Viard, Jean-François Baffier, Benjamin Renoust}
+%
+\institute{RIKEN AIP, Tokyo, Japan
+\and
+Japan Society for the Promotion of Sciences
+\and 
+Osaka Univerisity}
+
+\maketitle              % typeset the title of the contribution
+
+\begin{abstract}
+Graphs are commonly used in mathematics to represent some relationships between items. We generalise this model to networks of relationships which have complex structure and which depend on the time and we build and test several ``centralities'' to catch the importance of nodes, links and layers of such structures. We compare our new notions with the traditional ones. To illustrate this notions, we give example of use on US flights dataset and a network of different type of relationships between students.
+%The abstract should summarize the contents of the paper using at least 70 and at most 150 words. It will be set in 9-point font size and be inset 1.0 cm from the right and left margins. There will be two blank lines before and after the Abstract. \dots
+% We would like to encourage you to list your keywords within
+% the abstract section using the \keywords{...} command.
+\keywords{multilayer graph, stream graph, centrality, entanglement, density}
+\end{abstract}
+%
+
+\section{Introduction}
+%
+From the time Euler, in 1750 stated the bridges problem of Köninsgberg, the notion of graphs has been widely exploited to model and sort a lot of real-life and theoretical problems.
+
+A graph represent a set of relationships (links) between entities (nodes). This type of data can be found everywhere: road or rails between cities, friendships, communications between internet devices, etc. 
+
+This formalism can be extended to capture diversity in the data: links can be oriented, weighted, labelled, \textit{etc}. This different notions has been gathered in a new formalism, the multilayer graphs~\cite{mlkiv}. Furthermore, 
+
+\section{The multilayer stream graph}
+%
+\subsection{Preliminaries: multilayer graphs and stream graphs}
+%
+
+\subsubsection{Multilayer graphs}
+
+\subsubsection{Stream graphs}
+\subsection{Definition of the multilayer stream graph}
+%
+We define a multilayer stream graph (MSG) as a tuple $S_M = (T,T_M,V,W_M,E_M,{\cal L})$, such that $T$ and $V$ are, respectively, a time interval and a set of nodes, just like for stream graphs \cite{stream}.
+    
+    As for multilayer graphs \cite{mlkiv}, ${\cal L}$ is a set of $d$ {\em aspects}; ${\cal L} = \{L_i\}_{i=1}^d$, and an element $\alpha_i$ of $L_i$ is named {\em elementary layer}. An element of $L=L_1\times \dots \times L_d$ is named {\em layer}.
+
+	$T_M$ is a set of intervals of $T$ so for that each layer $\alpha$, $T_{\alpha}$ is the interval at which the layer exists. For each $t$ in $T$, $\exists \alpha \in L | t \in T_{\alpha}$. At each time of $T$, at least one layer of $L$ exists.
+
+	$W_M \subseteq T\times V \times (L_1 \times \dots \times L_d)$ represents the existing points on layers with respect to time. For each element $(t,u,\alpha)$ of $W_M$, $t$ must be in the interval of existence of $\alpha$.
+
+   $E_M \subseteq T\times V_M \otimes V_M$ are the links appearing with respect to time,  $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$. The elements of $V_M$ are named {\em node-layer}. A link cannot appear outside the time of existence of the two node-layers.
+   
+\subsection{Notions associated}
+%
+\subsubsection{Basic notions}
+%
+\subsubsection{Centralities}
+%
+\subsection{Implementation and complexity}
+%
+\subsection{Autonomous Systems}
+%
+
+\section{Datasets and results}
+%
+\subsection{Two datasets}
+%
+\subsubsection{Classes in an highschool: a social multilayer stream graph}
+%
+\subsubsection{Civil airlines in US: an application to transportation}
+%
+\subsection{Analysis}
+%
+
+% ---- Bibliography ----
+%
+\begin{thebibliography}{6}
+%
+
+%\bibitem {smit:wat}
+%Smith, T.F., Waterman, M.S.: Identification of common molecular subsequences.
+%J. Mol. Biol. 147, 195?197 (1981). \url{doi:10.1016/0022-2836(81)90087-5}
+
+\bibitem{stream}
+Latapy M.,Viard T.,Magnien C.: Stream graphs and link streams for the modeling
+of interactions over time. (October 2018) In: Social Network Analysis and Mining, vol.8. arXiv preprint arXiv:1710.04073. \url{doi:https://doi.org/10.1007/s13278-018-0537-7}
+
+\bibitem{mlkiv}
+Kivela M., Arenas A., Barthelemy M., Gleeson J.P., Moreno Y., Porter M.A.: Multilayer Networks. (2014) In: Journal of Complex Networks",vol.2.
+
+% --------------------------------------------------
+
+\bibitem {may:ehr:stein}
+May, P., Ehrlich, H.-C., Steinke, T.: ZIB structure prediction pipeline:
+composing a complex biological workflow through web services.
+In: Nagel, W.E., Walter, W.V., Lehner, W. (eds.) Euro-Par 2006.
+LNCS, vol. 4128, pp. 1148?1158. Springer, Heidelberg (2006).
+\url{doi:10.1007/11823285_121}
+
+
+\bibitem {fost:kes}
+Foster, I., Kesselman, C.: The Grid: Blueprint for a New Computing Infrastructure.
+Morgan Kaufmann, San Francisco (1999)
+
+\bibitem {czaj:fitz}
+Czajkowski, K., Fitzgerald, S., Foster, I., Kesselman, C.: Grid information services
+for distributed resource sharing. In: 10th IEEE International Symposium
+on High Performance Distributed Computing, pp. 181?184. IEEE Press, New York (2001).
+\url{doi: 10.1109/HPDC.2001.945188}
+
+\bibitem {fo:kes:nic:tue}
+Foster, I., Kesselman, C., Nick, J., Tuecke, S.: The physiology of the grid: an open grid services architecture for distributed systems integration. Technical report, Global Grid
+Forum (2002)
+
+\bibitem {onlyurl}
+National Center for Biotechnology Information. \url{http://www.ncbi.nlm.nih.gov}
+
+
+\end{thebibliography}
+\end{document}
