@@ -55,7 +55,7 @@ Letter\n\
 100.00\n\
 Single\n\
 -2\n\
-1200 2\n""")
+1200 2""")
 
         self.alpha = float(alpha)
         self.omega = float(omega)
@@ -176,9 +176,9 @@ Single\n\
             x3 = self.offset_x + int(i * self.time_unit)
             y3 = self.offset_y + self.nodes[v]*self.node_unit
 
-            sys.stdout.write("3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
-            sys.stdout.write("%s %s %s %s %s %s\n" % (x1, y1, x2, y2, x3, y3))
-            sys.stdout.write("0.000 -1.000 0.000\n")
+            sys.stdout.write("\n"+ "3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3")
+            sys.stdout.write("\n"+"%s %s %s %s %s %s" % (x1, y1, x2, y2, x3, y3))
+            sys.stdout.write("\n"+"0.000 -1.000 0.000")
 
 
 
@@ -213,9 +213,9 @@ Single\n\
         #sys.stdout.write("%s %s %s %s %s %s\n" % (x1, y1, x2, y2, x3, y3))
         #sys.stdout.write("0.000 -1.000 0.000\n")
 
-        self.f.writelines("\n 3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3\n")
-        self.f.writelines(str(x1)+" "+ str(y1)+" "+str( x2)+" "+ str(y2)+" "+ str(x3)+" "+str(y3)+"\n")
-        self.f.writelines("0.000 -1.000 0.000\n")
+        self.f.writelines("\n"+"3 2 0 " + str(width) + " " + str(color) + " 7 50 -1 -1 0.000 0 0 0 3")
+        self.f.writelines("\n"+str(x1)+" "+ str(y1)+" "+str( x2)+" "+ str(y2)+" "+ str(x3)+" "+str(y3))
+        self.f.writelines("\n"+"0.000 -1.000 0.000")
 
         numnodes = abs(self.nodes[u+layer1]+self.layers[layer1] - self.nodes[v+layer2]-self.layers[layer2])
 
