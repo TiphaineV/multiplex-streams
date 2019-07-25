@@ -12,6 +12,7 @@ from elemMSGraph import *
 from multiLayers import *
 from sortedcollection import *
 from random import *
+from matrices import *
 import seaborn as sns
 
 from tulip import tlp
@@ -178,9 +179,28 @@ def makeGraph(m,airportl,carL,dicoAir,airportperlay):
         n2=sub.nodes()[airportperlay[e.giveLabel()[2][0]].index(e.giveNodes()[1].giveNode())]
         sub.addEdge(ed)
     tlp.saveGraph(graph,"grapheplanes.tlp")
+    return(graph)
     
+#%%
+graph=makeGraph(m,airportl,carL,dicoAir,airportperlay)
+#%%
+pagerank=graph.getDoubleProperty("pageRank")
+params = tlp.getDefaultPluginParameters('Page Rank', graph)
+params["directed"]=True
 
-#makeGraph(m,airportl,carL,dicoAir,airportperlay)
+success = graph.applyDoubleAlgorithm('Page Rank', pagerank, params)
+pr=[]
+for n in graph.getNodes():
+    pr.append(pagerank[n])
+#%%
+betweenness=graph.getDoubleProperty("betweeness")
+params = tlp.getDefaultPluginParameters('Betweenness Centrality', graph)
+params["directed"]=True
+
+success = graph.applyDoubleAlgorithm('Betweenness Centrality', betweenness, params)
+bt=[]
+for n in graph.getNodes():
+    bt.append(betweenness[n]) 
 #%%
 matintric=multi.computeIntricationMatrixBurt()
 
@@ -234,9 +254,10 @@ plt.show()
 # random walk 
 
 def step(pos0,airportl,m,t):
-    print(dicoAir[pos0])
+    #print(dicoAir[pos0])
     bloque=False
     possibleLinks=[]
+    car="none"
     for link in m.giveLinks().giveListOfLinks():
         if link.giveNodes()[0].giveNode()==pos0:
             possibleLinks.append(link)
@@ -247,7 +268,7 @@ def step(pos0,airportl,m,t):
         print("no neighbours")
         t1=t
     else:
-        print("----------------------------")
+        #print("----------------------------")
         li=randint(0,len(possibleLinks)-1)
         link0=possibleLinks[li]
         #link0.printLink()
@@ -255,6 +276,7 @@ def step(pos0,airportl,m,t):
         pos1=link0.giveNodes()[1].giveNode()
         intervalsL=link0.giveIntervals()
         i=0
+        car=link0.giveLabel()[2][0]
         while i<len(intervalsL) and intervalsL[i].begining()<t :
             i=i+1
         if i==len(intervalsL):
@@ -263,15 +285,62 @@ def step(pos0,airportl,m,t):
             print("timeout")
         else:
             t1=intervalsL[i].end()
-    return(pos1,t1,bloque)
+    return(pos1,t1,car,bloque)
 
-pos0=airportl[randint(0,len(airportl)-1)]
-t=0
-bloque=False
-i=0
-while bloque==False and i<=3:
-    print(pos0,t)
-    pos0,t,bloque=step(pos0,airportl,m,t)
-    i=i+1
-print(pos0,t)
-    
+covAirports=np.array([0 for i in range(len(airportl))])
+covCompagnies=np.array([0 for i in range(len(carL))])
+
+def randomWalk(airportl,m,t,collect="coverage",prints=False):
+    pos0=airportl[randint(0,len(airportl)-1)]
+    t=0
+    bloque=False
+    i=0
+    if collect=="coverage":
+        airports=np.array([0 for i in range(len(airportl))])
+        compagnies=np.array([0 for i in range(len(carL))])
+    if collect=="firstTimeToReach":
+        airports=np.array([0 for i in range(len(airportl))])
+        compagnies=np.array([-1 for i in range(len(carL))])
+    while bloque==False:
+        if prints==True:
+            print(pos0,t)
+        pos0,t,car,bloque=step(pos0,airportl,m,t)
+        if collect=="coverage":
+            airports[airportl.index(pos0)]=airports[airportl.index(pos0)]+1
+            compagnies[carL.index(car)]=compagnies[carL.index(car)]+1
+        if collect=="firstTimeToReach":
+            if airports[airportl.index(pos0)]==0:
+                airports[airportl.index(pos0)]=t
+            if compagnies[carL.index(car)]== -1:
+                compagnies[carL.index(car)]=t
+        i=i+1
+    return([pos0,t,airports,compagnies])
+
+airports=np.array([0 for i in (airportl)])
+
+for i in range(100):
+    print("randomwalk n", i)
+    vect=randomWalk(airportl,m,t)
+    airports=vect[2]
+    compagnies=vect[3]
+    covAirports=np.add(covAirports,airports)
+    covCompagnies=np.add(covCompagnies,compagnies)
+#%%
+axes = plt.gca()
+plt.plot(covAirports,pr,'o')
+axes.set_ylabel('Page Rank')
+axes.set_xlabel('coverage by random walker')
+plt.show()
+
+
+axes = plt.gca()
+sns.relplot(data)
+axes.set_ylabel('Betweenness centrality')
+axes.set_xlabel('coverage by random walker')
+plt.show()
+
+axes=plt.gca()
+plt.plot(covCompagnies,vectp,'o')
+axes.set_ylabel('intrication')
+axes.set_xlabel('coverage compagnies by random walker')
+plt.show()

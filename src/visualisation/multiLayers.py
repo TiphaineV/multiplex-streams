@@ -375,6 +375,8 @@ class MultiLayer :
                 if i!=j :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
+        
+        
     def cleanML(self):
         layersVides=[]
         for lay in self.layers.giveLayerList():
