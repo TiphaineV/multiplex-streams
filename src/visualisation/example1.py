@@ -9,11 +9,13 @@ from Drawing import *
 
 sg = Drawing(alpha=0, omega=10, nameFile="exampletest.fig")
 
-sg.addNode("R1,U1,M1",[(3,10)])
-sg.addNode("R2,U1,Math")
-sg.addNode("R1,U1,CS")
+sg.addNode("F1",[(3,10)])
+sg.addNode("F2",[(1,5),(6,9)])
+sg.addNode("M1",[(0,5)])
 
-sg.addLink("R1,U1,M1","R2,U1,Math",2,9)
+sg.addLink("M1","F2",2,4)
+sg.addLink("F2","F1",4,5)
+sg.addLink("F2","F1",7,8)
 
 sg.addTimeLine()
 sg.closeFile()

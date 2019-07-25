@@ -17,12 +17,12 @@ from multiLayers import *
 
 sg = Drawing(alpha=0, omega=10, nameFile="exampleRapport.fig")
 
-sg.addNode("A",[(0,10)])
-sg.addNode("B",[(0,8)])
-sg.addNode("C",[(4,10)])
+sg.addNode("F1",[(0,10)])
+sg.addNode("F2",[(0,8)])
+sg.addNode("M1",[(4,10)])
 
-sg.addLink("A","B",2,6)
-sg.addLink("B","C",4,8)
+sg.addLink("F1","F2",2,6)
+sg.addLink("F2","M1",4,8)
 
 sg.addTimeLine()
 sg.closeFile()
@@ -36,41 +36,41 @@ tend=10
 scale = 1
 interval = Interval(0,(tend-t0)/scale)
 
-mil = Aspect("milieu",["plaine","montagne"])
+mil = Aspect("milieu",["plain","mountain"])
 
 
-rel = Aspect("type_de_relation",["Collaboration","Combat"])
+rel = Aspect("type_de_relation",["Collaboration","fight"])
 
 struct= LayerStruct([mil,rel])
 
-nA = NodeT("A",IntervalList([Interval(4,10)]),nodeLabel="A")
-nB = NodeT("B",IntervalList([Interval(0,10)]),nodeLabel="B")
-nC = NodeT("C",IntervalList([Interval(0,8)]),nodeLabel="C")
-nD = NodeT("D",IntervalList([Interval(0,10)]),nodeLabel="D")
+nA = NodeT("F1",IntervalList([Interval(4,10)]),nodeLabel="F1")
+nB = NodeT("F2",IntervalList([Interval(0,0)]),nodeLabel="F2")
+nC = NodeT("M1",IntervalList([Interval(0,2),Interval(4,8)]),nodeLabel="M1")
+nD = NodeT("M2",IntervalList([Interval(0,10)]),nodeLabel="M2")
 
-nl=NodeTList([nA,nB,nC,nD])
+nl=NodeTList([nA,nC,nD])
 
-layer1=Layer(struct,["plaine","Collaboration"],Interval(0,10),nl)
+layer1=Layer(struct,["plain","Collaboration"],Interval(0,10),nl)
 
-link1= Link(IntervalList([Interval(2,6)]),nD,["plaine","Collaboration"],nC,["plaine","Collaboration"])
-link2= Link(IntervalList([Interval(5,8)]),nA,["plaine","Collaboration"],nD,["plaine","Collaboration"])
-linkplus= Link(IntervalList([Interval(4,8)]),nA,["plaine","Collaboration"],nB,["plaine","Collaboration"])
-
-
-nA2 = NodeT("A",IntervalList([Interval(4,5), Interval(7,8)]),nodeLabel="A")
-nB2 = NodeT("B",IntervalList([Interval(0,10)]),nodeLabel="B")
-nC2 = NodeT("C",IntervalList([Interval(3,8)]),nodeLabel="C")
-nD2 = NodeT("D",IntervalList([Interval(0,10)]),nodeLabel="D")
-
-nl2=NodeTList([nA2,nB2,nC2,nD2])
-layer2=Layer(struct,["montagne","Collaboration"],Interval(0,10),nl2)
-
-link3= Link(IntervalList([Interval(4,5),Interval(7,8)]),nA2,["montagne","Collaboration"],nB2,["montagne","Collaboration"])
-linkplus2= Link(IntervalList([Interval(4,8)]),nC2,["montagne","Collaboration"],nB2,["montagne","Collaboration"])
-link4= Link(IntervalList([Interval(5,8)]),nD2,["montagne","Collaboration"],nC2,["montagne","Collaboration"])
+link1= Link(IntervalList([Interval(1,2),Interval(6,7)]),nD,["plain","Collaboration"],nC,["plain","Collaboration"])
+link2= Link(IntervalList([Interval(5,8)]),nA,["plain","Collaboration"],nC,["plain","Collaboration"])
+#linkplus= Link(IntervalList([Interval(4,8)]),nA,["plain","Collaboration"],nB,["plain","Collaboration"])
 
 
-m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4,linkplus,linkplus2]))
+nA2 = NodeT("F1",IntervalList([Interval(0,4)]),nodeLabel="F1")
+nB2 = NodeT("F2",IntervalList([Interval(0,10)]),nodeLabel="F2")
+nC2 = NodeT("M1",IntervalList([Interval(2,4),Interval(8,10)]),nodeLabel="M1")
+nD2 = NodeT("M2",IntervalList([Interval(0,0)]),nodeLabel="M2")
+
+nl2=NodeTList([nA2,nB2,nC2])
+layer2=Layer(struct,["mountain","Collaboration"],Interval(0,10),nl2)
+
+link3= Link(IntervalList([Interval(1,2),Interval(3,4)]),nA2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
+linkplus2= Link(IntervalList([Interval(2,3),Interval(8,9)]),nC2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
+#link4= Link(IntervalList([Interval(5,8)]),nD2,["mountain","Collaboration"],nC2,["mountain","Collaboration"])
+
+
+m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,linkplus2]))
 
 m.drawMS("exrap.fig")
 
