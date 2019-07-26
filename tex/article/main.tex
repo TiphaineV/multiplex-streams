@@ -100,7 +100,7 @@ Jean-François Baffier\inst{2} \and Benjamin Renoust\inst{3}}
 \and
 Japan Society for the Promotion of Sciences
 \and 
-Osaka Univerisity}
+Institute for Datability Science, Osaka Univerisity}
 
 \maketitle              % typeset the title of the contribution
 
@@ -353,20 +353,91 @@ We define a multilayer stream graph (MSG) as a tuple $S_M = (T,T_M,V,W_M,E_M,{\c
 
    $E_M \subseteq T\times V_M \otimes V_M$ are the links appearing with respect to time,  $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$. The elements of $V_M$ are named {\em node-layer}. A link can not appear outside the time of existence of the two node-layers.
    
+   We give an example of modelisation for the imaginary multilayer stream graph of relationships between monkeys, \cref{multistreamMonkeys}.
    \begin{figure}[h]
    	\includegraphics[width=0.8\textwidth]{img/monkeymls.pdf}
    	\caption{An example of the 2-layers stream graph of monkeys, collaborating in mountain or in plain. $F_1$ is in [mountain, collaboration] between $t=0$ and $t=4$ and then goes to [plain,collaboration]. It collaborates with $F_2$ at $t\in [1,2]\cup[3,4]$: $\{(t,F_1,[\text{mountain,collaboration}],F_2,[\text{mountain,collaboration}]),t\in [1,2]\cup[3,4]\} \subset E_M$.}
+   	\label{multistreamMonkeys}
    \end{figure}
    
-   
-\subsection{Notions associated}
 %
-\subsubsection{Basic notions}
+\subsection{Basic notions}
 %
+\subsubsection{Extractions}
+
+We built a object containing both the temporal and structural aspect, we will now explain how to do the reverse operation, how we can extract some stream graphs, multilayer graphs and graphs from a multilayer stream graph.
+
+\begin{definition}[Induced multilayer graph]
+    The {\em induced multilayer graph by the set } $\tau \subseteq T$ is a multilayer graph $M_I(S_M)=(V_{M,I}, E_{M,I}, V,L)$ which gathers all the layers, nodes-layers and links existing during a time of $\tau$.
+    \begin{align*}
+    	V_{M,I} = \{ v \in V | \exists t \in \tau, (t,v) \in V_M\}\\
+    	E_{M,I} = \{((v,\alpha),(w,\beta)) \in (V\times L)\otimes (V\times L) | \exists t \in \tau , (t,v,\alpha,w,\beta) \in E_M \} \\
+    \end{align*}
+    In our example of monkeys, the lower part of \cref{multimonkeys} is the induced multilayer stream graph of the multilayer stream graph represented \cref{multistreamMonkeys}.
+\end{definition}
+
+In the case of $\tau={t}$, we call the induced multilayer graph the {\em multilayer graph at time} $t$.
+
+We also extract sub-stream graph and sub-multilayer stream graphs, using the properties of the layers.
+
+\begin{definition}[Intralayer sub stream graph]	
+	For each layer $\alpha \in L_1 \times \dots \times L_d$, the {\em intralayer stream graph} $S^{\alpha}$ is the stream graph $S^{\alpha}=(T_{\alpha},V^{\alpha},W^{\alpha},E^{\alpha})$ such that $ T_{\alpha} \in T_M$ is the existence interval of $\alpha$. $V^{\alpha}$ is the set of node-layers in the layer $\alpha$ and $W^{\alpha}$ represents their times of appearance in the layer $\alpha$. $E^{\alpha}$ is the subset $E_M$ containing only the edges between node-layers of $\alpha$.
+	\end{definition}
+	
+	
+	\begin{definition}[Interlayer stream graphs]		
+	Given a doublet of layers $\alpha, \beta \in L_1\times \dots\times L_d$, the {\em interlayer stream graph} is the bipartite stream graph $S^{(\alpha,\beta)} = (T^{\alpha,\beta}, V^{\alpha,\beta},W^{\alpha,\beta},E^{\alpha,\beta})$ such that: $T^{\alpha,\beta}=T^{\alpha}\cap T^{\beta}$ is the interval of time in wich $\alpha$ and $\beta$ appear simultaneously. $V^{\alpha,\beta}$ are all the node-layers of the multilayer stream graph which are in the layers $\alpha$ and $\beta$, $W^{\alpha,\beta}$ describes all their intervals of existence. Finally, $E^{\alpha,\beta}$ are the not-oriented links between node-layers of layers $\alpha$ and $\beta$ with their times of existence.
+	\end{definition}
+	
+\begin{definition}[Underlying stream graph]
+	The underlying stream graph $S_U(S_M)$ $S_M$ is  $(T,V_M,W_M,E_M)$. It's the stream graph in which the nodes are the nodes-layers from $S_M$. There is a link between two nodes if there is a link between two corresponding node-layers.
+\end{definition}
+	
+	\begin{definition}[Aggregated stream graph]
+		
+		The aggregated stream graph $S_A(S_M)=(T,V,W_A,E_A)$ has the same interval of study $T$ than $S_M$. Its nodes are the same as in $S_M$ (the set $V$). Their times of existence are the union of their time of existence on the different layers: $T_u = \bigcup_{\alpha \in L} T_{u,\alpha}$ and $W_A=\bigcup_{u\in V} T_u\times\{u\}$. An edge exists between two nodes of $S_A(S_M)$ if it exists a the same time between two correspondent node-layers of $S_M$:  $E_A = \{(t,u,v)| \exists (\alpha,\beta) \in L^2, (t,(u,\alpha),(v,\beta)) \in E_M \}$.
+	\end{definition}
+
+\subsection{Density}
+%
+In a classical graph $G=(V,E)$, the density is the rate of connections: $\delta(G)= \frac{|E|}{|V|^2}$ if the graph is directed, and  $\delta(G)= \frac{2|E|}{|V|(|V|-1)}$ if it's not directed. We will focus on the undirected multilayer stream graphs.
+
+\begin{definition}[Density of a multilayer stream graph]	
+	Nous appelons  $C \in T \times V_M\times V_M$ l'ensemble des liens autorisés dans le \stgm{}. Si certaines liens sont \og automatiques\fg{} ou \og sous-entendus \fg{} comme par exemple les arêtes de couplage, nous ne les comptons pas dans $C$ non plus pour que le cas où la densité soit nulle corresponde au cas où on ne peut pas retirer de lien.
+
+	Let's call $C \in T \times V_M\times V_M$ the set of ``possible links'' in the multilayer stream graph. If some links are implied (the links between the nodes-layers from the same nodes), they are not in $C$. 
+	
+	The density is then written as follows:
+	\[
+		\delta_M (M) 
+		%= \frac{\int_{t\in T}|E_M,t|}{\int_{t\in T}|C_t|} 
+		= \frac{\sum_{(u,\alpha)(v,\beta) \in E_M}|T_{(u,\alpha)(v,\beta)}|}{|C|}
+	\]
+\end{definition}	
+	
 
 
-\subsubsection{Centralities}
+\subsection{Centralities}
 %
+A centrality is a measure that quantifies the influence of elements of a graph on the whole graph. In a classical graph, we measure the importance of nodes with the degree, the page-ranking \cite{pr}, with the betweenness centrality \cite{btw}, among a lot of others. But we can also compute betweenness centrality on links, for instance to know which links we have to remove to break a connected component.
+
+In our case, we have nodes, layers, node-layers, and links. This means that the measures will get more complex and more diverse.
+
+\subsubsection{Centrality in layers}
+
+Two types of groups of layers are preponderant in multilayer graphs, the superimposed layers and the juxtaposed layers, and we will define centralities for the two types of layers.
+
+The {\bf superimposed layers}: in this group of layers, nodes can appear on all layers. It is the case for layers describing to diverse types of relationships. If two different node-layers are from different nodes and different superimposed layers, we don't have a link between those two node-layers. A relevant way to study those layers will be to compare them.
+
+The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they can model people from different classes in the same school. A relevant way to deal with those layers will be to study the interactions between them.
+
+\subsubsection{Centrality of times}
+%
+\subsubsection{Centrality of nodes}
+%
+\subsubsection{Experimental centralities: random walk}
+%
+
 \subsection{Implementation and complexity}
 %
 \subsection{Autonomous Systems}
@@ -402,32 +473,15 @@ Kivela M., Arenas A., Barthelemy M., Gleeson J.P., Moreno Y., Porter M.A.: Multi
 \bibitem{mldd}
 De Domenico M., Sol\'e-Ribalta A., Cozzo E., Kivel\"a M., Moreno Y., Porter M.A., G\'omez S., Arenas A.: Mathematical Formulation of Multilayer Networks.(2013). In: Phys. Rev. X. doi:10.1103/PhysRevX.3.041022
 
+%page rank
+\bibitem{pr}
+Brin S., Page L.: The anatomy of a large-scale hypertextual web search engine (1998). In: Proceedings of the Seventh World Wide Web Conference
+
+%betweenness centrality
+\bibitem{btw}
+Brandes U.: A faster algorithm for betweenness centrality (2001). In: Journal of mathematical sociology.
 % --------------------------------------------------
 
-\bibitem {may:ehr:stein}
-May, P., Ehrlich, H.-C., Steinke, T.: ZIB structure prediction pipeline:
-composing a complex biological workflow through web services.
-In: Nagel, W.E., Walter, W.V., Lehner, W. (eds.) Euro-Par 2006.
-LNCS, vol. 4128, pp. 1148?1158. Springer, Heidelberg (2006).
-\url{doi:10.1007/11823285_121}
-
-
-\bibitem {fost:kes}
-Foster, I., Kesselman, C.: The Grid: Blueprint for a New Computing Infrastructure.
-Morgan Kaufmann, San Francisco (1999)
-
-\bibitem {czaj:fitz}
-Czajkowski, K., Fitzgerald, S., Foster, I., Kesselman, C.: Grid information services
-for distributed resource sharing. In: 10th IEEE International Symposium
-on High Performance Distributed Computing, pp. 181?184. IEEE Press, New York (2001).
-\url{doi: 10.1109/HPDC.2001.945188}
-
-\bibitem {fo:kes:nic:tue}
-Foster, I., Kesselman, C., Nick, J., Tuecke, S.: The physiology of the grid: an open grid services architecture for distributed systems integration. Technical report, Global Grid
-Forum (2002)
-
-\bibitem {onlyurl}
-National Center for Biotechnology Information. \url{http://www.ncbi.nlm.nih.gov}
 
 
 \end{thebibliography}
