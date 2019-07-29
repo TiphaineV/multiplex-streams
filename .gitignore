@@ -109,7 +109,6 @@ venv.bak/
 *.bak
 *.blg
 *.log
-*.pdf 
 *.gz
 *.aux
 *.gml
@@ -129,3 +128,6 @@ src/visualisation/lycee.svg
 #folder 
 **/src/visualisation/outputs/
 **/data/resistance
+
+#files
+main.pdf
