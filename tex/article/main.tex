@@ -167,9 +167,9 @@ To illustrate the definitions of all the graphs, we will use the same example: a
     \end{subfigure}
     ~ %add desired spacing between images, e. g. ~, \quad, \qquad, \hfill etc.
     %(or a blank line to force the subfigure onto a new line)
-    \begin{subfigure}[b]{\textwidth}
+    \begin{subfigure}[b]{.45\textwidth}
 			\centering
-			\begin{tikzpicture}[scale=0.38,every node/.style={minimum size=1cm},on grid]
+			\begin{tikzpicture}[scale=0.25,every node/.style={minimum size=1cm},on grid]
 
 				\node [mybox, scale=1.0] at (10.5, 2) (box){%
 					\begin{minipage}{0.6\textwidth}
@@ -302,6 +302,10 @@ To illustrate the definitions of all the graphs, we will use the same example: a
 			\end{tikzpicture}
 			\caption{The multilayer graph of relationships between monkeys. Red link between $M_1$ and $F_2$ means that the two monkeys have been fighting in the forest. The dotted links means that the nodes-layers are from the same nodes.}
 			\label{subfig:monkeyplex}
+    \end{subfigure}
+		\hfill
+    \begin{subfigure}[b]{0.45\textwidth}
+    	\includegraphics[width=\textwidth]{img/test}
     \end{subfigure}
     \caption{Monkeys interactions through the lens of different kind of networks.}\label{fig:monkey}
 \end{figure}
