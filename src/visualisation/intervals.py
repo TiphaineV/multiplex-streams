@@ -138,7 +138,6 @@ class IntervalList :
                 #print("fusion")
                 #self.listOfIntervals[i].printInterval()
                 #self.listOfIntervals[i+1].printInterval()
-                print("condddd")
                 inte=self.listOfIntervals.pop(i+1)
                 self.listOfIntervals[i].setEnd(max(inte.end(),self.listOfIntervals[i].end()))
             else :

@@ -306,6 +306,8 @@ To illustrate the definitions of all the graphs, we will use the same example: a
 		\hfill
     \begin{subfigure}[b]{0.45\textwidth}
     	\includegraphics[width=\textwidth]{img/test}
+    	\caption{An example of the 2-layers stream graph of monkeys, collaborating in mountain or in plain. $F_1$ is in [mountain, collaboration] between $t=0$ and $t=4$ and then goes to [plain,collaboration]. It collaborates with $F_2$ at $t\in [1,2]\cup[3,4]$: $\{(t,F_1,[\text{mountain,collaboration}],F_2,[\text{mountain,collaboration}]),t\in [1,2]\cup[3,4]\} \subset E_M$.}
+    	\label{subfig:monkeymls}
     \end{subfigure}
     \caption{Monkeys interactions through the lens of different kind of networks.}\label{fig:monkey}
 \end{figure}
@@ -364,12 +366,8 @@ We define a multilayer stream graph (MSG) as a tuple $S_M = (T,T_M,V,W_M,E_M,{\c
 
    $E_M \subseteq T\times V_M \otimes V_M$ are the links appearing with respect to time,  $V_M = \{ (u,\alpha), u\in V, \alpha \in L\}$. The elements of $V_M$ are named {\em node-layer}. A link can not appear outside the time of existence of the two node-layers.
 
-   We give an example of modelisation for the imaginary multilayer stream graph of relationships between monkeys, \cref{multistreamMonkeys}.
-   \begin{figure}[t!]
-   	\includegraphics[width=0.6\textwidth]{img/monkeymls.pdf}
-   	\caption{An example of the 2-layers stream graph of monkeys, collaborating in mountain or in plain. $F_1$ is in [mountain, collaboration] between $t=0$ and $t=4$ and then goes to [plain,collaboration]. It collaborates with $F_2$ at $t\in [1,2]\cup[3,4]$: $\{(t,F_1,[\text{mountain,collaboration}],F_2,[\text{mountain,collaboration}]),t\in [1,2]\cup[3,4]\} \subset E_M$.}
-   	\label{multistreamMonkeys}
-   \end{figure}
+   We give an example of modelisation for the imaginary multilayer stream graph of relationships between monkeys, \cref{subfig:monkeymls}.
+
 
 %
 \subsection{Basic notions}
@@ -430,10 +428,11 @@ In a classical graph $G=(V,E)$, the density is the rate of connections: $\delta(
 A centrality is a measure that quantifies the influence of elements of a graph on the whole graph. In a classical graph, we measure the importance of nodes with the degree, the page-ranking \cite{pr}, with the betweenness centrality \cite{btw}, among a lot of others. But we can also compute betweenness centrality on links, for instance to know which links we have to remove to break a connected component.
 
 In our case, we have nodes, layers, node-layers, and links. This means that the measures become more complex and more diverse.
+
 %
 \subsubsection{Centrality of nodes and the paths}
 %
-In classical graph, the centrality of the nodes describe how much we will encounter a node while browsing a graph. They are different way to browse a graph: the random walk, the contamination models, the shortest path, etc. In the stream graph, the notions are more numerous: we can compute random walks, but with different laws of probabilities of transition, same for the contamination. We can look for the shortest paths (with the less transitions possible) but the fastest paths (the ones that take less time), the foremost paths (the ones that arrives the earliest starting from a certain time), and we can combine those notions.
+In classical graph, the centrality of the nodes describes how much we encounter a node while browsing a graph. They are different way to browse a graph: the random walk, the contamination models, the shortest path, etc. In the stream graph, the notions are more numerous: we can compute random walks, but with different laws of probabilities of transition, same for the contamination. We can look for the shortest paths (with the less transitions possible) but the fastest paths (the ones that take less time), the foremost paths (the ones that arrives the earliest starting from a certain time), and we can combine those notions.
 
 
 
@@ -442,6 +441,12 @@ In classical graph, the centrality of the nodes describe how much we will encoun
 Two types of groups of layers are preponderant in multilayer graphs, the superimposed layers and the juxtaposed layers, and we define centralities for the two types of layers.
 
 The {\bf superimposed layers}: in this group of layers, nodes can appear on all layers. It is the case for layers describing to diverse types of relationships. If two different node-layers are from different nodes and different superimposed layers, we don't have a link between those two node-layers. A relevant way to study those layers is be to compare them.
+We build then a centrality based on the density. We create the matrix of density between different layers $(D_{ij})_{1\leq i,j\leq n}$:
+\begin{align*}
+\forall i \in [1,n], & D_{i,i} = \delta_i \\
+\forall i \neq j , & D_{i,j} = \delta_{i,j}
+\end{align*}
+The theorem of Perron-Frobenius theorem~\cite{perron,frobenius} says that a non-reductible non-negative matrix has a maximum positive eigenvalue with a eigen space of range 1. Here, we know that $A$ is non-negative by definition and irreductible unless we can share the layers into different groups that don't interact together.
 
 The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they can model people from different classes in the same school. A relevant way to deal with those layers is to study the interactions between them.
 
@@ -451,7 +456,6 @@ The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they c
 
 \subsubsection{Experimental centralities: random walk}
 %
-
 \subsection{Implementation and complexity}
 %
 \subsection{Autonomous Systems}
@@ -461,10 +465,56 @@ The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they c
 %
 \subsection{Two datasets}
 %
-\subsubsection{Classes in an high school: a social multilayer stream graph}
+We use two datasets to illustrate our new notions. The first one is a recording of three type of interactions among student in different classes of an high school. The second one is the dataset of the flights of different companies in the US.
 %
+\subsubsection{Classes in an high school~\cite{cpge}: a social multilayer stream graph}
+%
+This dataset has the following properties:
+\begin{itemize}
+	\item number of nodes: 329
+	\item aspects:
+	\begin{itemize}
+		\item class: \texttt{["MP","MP*1","MP*2","PSI*","PC","PC*","2BIO1","2BIO2","2BIO3"]}. Juxtaposed elementary layers.
+		\item sexe: \texttt{["F","M","U"]} (the "U" are for the professors). Juxtaposed elementary layers.
+		\item type of relationship: \texttt{["face to face","facebook","friendship"]}. Superimposed elementary layers.
+	\item number of layers: $81$.
+	\item number of node-layers: $987$
+	\item number of links: $7661$
+	\end{itemize}
+\end{itemize}
+The \texttt{"Facebook"} and \texttt{"friendship"} doesn't depend on time, they have been recorded from the answers of student at a questionnaire. The links \texttt{"face to face"} have been recorded each 20 seconds during 5 days with receptors on each student. Those receptors detect and record when two student are next to each other.
+
+To have an overwiev on the dataset, we represent all the layers of the relationship \texttt{"face to face"} \cref{visu}, as for \cref{subfig:monkeymls}
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/lycee/lyceeentier.JPG}
+	\caption{The visualisation of the multilayer stream graph of face to face relationships between student. Each color describes interactions inside a layer, the black are for interlayer relationships.}
+	\label{visu}
+\end{figure}
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/lycee/compfg.pdf}
+\end{figure}
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/lycee/matricegenres.pdf}
+\end{figure}
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/lycee/sousmulticlasseftf.png}
+\end{figure}
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/lycee/tout.png}
+\end{figure}
 \subsubsection{Civil airlines in US: an application to transportation}
 %
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/planes/map.jpg}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/planes/intricplanes.pdf}
+\end{figure}
+
+\begin{figure}
+	\includegraphics[width=0.8\textwidth]{img/planes/prVSrw.pdf}
+\end{figure}
 \subsection{Analysis}
 %
 
@@ -494,6 +544,16 @@ Brin S., Page L.: The anatomy of a large-scale hypertextual web search engine (1
 %betweenness centrality
 \bibitem{btw}
 Brandes U.: A faster algorithm for betweenness centrality (2001). In: Journal of mathematical sociology.
+
+%perron-frobenius
+\bibitem{perron}
+Perron O.: Zur Theorie der Matrices (1907). In: Mathematische Annalen. \url{doi:10.1007/BF01449896}
+\bibitem{frobenius}
+Frobenius G: Über Matrizen aus positiven Elementen, 1 and 2 (1908-1909). In: Sitzungsberichte der Königlich Preussischen Akademie der Wissenschaften.
+
+%dataset
+\bibitem{cpge}
+Mastrandrea R. AND Fournet J. AND Barrat A.: Contact Patterns in a High School: A Comparison between Data Collected Using Wearable Sensors, Contact Diaries and Friendship Surveys (2015). In: PLOS ONE, Public Library of Science,\url{doi:https://doi.org/10.1371/journal.pone.0136497}
 % --------------------------------------------------
 
 
