@@ -464,6 +464,46 @@ class MultiStream :
                     matc[i][j]=mat[i][j]/mat[j][j]
         return(matc)
         
+    def computeCovMatrix(self):
+        n=self.layers.length()
+        mat=np.zeros((n,n))
+        matIntervales=[[[]for i in range(n)]for i in range(n)]
+        i1=0
+        j1=0
+        ne=self.em.length()
+        N=0
+        ind=0
+        liste=[]
+        em2=self.em.giveListOfLinks().copy()
+        while em2.__len__()!=0:
+            link=em2[0]
+            em2.remove(link)
+            N=N+link.giveIntervals2().duration()
+            if link.giveLabel()[2]==link.giveLabel()[3]:
+                n1=link.giveLabel()[0]
+                n2=link.giveLabel()[1]
+                indice=self.layers.giveIndex(link.giveLabel()[2])
+                mat[indice][indice]=mat[indice][indice]+link.giveIntervals2().duration()
+                liste=[]
+                for link2 in em2:
+                    if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2) or(link2.giveLabel()[0]==n2 and link2.giveLabel()[1]==n1):
+                        if link2.giveLabel()[2]==link2.giveLabel()[3]:
+                            link2.printLink()
+                            indice2=self.layers.giveIndex(link2.giveLabel()[2])
+                            nnodescroises=link2.giveIntervals2().intersection(link.giveIntervals2()).duration()
+                            mat[indice][indice2]=mat[indice][indice2]+nnodescroises
+                            mat[indice2][indice]=mat[indice2][indice]+nnodescroises
+                            liste.append(link2)
+        print(mat)
+        matc=np.zeros((n,n))
+        for i in range(n):
+            for j in range(n):
+                if i==j:
+                    matc[i][i]=mat[i][i]/N-(mat[i][i]/N)**2
+                else :
+                    matc[i][j]=mat[i][j]/N-mat[j][j]*mat[i][i]/(N*N)
+        return(matc)
+        
     def elemLayerDensitiesMat(self,aspect):
         n=len(aspect.giveElemLayer())
         mat=np.zeros((n,n))
@@ -501,6 +541,8 @@ class MultiStream :
                 mat[i][j]=dens2
                 mat[j][i]=dens2
         return([mat,listeElemLay])
+    
+
 
 def indice(liste,elem1):
     i=0

@@ -193,6 +193,27 @@ pr=[]
 for n in graph.getNodes():
     pr.append(pagerank[n])
 #%%
+matcov=multi.computeCovariance()
+print("rank=",np.linalg.matrix_rank(matcov))
+matprec=np.linalg.inv(matcov)
+for i in range(len(matprec)):
+    matprec[i][i]=0
+print("****************************************************************")
+
+valp,vectp=valeurPropreMax(np.transpose(matprec),1000)
+lablist=multi.giveLayersLabels()
+sns_plot=sns.heatmap(np.transpose(matprec),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
+fig = sns_plot.get_figure()
+fig.savefig("marprec.pdf")
+plt.show()
+
+l=SortedCollection(iterable=lablist,key = lambda lab: vectp[lablist.index(lab)])
+vectpo,labo=l.listsSorted()
+
+plt.plot(labo,vectpo,'o')
+plt.savefig("precVP.pdf")
+plt.show()
+#%%
 betweenness=graph.getDoubleProperty("betweeness")
 params = tlp.getDefaultPluginParameters('Betweenness Centrality', graph)
 params["directed"]=True
@@ -204,6 +225,7 @@ for n in graph.getNodes():
 #%%
 matintric=multi.computeIntricationMatrixBurt()
 
+print("rank=",np.rank(matintric))
 print("****************************************************************")
 
 valp,vectp=valeurPropreMax(np.transpose(matintric),1000)
@@ -317,7 +339,7 @@ def randomWalk(airportl,m,t,collect="coverage",prints=False):
     return([pos0,t,airports,compagnies])
 
 airports=np.array([0 for i in (airportl)])
-
+t=0
 for i in range(100):
     print("randomwalk n", i)
     vect=randomWalk(airportl,m,t)

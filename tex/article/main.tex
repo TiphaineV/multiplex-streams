@@ -12,6 +12,7 @@
 \documentclass{svproc}
 \usepackage{amsmath}
 \usepackage{cleveref}
+\usepackage{tabularx}
 %
 % RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -399,7 +400,7 @@ We also extract sub-stream graph and sub-multilayer stream graphs, using the pro
 	\end{definition}
 
 \begin{definition}[Underlying stream graph]
-	The underlying stream graph $S_U(S_M)$ $S_M$ is  $(T,V_M,W_M,E_M)$. It's the stream graph in which the nodes are the nodes-layers from $S_M$. There is a link between two nodes if there is a link between two corresponding node-layers.
+	The underlying stream graph \\$S_U(S_M)$ of $S_M$ is  $(T,V_M,W_M,E_M)$. It's the stream graph in which the nodes are the nodes-layers from $S_M$. There is a link between two nodes if there is a link between two corresponding node-layers.
 \end{definition}
 
 	\begin{definition}[Aggregated stream graph]
@@ -453,71 +454,109 @@ The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they c
 
 \subsubsection{Centrality of times}
 %
-
 \subsubsection{Experimental centralities: random walk}
 %
 \subsection{Implementation and complexity}
-%
-\subsection{Autonomous Systems}
 %
 
 \section{Datasets and results}
 %
 \subsection{Two datasets}
 %
-We use two datasets to illustrate our new notions. The first one is a recording of three type of interactions among student in different classes of an high school. The second one is the dataset of the flights of different companies in the US.
+We use two datasets to illustrate our new notions. The first one is a recording of three type of interactions among student in different classes of an high school. The second one is the dataset of the flights of different companies in the US. Their characteristics are described on the \cref{tab:characteristics}.
+\paragraph{Classes in an high school~\cite{cpge}: a social multilayer stream graph} Relationships of different types between students have been recorded.  The \texttt{"Facebook"} and \texttt{"friendship"} doesn't depend on time, they have been recorded from the answers of student at a questionnaire. The links \texttt{"face to face"} have been recorded each 20 seconds during 5 days with receptors on each student. Those receptors detect and record when two student are next to each other.
 %
-\subsubsection{Classes in an high school~\cite{cpge}: a social multilayer stream graph}
-%
-This dataset has the following properties:
-\begin{itemize}
-	\item number of nodes: 329
-	\item aspects:
-	\begin{itemize}
-		\item class: \texttt{["MP","MP*1","MP*2","PSI*","PC","PC*","2BIO1","2BIO2","2BIO3"]}. Juxtaposed elementary layers.
-		\item sexe: \texttt{["F","M","U"]} (the "U" are for the professors). Juxtaposed elementary layers.
-		\item type of relationship: \texttt{["face to face","facebook","friendship"]}. Superimposed elementary layers.
-	\item number of layers: $81$.
-	\item number of node-layers: $987$
-	\item number of links: $7661$
-	\end{itemize}
-\end{itemize}
-The \texttt{"Facebook"} and \texttt{"friendship"} doesn't depend on time, they have been recorded from the answers of student at a questionnaire. The links \texttt{"face to face"} have been recorded each 20 seconds during 5 days with receptors on each student. Those receptors detect and record when two student are next to each other.
+%\begin{itemize}
+%	\item number of nodes: 329
+%	\item aspects:
+%	\begin{itemize}
+%		\item class: \texttt{["MP","MP*1","MP*2","PSI*","PC","PC*","2BIO1","2BIO2","2BIO3"]}. Juxtaposed elementary layers.
+%		\item sexe: \texttt{["F","M","U"]} (the "U" are for the professors). Juxtaposed elementary layers.
+%		\item type of relationship: \texttt{["face to face","facebook","friendship"]}. Superimposed elementary layers.
+%	\item number of layers: $81$.
+%	\item number of node-layers: $987$
+%	\item number of links: $7661$
+%	\end{itemize}
+%\end{itemize}
 
-To have an overwiev on the dataset, we represent all the layers of the relationship \texttt{"face to face"} \cref{visu}, as for \cref{subfig:monkeymls}
+
+
+\paragraph{US Flight~\cite{planes}: a transporation multilayer stream graph} All the intern flights have been recorded since 1987. We choosed January 2019 for our study. 
+
+\begin{table}
+\begin{tabularx}{\linewidth}{|l|l|X|X|l|l|}
+\hline
+dataset & Nodes & superimposed aspects  & Juxtaposed aspects & Links & $T$ \\
+\hline
+High school & Students: 329&  Relationships type (Facebook, Face to face, Friendships) & Sex (F,M,U), Class (9)&  Relationships & 5 days \\
+\hline
+US planes & Airports: 346 & Companies (17) & - & Flights & 1 month \\
+\hline
+\end{tabularx}
+\caption{Characteristic of the multilayer stream graphs representing our two datasets}
+\label{tab:characteristics}
+\end{table}
+
+
+\subsection{Visualisations}
+The multilayer stream graph is by definition an object with several dimensions, which means that to have an overview on it, we will have to make projections.
+
+To have an overview on the High School dataset, we represent all the layers of the relationship \texttt{"face to face"} \cref{figvisu}, as for \cref{subfig:monkeymls}. This vizualisation gives global informations, for instance, we can see in black the breaks and lunch time, with the only inter-classes relationships.
 \begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/lycee/lyceeentier.JPG}
+\begin{subfigure}{0.50\textwidth}
+	\includegraphics[width=\textwidth]{img/lycee/lyceeentier.JPG}
 	\caption{The visualisation of the multilayer stream graph of face to face relationships between student. Each color describes interactions inside a layer, the black are for interlayer relationships.}
-	\label{visu}
-\end{figure}
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/lycee/compfg.pdf}
-\end{figure}
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/lycee/matricegenres.pdf}
-\end{figure}
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/lycee/sousmulticlasseftf.png}
-\end{figure}
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/lycee/tout.png}
-\end{figure}
-\subsubsection{Civil airlines in US: an application to transportation}
-%
-\begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/planes/map.jpg}
+	\label{fig:visuLycee}
+	\end{subfigure}
+	\begin{subfigure}{0.40\textwidth}
+	\includegraphics[width=\textwidth]{img/planes/map.jpg}
+	\caption{Induced multilayer graph of the intern flight of american companies. The size of the nodes depend of their PageRank centrality. Generated with Tulip. }
+	\end{subfigure}
 \end{figure}
 
+On the multilayer stream graph of the planes dataset, as it is closely linked to the geography, the view of the induced graph is the more understandable.
+
+\subsection{Centralities}
+\subsubsection{Density}
+
+The density in multilayer stream graph can be used to capture more precise things than in a static multilayer graph. For instance, we wondered if the sex separation was seeable in the interactions between students. We then computed the density inside the stream graphs of the layers associated to men, and women, the density of relationships between the two sets of layers (we then have a bipartite density). And we computed the global density~\cref{fig:dens}. We compared our results to the one founded with the induced multilayer graph by $day_i, \forall i \in \{1,2,3,4,5\}$. We noticed that the separation was much more visible with the multilayer stream graph density. We can then confirm that relationships between women are more dense than the one between man, which are more dense that inside the whole population. And the less dense relationships are between man and women.
 \begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/planes/intricplanes.pdf}
+	\begin{subfigure}{0.45\textwidth}
+	\includegraphics[width=\textwidth]{img/lycee/compfg.pdf}
+	\caption{Density in multilayer stream graph computed for each day, inside the layers of mens, the layers of womens, between the two groups of layers and inside the whole group}
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+	\includegraphics[width=\textwidth]{img/lycee/densitesj.pdf}
+	\caption{Density in induced multilayer stream graph by each day. }
+	\end{subfigure}
+	\begin{subfigure}{0.45\textwidth}
+	\includegraphics[width=\textwidth]{img/lycee/matricegenres.pdf}
+	\label{fig:matrixD}
+	\caption{A compléter: j'ai presque une interprétation qui tient la route: $X$ représente les proportions de gens dans chaque couche. La densité globale tend quand le nombre de noeuds tend vers l'infini, vers $\lambda$ la valeur propre de $A$, mais le problème vient du fait que $\lambda$ est le max de $^tXAX$, $||X||_{\textbf{2}=1}$ et non $||X||_{\textbf{1}=1}$. Le calcul du max de $^tXAX$ sur ce dernier ensemble est un problème linéaire, les solutions ne sont pas satisfaisantes  }
+\end{subfigure}
+	\label{fig:dens}
+	
+	\caption{Two types of density are used to differentiate the men and women interactions. In the first one, the density in multilayer stream graph, the difference between the different groups is much more accentuated, the gap between the more and the less dense measure is 3 times the less dense, although in the second one it's only two.  }
+	
 \end{figure}
 
+We get then intuitively a centrality of the layers: we see that as the relationships are more dense between women, their layers are more central than the men's one.
+
+We added the relationships with professors (of sex \texttt{'U'}) and we computed the matrix of density~\cite{fig:matrixD}.
+
+
+
 \begin{figure}
-	\includegraphics[width=0.8\textwidth]{img/planes/prVSrw.pdf}
+\begin{subfigure}{0.45\textwidth}
+	\includegraphics[width=\textwidth]{img/planes/intricplanes.pdf}
+\end{subfigure}
+\begin{subfigure}{0.45\textwidth}
+	\includegraphics[width=\textwidth]{img/planes/prVSrw.pdf}
+\end{subfigure}
 \end{figure}
 \subsection{Analysis}
 %
-
+\newpage
 % ---- Bibliography ----
 %
 \begin{thebibliography}{6}
@@ -554,6 +593,10 @@ Frobenius G: Über Matrizen aus positiven Elementen, 1 and 2 (1908-1909). In: Si
 %dataset
 \bibitem{cpge}
 Mastrandrea R. AND Fournet J. AND Barrat A.: Contact Patterns in a High School: A Comparison between Data Collected Using Wearable Sensors, Contact Diaries and Friendship Surveys (2015). In: PLOS ONE, Public Library of Science,\url{doi:https://doi.org/10.1371/journal.pone.0136497}
+
+\bibitem{planes}
+Bureau of Transportation Statistics,\url{https://www.transtats.bts.gov/DL_SelectFields.asp?Table_ID=236}
+
 % --------------------------------------------------
 
 

@@ -349,31 +349,67 @@ class MultiLayer :
         ne=self.em.length()
         N=0
         ind=0
-        liste=[]
+        liens=[]
         em2=self.em.giveListOfLinks().copy()
         while em2.__len__()!=0:
             link=em2[0]
             em2.remove(link)
-            N=N+1
             if link.giveLabel()[2]==link.giveLabel()[3]:
                 n1=link.giveLabel()[0]
                 n2=link.giveLabel()[1]
                 indice=self.layers.giveIndex(link.giveLabel()[2])
                 mat[indice][indice]=mat[indice][indice]+1
-                liste=[]
+                if not([n1,n2] in liens or [n2,n1] in liens):
+                    liens.append([n1,n2])
                 for link2 in em2:
                     if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2) or(link2.giveLabel()[0]==n2 and link2.giveLabel()[1]==n1):
                         if link2.giveLabel()[2]==link2.giveLabel()[3]:
                             indice2=self.layers.giveIndex(link2.giveLabel()[2])
                             mat[indice][indice2]=mat[indice][indice2]+1
                             mat[indice2][indice]=mat[indice2][indice]+1
-                            liste.append(link2)
         matc=np.zeros((n,n))
+        N=len(liens)
         for i in range(n):
             matc[i][i]=mat[i][i]/N
             for j in range(n):                    
                 if i!=j :
                     matc[i][j]=mat[i][j]/mat[j][j]
+        return(matc)
+        
+    def computeCovariance(self):
+        n=self.layers.length()    
+        mat=np.zeros((n,n))
+        i1=0
+        j1=0
+        ne=self.em.length()
+        N=0
+        ind=0
+        em2=self.em.giveListOfLinks().copy()
+        liens=[]
+        while em2.__len__()!=0:
+            link=em2[0]
+            em2.remove(link)
+            if link.giveLabel()[2]==link.giveLabel()[3]:
+                n1=link.giveLabel()[0]
+                n2=link.giveLabel()[1]
+                indice=self.layers.giveIndex(link.giveLabel()[2])
+                mat[indice][indice]=mat[indice][indice]+1
+                if not([n1,n2] in liens or [n2,n1] in liens):
+                    liens.append([n1,n2])
+                for link2 in em2:
+                    if (link2.giveLabel()[0]==n1 and link2.giveLabel()[1]==n2):
+                        if link2.giveLabel()[2]==link2.giveLabel()[3]:
+                            indice2=self.layers.giveIndex(link2.giveLabel()[2])
+                            mat[indice][indice2]=mat[indice][indice2]+1
+                            mat[indice2][indice]=mat[indice2][indice]+1
+        N=(len(liens))
+        matc=np.zeros((n,n))
+        for i in range(n):
+            matc[i][i]=mat[i][i]/N-(mat[i][i]/N)**2
+            for j in range(n):                    
+                if i!=j :
+                    matc[i][j]=mat[i][j]/N- mat[i][i]*mat[j][j]/(N**2)
+        print("N=",N)
         return(matc)
         
         
