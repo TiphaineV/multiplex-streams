@@ -433,7 +433,11 @@ In our case, we have nodes, layers, node-layers, and links. This means that the 
 %
 \subsubsection{Centrality of nodes and the paths}
 %
-In classical graph, the centrality of the nodes describes how much we encounter a node while browsing a graph. They are different way to browse a graph: the random walk, the contamination models, the shortest path, etc. In the stream graph, the notions are more numerous: we can compute random walks, but with different laws of probabilities of transition, same for the contamination. We can look for the shortest paths (with the less transitions possible) but the fastest paths (the ones that take less time), the foremost paths (the ones that arrives the earliest starting from a certain time), and we can combine those notions.
+In classical graph, the centrality of the nodes describes how much we encounter a node while browsing a graph. They are different way to browse a graph. First, it is necessary to define what transistion are possible, depending on the system we model. If the link represent some travels (flights for instance), then to go from one node to another, the``passenge'' has to ``take'' the flight from the beginning to the end. For a relationship multilayer stream graph, something going across the links which represent interaction will be a disease for instance, and can pass from one node to another continuously during the interval of the link.  
+
+\textbf{Remarque: illustration possible avec l'image d'un pont-levis ou de ferry-boats pour traverser une rivière}
+
+The random walk gives an information on which nodes are well connected (on the same principle as for the PageRank for classical graphs). The betweenness centrality, computed with shortest paths (in time or transitions) from on node to another, or foremost paths (from one node and one time to another time) allows us to get the node the more important for the connectivity of the other nodes. 
 
 
 
@@ -449,7 +453,7 @@ We build then a centrality based on the density. We create the matrix of density
 \end{align*}
 The theorem of Perron-Frobenius theorem~\cite{perron,frobenius} says that a non-reductible non-negative matrix has a maximum positive eigenvalue with a eigen space of range 1. Here, we know that $A$ is non-negative by definition and irreductible unless we can share the layers into different groups that don't interact together.
 
-The {\bf juxtaposed layers} forms a partition of the nodes. For instance, they can model people from different classes in the same school. A relevant way to deal with those layers is to study the interactions between them.
+The {\bf juxtaposed layers} form a partition of the nodes. For instance, they can model people from different classes in the same school. A relevant way to deal with those layers is to study the interactions between them.
 
 
 \subsubsection{Centrality of times}
@@ -484,13 +488,13 @@ We use two datasets to illustrate our new notions. The first one is a recording 
 \paragraph{US Flight~\cite{planes}: a transporation multilayer stream graph} All the intern flights have been recorded since 1987. We choosed January 2019 for our study. 
 
 \begin{table}
-\begin{tabularx}{\linewidth}{|l|l|X|X|l|l|}
+\begin{tabularx}{\linewidth}{|l|l|X|X|X|l|}
 \hline
 dataset & Nodes & superimposed aspects  & Juxtaposed aspects & Links & $T$ \\
 \hline
-High school & Students: 329&  Relationships type (Facebook, Face to face, Friendships) & Sex (F,M,U), Class (9)&  Relationships & 5 days \\
+High school & Students: 329&  Relationships type (Facebook, Face to face, Friendships) & Sex (F,M,U), Class (9)&  Relationships: 36~732 & 5 days \\
 \hline
-US planes & Airports: 346 & Companies (17) & - & Flights & 1 month \\
+US planes & Airports: 346 & Companies (17) & - & Flights: 583~986 & 1 month \\
 \hline
 \end{tabularx}
 \caption{Characteristic of the multilayer stream graphs representing our two datasets}
