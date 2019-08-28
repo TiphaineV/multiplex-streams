@@ -83,7 +83,7 @@ def readLinks():
                     airportPerLay[career].append(origin)
                 if not dest in airportPerLay[career]:
                     airportPerLay[career].append(dest)
-                em.addLink(Link(IntervalList([inter]),NodeT(origin,IntervalList([interval])),[career],NodeT(dest,IntervalList([interval])),[career],directed=0),cond=0)
+                em.addLink(Link(IntervalList([inter]),NodeT(origin,IntervalList([interval])),[career],NodeT(dest,IntervalList([interval])),[career],directed=1),cond=0)
         n=n+1
     return(em,sorted(careersl),sorted(airportl),airportPerLay)
 
@@ -133,7 +133,7 @@ layers=LayerList(listLay)
 
 
 
-m=MultiStream(interval,laystr,layers,em)          
+m=MultiStream(interval,laystr,layers,em,nodes=airportl)          
 
 multi=m.extractML()
 
@@ -181,188 +181,189 @@ def makeGraph(m,airportl,carL,dicoAir,airportperlay):
     tlp.saveGraph(graph,"grapheplanes.tlp")
     return(graph)
     
+t=m.calculMatriceProbaTransition(7*60,60*5)
 #%%
-graph=makeGraph(m,airportl,carL,dicoAir,airportperlay)
-#%%
-pagerank=graph.getDoubleProperty("pageRank")
-params = tlp.getDefaultPluginParameters('Page Rank', graph)
-params["directed"]=True
-
-success = graph.applyDoubleAlgorithm('Page Rank', pagerank, params)
-pr=[]
-for n in graph.getNodes():
-    pr.append(pagerank[n])
-#%%
-matcov=multi.computeCovariance()
-print("rank=",np.linalg.matrix_rank(matcov))
-matprec=np.linalg.inv(matcov)
-for i in range(len(matprec)):
-    matprec[i][i]=0
-print("****************************************************************")
-
-valp,vectp=valeurPropreMax(np.transpose(matprec),1000)
-lablist=multi.giveLayersLabels()
-sns_plot=sns.heatmap(np.transpose(matprec),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
-fig = sns_plot.get_figure()
-fig.savefig("marprec.pdf")
-plt.show()
-
-l=SortedCollection(iterable=lablist,key = lambda lab: vectp[lablist.index(lab)])
-vectpo,labo=l.listsSorted()
-
-plt.plot(labo,vectpo,'o')
-plt.savefig("precVP.pdf")
-plt.show()
-#%%
-betweenness=graph.getDoubleProperty("betweeness")
-params = tlp.getDefaultPluginParameters('Betweenness Centrality', graph)
-params["directed"]=True
-
-success = graph.applyDoubleAlgorithm('Betweenness Centrality', betweenness, params)
-bt=[]
-for n in graph.getNodes():
-    bt.append(betweenness[n]) 
-#%%
-matintric=multi.computeIntricationMatrixBurt()
-
-print("rank=",np.rank(matintric))
-print("****************************************************************")
-
-valp,vectp=valeurPropreMax(np.transpose(matintric),1000)
-lablist=multi.giveLayersLabels()
-sns_plot=sns.heatmap(np.transpose(matintric),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
-fig = sns_plot.get_figure()
-fig.savefig("intricplanes.pdf")
-plt.show()
-
-l=SortedCollection(iterable=lablist,key = lambda lab: vectp[lablist.index(lab)])
-vectpo,labo=l.listsSorted()
-
-plt.plot(labo,vectpo,'o')
-plt.savefig("intricscoresplanes.pdf")
-plt.show()
-#%%
-matintric2=multi.computeIntricationMatrixBurt()
-
-#for i in range(len(matintric2)):
- #   matintric2[i][i]=0
-
-valp,vectp2=valeurPropreMax((matintric2),1000)
-lablist=multi.giveLayersLabels()
-sns_plot=sns.heatmap(np.transpose(matintric2),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
-fig = sns_plot.get_figure()
-fig.savefig("intricplanes.pdf")
-plt.show()
-
-l=SortedCollection(iterable=lablist,key = lambda lab: vectp2[lablist.index(lab)])
-vectpo2,labo2=l.listsSorted()
-
-plt.plot(labo2,vectpo2,'o')
-plt.savefig("intricscoresplanes.pdf")
-
-#%%
-n=len(matintric2)
-
-matintric3=np.zeros((n,n))
-
-
-for i in range(n):
-    for j in range(n):
-        matintric3[i][j]=matintric2[lablist.index(vectpo[i])][lablist.index(vectpo[j])]
-
-sns.heatmap(matintric3,cmap="YlGnBu",xticklabels=vectpo,yticklabels=vectpo)
-plt.show()
-#%%
-# random walk 
-
-def step(pos0,airportl,m,t):
-    #print(dicoAir[pos0])
-    bloque=False
-    possibleLinks=[]
-    car="none"
-    for link in m.giveLinks().giveListOfLinks():
-        if link.giveNodes()[0].giveNode()==pos0:
-            possibleLinks.append(link)
-            #print(link.giveLabel())
-    if len(possibleLinks)==0:
-        bloque=True
-        pos1=pos0
-        print("no neighbours")
-        t1=t
-    else:
-        #print("----------------------------")
-        li=randint(0,len(possibleLinks)-1)
-        link0=possibleLinks[li]
-        #link0.printLink()
-        #print(link0.giveLabel())
-        pos1=link0.giveNodes()[1].giveNode()
-        intervalsL=link0.giveIntervals()
-        i=0
-        car=link0.giveLabel()[2][0]
-        while i<len(intervalsL) and intervalsL[i].begining()<t :
-            i=i+1
-        if i==len(intervalsL):
-            bloque=True
-            t1=t
-            print("timeout")
-        else:
-            t1=intervalsL[i].end()
-    return(pos1,t1,car,bloque)
-
-covAirports=np.array([0 for i in range(len(airportl))])
-covCompagnies=np.array([0 for i in range(len(carL))])
-
-def randomWalk(airportl,m,t,collect="coverage",prints=False):
-    pos0=airportl[randint(0,len(airportl)-1)]
-    t=0
-    bloque=False
-    i=0
-    if collect=="coverage":
-        airports=np.array([0 for i in range(len(airportl))])
-        compagnies=np.array([0 for i in range(len(carL))])
-    if collect=="firstTimeToReach":
-        airports=np.array([0 for i in range(len(airportl))])
-        compagnies=np.array([-1 for i in range(len(carL))])
-    while bloque==False:
-        if prints==True:
-            print(pos0,t)
-        pos0,t,car,bloque=step(pos0,airportl,m,t)
-        if collect=="coverage":
-            airports[airportl.index(pos0)]=airports[airportl.index(pos0)]+1
-            compagnies[carL.index(car)]=compagnies[carL.index(car)]+1
-        if collect=="firstTimeToReach":
-            if airports[airportl.index(pos0)]==0:
-                airports[airportl.index(pos0)]=t
-            if compagnies[carL.index(car)]== -1:
-                compagnies[carL.index(car)]=t
-        i=i+1
-    return([pos0,t,airports,compagnies])
-
-airports=np.array([0 for i in (airportl)])
-t=0
-for i in range(100):
-    print("randomwalk n", i)
-    vect=randomWalk(airportl,m,t)
-    airports=vect[2]
-    compagnies=vect[3]
-    covAirports=np.add(covAirports,airports)
-    covCompagnies=np.add(covCompagnies,compagnies)
-#%%
-axes = plt.gca()
-plt.plot(covAirports,pr,'o')
-axes.set_ylabel('Page Rank')
-axes.set_xlabel('coverage by random walker')
-plt.show()
-
-
-axes = plt.gca()
-sns.relplot(data)
-axes.set_ylabel('Betweenness centrality')
-axes.set_xlabel('coverage by random walker')
-plt.show()
-
-axes=plt.gca()
-plt.plot(covCompagnies,vectp,'o')
-axes.set_ylabel('intrication')
-axes.set_xlabel('coverage compagnies by random walker')
-plt.show()
+#graph=makeGraph(m,airportl,carL,dicoAir,airportperlay)
+##%%
+#pagerank=graph.getDoubleProperty("pageRank")
+#params = tlp.getDefaultPluginParameters('Page Rank', graph)
+#params["directed"]=True
+#
+#success = graph.applyDoubleAlgorithm('Page Rank', pagerank, params)
+#pr=[]
+#for n in graph.getNodes():
+#    pr.append(pagerank[n])
+##%%
+#matcov=multi.computeCovariance()
+#print("rank=",np.linalg.matrix_rank(matcov))
+#matprec=np.linalg.inv(matcov)
+#for i in range(len(matprec)):
+#    matprec[i][i]=0
+#print("****************************************************************")
+#
+#valp,vectp=valeurPropreMax(np.transpose(matprec),1000)
+#lablist=multi.giveLayersLabels()
+#sns_plot=sns.heatmap(np.transpose(matprec),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
+#fig = sns_plot.get_figure()
+#fig.savefig("marprec.pdf")
+#plt.show()
+#
+#l=SortedCollection(iterable=lablist,key = lambda lab: vectp[lablist.index(lab)])
+#vectpo,labo=l.listsSorted()
+#
+#plt.plot(labo,vectpo,'o')
+#plt.savefig("precVP.pdf")
+#plt.show()
+##%%
+#betweenness=graph.getDoubleProperty("betweeness")
+#params = tlp.getDefaultPluginParameters('Betweenness Centrality', graph)
+#params["directed"]=True
+#
+#success = graph.applyDoubleAlgorithm('Betweenness Centrality', betweenness, params)
+#bt=[]
+#for n in graph.getNodes():
+#    bt.append(betweenness[n]) 
+##%%
+#matintric=multi.computeIntricationMatrixBurt()
+#
+#print("rank=",np.rank(matintric))
+#print("****************************************************************")
+#
+#valp,vectp=valeurPropreMax(np.transpose(matintric),1000)
+#lablist=multi.giveLayersLabels()
+#sns_plot=sns.heatmap(np.transpose(matintric),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
+#fig = sns_plot.get_figure()
+#fig.savefig("intricplanes.pdf")
+#plt.show()
+#
+#l=SortedCollection(iterable=lablist,key = lambda lab: vectp[lablist.index(lab)])
+#vectpo,labo=l.listsSorted()
+#
+#plt.plot(labo,vectpo,'o')
+#plt.savefig("intricscoresplanes.pdf")
+#plt.show()
+##%%
+#matintric2=multi.computeIntricationMatrixBurt()
+#
+##for i in range(len(matintric2)):
+# #   matintric2[i][i]=0
+#
+#valp,vectp2=valeurPropreMax((matintric2),1000)
+#lablist=multi.giveLayersLabels()
+#sns_plot=sns.heatmap(np.transpose(matintric2),cmap="YlGnBu",xticklabels=lablist,yticklabels=lablist)
+#fig = sns_plot.get_figure()
+#fig.savefig("intricplanes.pdf")
+#plt.show()
+#
+#l=SortedCollection(iterable=lablist,key = lambda lab: vectp2[lablist.index(lab)])
+#vectpo2,labo2=l.listsSorted()
+#
+#plt.plot(labo2,vectpo2,'o')
+#plt.savefig("intricscoresplanes.pdf")
+#
+##%%
+#n=len(matintric2)
+#
+#matintric3=np.zeros((n,n))
+#
+#
+#for i in range(n):
+#    for j in range(n):
+#        matintric3[i][j]=matintric2[lablist.index(vectpo[i])][lablist.index(vectpo[j])]
+#
+#sns.heatmap(matintric3,cmap="YlGnBu",xticklabels=vectpo,yticklabels=vectpo)
+#plt.show()
+##%%
+## random walk 
+#
+#def step(pos0,airportl,m,t):
+#    #print(dicoAir[pos0])
+#    bloque=False
+#    possibleLinks=[]
+#    car="none"
+#    for link in m.giveLinks().giveListOfLinks():
+#        if link.giveNodes()[0].giveNode()==pos0:
+#            possibleLinks.append(link)
+#            #print(link.giveLabel())
+#    if len(possibleLinks)==0:
+#        bloque=True
+#        pos1=pos0
+#        print("no neighbours")
+#        t1=t
+#    else:
+#        #print("----------------------------")
+#        li=randint(0,len(possibleLinks)-1)
+#        link0=possibleLinks[li]
+#        #link0.printLink()
+#        #print(link0.giveLabel())
+#        pos1=link0.giveNodes()[1].giveNode()
+#        intervalsL=link0.giveIntervals()
+#        i=0
+#        car=link0.giveLabel()[2][0]
+#        while i<len(intervalsL) and intervalsL[i].begining()<t :
+#            i=i+1
+#        if i==len(intervalsL):
+#            bloque=True
+#            t1=t
+#            print("timeout")
+#        else:
+#            t1=intervalsL[i].end()
+#    return(pos1,t1,car,bloque)
+#
+#covAirports=np.array([0 for i in range(len(airportl))])
+#covCompagnies=np.array([0 for i in range(len(carL))])
+#
+#def randomWalk(airportl,m,t,collect="coverage",prints=False):
+#    pos0=airportl[randint(0,len(airportl)-1)]
+#    t=0
+#    bloque=False
+#    i=0
+#    if collect=="coverage":
+#        airports=np.array([0 for i in range(len(airportl))])
+#        compagnies=np.array([0 for i in range(len(carL))])
+#    if collect=="firstTimeToReach":
+#        airports=np.array([0 for i in range(len(airportl))])
+#        compagnies=np.array([-1 for i in range(len(carL))])
+#    while bloque==False:
+#        if prints==True:
+#            print(pos0,t)
+#        pos0,t,car,bloque=step(pos0,airportl,m,t)
+#        if collect=="coverage":
+#            airports[airportl.index(pos0)]=airports[airportl.index(pos0)]+1
+#            compagnies[carL.index(car)]=compagnies[carL.index(car)]+1
+#        if collect=="firstTimeToReach":
+#            if airports[airportl.index(pos0)]==0:
+#                airports[airportl.index(pos0)]=t
+#            if compagnies[carL.index(car)]== -1:
+#                compagnies[carL.index(car)]=t
+#        i=i+1
+#    return([pos0,t,airports,compagnies])
+#
+#airports=np.array([0 for i in (airportl)])
+#t=0
+#for i in range(100):
+#    print("randomwalk n", i)
+#    vect=randomWalk(airportl,m,t)
+#    airports=vect[2]
+#    compagnies=vect[3]
+#    covAirports=np.add(covAirports,airports)
+#    covCompagnies=np.add(covCompagnies,compagnies)
+##%%
+#axes = plt.gca()
+#plt.plot(covAirports,pr,'o')
+#axes.set_ylabel('Page Rank')
+#axes.set_xlabel('coverage by random walker')
+#plt.show()
+#
+#
+#axes = plt.gca()
+#sns.relplot(data)
+#axes.set_ylabel('Betweenness centrality')
+#axes.set_xlabel('coverage by random walker')
+#plt.show()
+#
+#axes=plt.gca()
+#plt.plot(covCompagnies,vectp,'o')
+#axes.set_ylabel('intrication')
+#axes.set_xlabel('coverage compagnies by random walker')
+#plt.show()

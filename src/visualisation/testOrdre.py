@@ -56,9 +56,9 @@ nl=NodeTList([nA,nB,nC,nD])
 
 layer1=Layer(struct,["plaine"],Interval(0,10),nl)
 
-link1= Link(IntervalList([Interval(0,4)]),nA,["plaine"],nB,["plaine"])
-link2= Link(IntervalList([Interval(1,5)]),nB,["plaine"],nC,["plaine"])
-link3= Link(IntervalList([Interval(4,8)]),nA,["plaine"],nD,["plaine"])
+link1= Link(IntervalList([Interval(0,3),Interval(4,5)]),nA,["plaine"],nB,["plaine"])
+link2= Link(IntervalList([Interval(1,2),Interval(3,4)]),nB,["plaine"],nC,["plaine"])
+link3= Link(IntervalList([Interval(4,8)]),nC,["plaine"],nA,["plaine"])
 
 nE = NodeT("A",IntervalList([Interval(4,10)]),nodeLabel="A")
 nF = NodeT("B",IntervalList([Interval(0,0)]),nodeLabel="B")
@@ -75,7 +75,12 @@ link6= Link(IntervalList([Interval(4,8)]),nE,["foret"],nH,["foret"])
 
 link7=Link(IntervalList([Interval(0,10)]),nA,["plaine"],nE,["foret"])
 
-m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4,link5,link6,link7]))
+nodes=["A","B","C","D"]
+
+
+m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,link4,link5,link6,link7]),nodes=nodes)
+
+
 
 print("l",m.computeLengthEm(layer=["foret"]))
 o=m.ordreAretes(layer=["foret"])
@@ -87,7 +92,16 @@ for n in o:
 
 m.drawMS("exordre.fig")
 
+em=m.giveLinks()
+s=em.giveListForForemost()
+t=m.foremostPath("A",s,t0=2)
 #print(m.computeDensity())
 
+s2=m.giveListForLastDept()
+
+t2=m.lastDeptPath("C",s2,t0=6)
+
+wind=m.findWindows("C",to=5)
+#pb= liste d"intervalles vides
 
 

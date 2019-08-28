@@ -106,12 +106,16 @@ class IntervalList :
     list of interval is always sorted (we use for that sorted collection) by the begining of each interval and do not contains overlapping intervals (the function
     condensate interval has been created on this purpose)
     """
-    def __init__(self,listOfIntervals,key=lambda interval: interval.begining()):
+    def __init__(self,listOfIntervals,key=lambda interval: [interval.begining(),interval.end()]):
         self.listOfIntervals = SortedCollection(iterable=listOfIntervals,key=key)
         self.condensateIntervals()
 
     def giveListOfIntervals(self):
         return(self.listOfIntervals)
+    
+    def pop(self,index):
+        p=self.listOfIntervals.pop(index)
+        return(p)
 
     def condensateIntervals(self,index=0,tolerance=0,superpos=0):
         """

@@ -6,6 +6,7 @@ Created on Wed May 22 15:02:31 2019
 """
 
 from sortedcollection import *
+from intervals import *
 import numpy as np
 
 """
@@ -223,7 +224,7 @@ class Link:
     todo : Find a better indexing ?
     """
     def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0,directed=1):
-        if directed==1:
+        if directed==0:
             if node1.giveNode()>node2.giveNode():
                 layerLabel1,layerLabel2=layerLabel2,layerLabel1
                 node1,node2=node2,node1
@@ -234,6 +235,32 @@ class Link:
         self.layerLabel2=layerLabel2
         #intervals.printIntervals()
     
+    def copy(self):
+        print("copy")
+        #self.intervals.printIntervals()
+        liste=self.intervals.giveListOfIntervals()
+        temps=IntervalList([])
+        for t in liste:
+            temps.addInterval(Interval(t.begining(),t.end()),tolerance=0,cond=0)
+        l=Link(temps,self.node1,self.layerLabel1,self.node2,self.layerLabel2,directed=1)
+        return(l)
+    
+    def copyReverse(self):
+        liste=self.intervals.giveListOfIntervals()
+        temps=IntervalList([],key=lambda interval: [-interval.end(),-interval.begining()])
+        for t in liste:
+            temps.addInterval(Interval(t.begining(),t.end()),tolerance=0,cond=0)
+        l=Link(temps,self.node1,self.layerLabel1,self.node2,self.layerLabel2,directed=1)
+        return(l)
+    
+    def copyShortest(self):
+        liste=self.intervals.giveListOfIntervals()
+        temps=IntervalList([],key=lambda interval: [interval.length(),interval.begining()])
+        for t in liste:
+            temps.addInterval(Interval(t.begining(),t.end()),tolerance=0,cond=0)
+        l=Link(temps,self.node1,self.layerLabel1,self.node2,self.layerLabel2,directed=1)
+        return(l)
+        
     def giveIntervals(self):
         return(self.intervals.giveListOfIntervals())
         """
@@ -250,7 +277,9 @@ class Link:
         
         return the list of intervals of type IntervalList
         """
-        
+    def popInterval(self,index):
+        p=self.intervals.pop(index)
+        return(p)
     def addInterval(self,i,tolerance=0,cond=1):
         self.intervals.addInterval(i,tolerance,cond=cond)
     def giveLength(self):
@@ -308,5 +337,41 @@ class LinkList:
     
     def giveIndex(self,label):
         return(self.listOfLinks.index_label(label))
-        
-        
+    
+    def countLinks(self):
+        leng=0
+        for i in self.listOfLinks:
+            leng=leng+i.giveIntervals().__len__()
+        return(leng)
+    def giveListForForemost(self):
+        #print("couqsdjkh")
+        #self.listOfLinks[0].printLink()
+        #print("jdmslfhswkdjhslwkjdhlwjdkhw")
+        #print("len",len(self.listOfLinks))
+        s=SortedCollection([], key=lambda link: [link.giveIntervals()[0].begining(),link.giveLabel()])
+        for li in self.listOfLinks:
+            #li.printLink()
+            li2=li.copy()
+            #print("ccccccccccccccccccccccccccccccccccccccccccccccccccc")
+            #li2.printLink()
+            s.insert(li2)
+        print("given")
+        return(s)
+            
+    def giveListForLastDept(self):
+        s=SortedCollection([], key=lambda link: [-link.giveIntervals()[0].end(),link.giveLabel()])
+        for li in self.listOfLinks:
+            li2=li.copyReverse()
+            s.insert(li2)
+        print("given")
+        return(s)
+    
+    def giveListForEnum(self):
+        s=SortedCollection([],key=lambda link: [link.giveIntervals()[0].length(),link.giveLabel(),link.giveIntervals()[0].begining()])
+        for li in self.listOfLinks:
+            li.printLink()
+            li2=li.copyShortest()
+            li2.printLink()
+            s.insert(li2)
+        print("enum sorted")
+        return(s)

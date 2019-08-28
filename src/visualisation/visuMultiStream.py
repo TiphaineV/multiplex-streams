@@ -55,12 +55,14 @@ class MultiStream :
 
     """
 
-    def __init__(self,T,layerStruct,layers,em):
+    def __init__(self,T,layerStruct,layers,em,nodes=[],directed=False):
         #todo : coherence checks !!
         self.T=T
         self.layerStruct=layerStruct
         self.layers = layers #todo : create empty layer with good structure, then add the layers in it.
         self.em = em
+        self.nodes=nodes
+        self.directed=directed
 
     def interval(self):
         return(self.T)
@@ -425,6 +427,7 @@ class MultiStream :
         return(ordref)
 
     def comupteIntricationMatrixBurtMS(self):
+        """ attention incomplet: N à changer, cf multilayers"""
         n=self.layers.length()
         mat=np.zeros((n,n))
         matIntervales=[[[]for i in range(n)]for i in range(n)]
@@ -465,6 +468,7 @@ class MultiStream :
         return(matc)
         
     def computeCovMatrix(self):
+        """ attention incomplet: N à changer, cf multilayers"""
         n=self.layers.length()
         mat=np.zeros((n,n))
         matIntervales=[[[]for i in range(n)]for i in range(n)]
@@ -542,8 +546,137 @@ class MultiStream :
                 mat[j][i]=dens2
         return([mat,listeElemLay])
     
+    def giveListForForemost(self):
+        return(self.em.giveListForForemost())
+    
+    def foremostPath(self,nodeLab,s,t0=0):
+        t=[-1 for i in self.nodes]
+        #print(self.nodes)
+        t[self.nodes.index(nodeLab)]=t0
+        while s.__len__()>0:
+            l0=s.pop(0)
+            lab=l0.giveLabel()
+            time=l0.popInterval(0)
+            #print("link",lab)
+            #print("dist",t[self.nodes.index(lab[0])], t[self.nodes.index(lab[0])],time.begining())
+            if t[self.nodes.index(lab[0])]>=0 and t[self.nodes.index(lab[0])]<=time.begining():#si on peut prendre cet avion
+                #print("on peut pprendre cet avion:")
+                if t[self.nodes.index(lab[1])]>=time.end() or t[self.nodes.index(lab[1])]==-1:
+                    #print("avion selectionne")
+                    t[self.nodes.index(lab[1])]=time.end()
+            #print("l0",l0.giveIntervals())
+            if l0.giveIntervals().__len__()>0:
+                s.insert(l0)
+        return(t)
+        
+    def giveListForLastDept(self):
+        return(self.em.giveListForLastDept())
+    
+    def lastDeptPath(self,nodeLab,s,t0=0):
+        t=[-1 for i in self.nodes]
+        t[self.nodes.index(nodeLab)]=t0
+        while s.__len__()>0:
+            l0=s.pop(0)
+            lab=l0.giveLabel()
+            time=l0.popInterval(0)
+            #l0.printLink()
+            #time.printInterval()
+            if t[self.nodes.index(lab[1])]>=0 and t[self.nodes.index(lab[1])]>=time.end(): #si on peut prendre cet avion
+                if t[self.nodes.index(lab[0])]<=time.begining() or t[self.nodes.index(lab[0])]==-1: #si il améliore le score
+                    t[self.nodes.index(lab[0])]=time.begining()
+            if l0.giveIntervals().__len__()>0:
+                s.insert(l0)
+        return(t)
+        
+    def findWindows(self,node,to):
+        s1=self.giveListForForemost()
+        s2=self.giveListForLastDept()
+        endWindows=self.foremostPath(node,s1,t0=to)
+        beginingWindows=self.lastDeptPath(node,s2,t0=to)
+        windows=[]
+        for i in range(len(beginingWindows)):
+            windows.append([beginingWindows[i],endWindows[i]])
+        return(windows)
 
-
+    def enumShortestPath(self,source,target):
+        #a finir
+        s=self.em.giveListForEnum()
+        tab=[[]for i in range(len(self.nodes))]
+        deptAndArr=[[]for i in range(len(self.nodes))]
+        encadr=[[] for i in range(len(self.nodes))]
+        while len(s)!= 0:
+            l0=s.pop(0)
+            lab=l0.giveLabel()
+            time=l0.popInterval(0)
+            if lab[0]==source:
+                tab[self.nodes.index(lab[1])].append([lab[1]])
+                deptAndArr[self.nodes.index(lab[1])].append([])
+            elif len(tab[self.nodes.index(lab[0])])>0:
+                return()
+        return()
+    
+    def avionsSuivants(self,source,time,sizeWindows):
+        noeudsAtteints=[[]for i in range(len(self.nodes))]
+        nlay=len(self.layers.giveLayers())
+        compUtilisees=[ [] for i in range(nlay)]
+        for i in self.em.giveListOfLinks():
+            lab=i.giveLabel()
+            if lab[0]==source:
+                for tps in i.giveIntervals():
+                    if tps.begining()>=time and tps.begining()<=time+sizeWindows:
+                        noeudsAtteints[self.nodes.index(lab[1])].append(tps.begining())
+                        print(lab[2])
+                        print(self.layers.giveLayers().index_label(lab[2]))
+                        ind=self.layers.giveLayers().index_label(lab[2])
+                        compUtilisees[ind].append(tps.begining())
+        return(noeudsAtteints,compUtilisees)
+    
+    def tmpsTransition(self,source):
+        tpsL=[]
+        for i in self.em.giveListOfLinks():
+            lab=i.giveLabel()
+            if lab[1]==source:
+                for tps in i.giveIntervals():
+                    tpsL.append(tps)
+        return(tpsL)
+    
+    def calculProba(self,source,noeudsAtteints,compUtilisees,t0,sizeWindows):
+        probaNodes=[ 0 for i in range(len(self.nodes))]
+        pN=0
+        nlay=len(self.layers.giveLayers())
+        probaLay=[ 0 for i in range(nlay)]
+        pL=0
+        for i in range(len(probaNodes)):
+            for j in range(len(noeudsAtteints[i])):
+                probaNodes[i]=probaNodes[i]+sizeWindows-(noeudsAtteints[i][j]-t0)
+                pN=pN+sizeWindows-(noeudsAtteints[i][j]-t0)
+        for i in range(len(probaLay)):
+            for j in range(len(compUtilisees[i])):
+                probaLay[i]=probaLay[i]+sizeWindows-(compUtilisees[i][j]-t0)
+                pL=pL+sizeWindows-(compUtilisees[i][j]-t0)
+        for i in range(len(probaNodes)):
+            if pN!=0:
+                probaNodes[i]=probaNodes[i]/pN
+            else:
+                probaNodes[self.nodes.index(source)]=1
+        for i in range(len(probaLay)):
+            if pL!=0:
+                probaLay[i]=probaLay[i]/pL
+        return(probaNodes,probaLay)
+    
+    def calculMatriceProbaTransition(self,t0,sizeWindows):
+        matNodes=[[[]for j in range(len(self.nodes))] for i in range(len(self.nodes))]
+        nLay=len(self.layers.giveLayers())
+        matLay=[[[] for j in range(nLay)] for i in range(len(self.nodes))]
+        for i in range(len(self.nodes)):
+            nAtteints,compUtilisees=self.avionsSuivants(self.nodes[i],t0,sizeWindows)
+            pNodes,pLay=self.calculProba(self.nodes[i],nAtteints,compUtilisees,t0,sizeWindows)
+            for j in range(len(self.nodes)):
+                matNodes[i][j]=pNodes[j]
+            for k in range(nLay):
+                matLay[i][k]=pLay[k]
+        return(matNodes,matLay)
+        
 def indice(liste,elem1):
     i=0
     ind=0

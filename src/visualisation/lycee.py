@@ -195,7 +195,11 @@ ti,ni=readLinks(liste)
 
 ftf=layerWithCommonPoint(lycee,"relation","face_to_face")
 #
+print("compte=",m.giveLinks().countLinks())
 m=m.extractLayers(ftf)
+
+s=m.giveLinks().giveListForForemost()
+
 femmes=layerWithCommonPoint(lycee,"sexe","F")
 
 hommes= layerWithCommonPoint(lycee,"sexe","M")
@@ -237,6 +241,8 @@ plt.show()
 
 plt.plot(classe.giveElemLayer(),(vectp),'o')
 plt.show()
+
+
 
 ##########################
 

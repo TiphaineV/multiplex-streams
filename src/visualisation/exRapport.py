@@ -48,7 +48,7 @@ nB = NodeT("F2",IntervalList([Interval(0,0)]),nodeLabel="F2")
 nC = NodeT("M1",IntervalList([Interval(0,2),Interval(4,8)]),nodeLabel="M1")
 nD = NodeT("M2",IntervalList([Interval(0,10)]),nodeLabel="M2")
 
-nl=NodeTList([nA,nC,nD])
+nl=NodeTList([nA,nB,nC,nD])
 
 layer1=Layer(struct,["plain","Collaboration"],Interval(0,10),nl)
 
@@ -62,15 +62,16 @@ nB2 = NodeT("F2",IntervalList([Interval(0,10)]),nodeLabel="F2")
 nC2 = NodeT("M1",IntervalList([Interval(2,4),Interval(8,10)]),nodeLabel="M1")
 nD2 = NodeT("M2",IntervalList([Interval(0,0)]),nodeLabel="M2")
 
-nl2=NodeTList([nA2,nB2,nC2])
+nl2=NodeTList([nA2,nB2,nC2,nD2])
 layer2=Layer(struct,["mountain","Collaboration"],Interval(0,10),nl2)
 
 link3= Link(IntervalList([Interval(1,2),Interval(3,4)]),nA2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
 linkplus2= Link(IntervalList([Interval(2,3),Interval(8,9)]),nC2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
+interlink= Link(IntervalList([Interval(9,10)]),nC,["mountain","Collaboration"],nA2,["plain","Collaboration"])
 #link4= Link(IntervalList([Interval(5,8)]),nD2,["mountain","Collaboration"],nC2,["mountain","Collaboration"])
 
 
-m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,linkplus2]))
+m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,linkplus2,interlink]))
 
 m.drawMS("exrap.fig")
 

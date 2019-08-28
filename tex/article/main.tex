@@ -13,7 +13,6 @@
 \usepackage{amsmath}
 \usepackage{cleveref}
 \usepackage{tabularx}
-\usepackage[utf8]{inputenc}
 %
 % RECOMMENDED %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -111,7 +110,7 @@ Institute for Datability Science, Osaka Univerisity}
 \maketitle              % typeset the title of the contribution
 
 \begin{abstract}
-Graphs are commonly used in mathematics to represent some relationships between items. We generalise this model to networks of relationships which have complex structure and which depend on the time and we build and test several ``centralities'' to catch the importance of nodes, links and layers of such structures. We compare our new notions with the traditional ones. To illustrate this notions, we give example of use on US flights dataset and a network of different type of relationships between students.
+Graphs are commonly used in mathematics to represent some relationships between items. We generalise them to model networks of relationships which have complex structure and which depend on the time. We build and test several ``centralities'' to catch the importance of nodes, links and layers of such structures. We compare our new notions with the traditional ones. To illustrate this notions, we give example of use on US flights dataset and a network of different type of relationships between students.
 %The abstract should summarize the contents of the paper using at least 70 and at most 150 words. It will be set in 9-point font size and be inset 1.0 cm from the right and left margins. There will be two blank lines before and after the Abstract. \dots
 % We would like to encourage you to list your keywords within
 % the abstract section using the \keywords{...} command.
@@ -121,13 +120,11 @@ Graphs are commonly used in mathematics to represent some relationships between 
 
 \section{Introduction}
 %
-From the time, in 1750, that stated the bridges problem of Köninsgberg, the notion of graphs has been widely exploited to model and sort a lot of real-life and theoretical problems.
-
-A graph represent a set of relationships (links) between entities (nodes). This type of data can be found everywhere: road or rails between cities, friendships, communications between internet devices, etc.
+A graph represents a set of relationships (links) between entities (nodes). This type of data can be found everywhere: road or rails between cities, friendships, communications between internet devices, etc.
 
 This formalism has been extended to capture diversity in the data: links can be oriented, weighted, labelled, \textit{etc}. The nodes can have different labels too. The nodes and the links can change with the time. Several new formalisms have been created to deal with this new aspects. We focus on two of them: the multilayer graphs~\cite{mlkiv} to deal with non-trivial structures and the stream graphs~\cite{stream} to deal with time-dependant interactions. We use this two formalisms and the theories associated to describe time-dependant set of interactions with complex structures.
 
-In the first part, the multilayer stream graph is constructed with its theoretical definitions. The we give example of use with to real datasets.
+In the first part, the multilayer stream graph is constructed with its theoretical definitions. The we give example of use with two real datasets.
 
 
 \section{The multilayer stream graph}
@@ -463,6 +460,7 @@ The {\bf juxtaposed layers} form a partition of the nodes. For instance, they ca
 %
 \subsection{Implementation and complexity}
 %
+
 
 \section{Datasets and results}
 %
