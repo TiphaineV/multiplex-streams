@@ -15,7 +15,7 @@ from structure import *
 from elemMSGraph import *
 from multiLayers import *
 
-sg = Drawing(alpha=0, omega=10, nameFile="exampleRapport.fig")
+sg = Drawing(alpha=0, omega=20, nameFile="exampleRapport.fig")
 
 sg.addNode("F1",[(0,10)])
 sg.addNode("F2",[(0,8)])
@@ -32,7 +32,7 @@ sg.closeFile()
 
 
 t0=0
-tend=10
+tend=20
 scale = 1
 interval = Interval(0,(tend-t0)/scale)
 
@@ -43,9 +43,9 @@ rel = Aspect("type_de_relation",["Collaboration","fight"])
 
 struct= LayerStruct([mil,rel])
 
-nA = NodeT("F1",IntervalList([Interval(4,10)]),nodeLabel="F1")
-nB = NodeT("F2",IntervalList([Interval(0,0)]),nodeLabel="F2")
-nC = NodeT("M1",IntervalList([Interval(0,2),Interval(4,8)]),nodeLabel="M1")
+nA = NodeT("F1",IntervalList([Interval(4,10),Interval(12,20)]),nodeLabel="F1")
+nB = NodeT("F2",IntervalList([Interval(10,20)]),nodeLabel="F2")
+nC = NodeT("M1",IntervalList([Interval(0,2),Interval(4,8),Interval(15,19)]),nodeLabel="M1")
 nD = NodeT("M2",IntervalList([Interval(0,10)]),nodeLabel="M2")
 
 nl=NodeTList([nA,nB,nC,nD])
@@ -53,27 +53,27 @@ nl=NodeTList([nA,nB,nC,nD])
 layer1=Layer(struct,["plain","Collaboration"],Interval(0,10),nl)
 
 link1= Link(IntervalList([Interval(1,2),Interval(6,7)]),nD,["plain","Collaboration"],nC,["plain","Collaboration"])
-link2= Link(IntervalList([Interval(5,8)]),nA,["plain","Collaboration"],nC,["plain","Collaboration"])
+link2= Link(IntervalList([Interval(5,8),Interval(15,17)]),nA,["plain","Collaboration"],nC,["plain","Collaboration"])
 #linkplus= Link(IntervalList([Interval(4,8)]),nA,["plain","Collaboration"],nB,["plain","Collaboration"])
 
 
-nA2 = NodeT("F1",IntervalList([Interval(0,4)]),nodeLabel="F1")
+nA2 = NodeT("F1",IntervalList([Interval(0,4),Interval(10,12)]),nodeLabel="F1")
 nB2 = NodeT("F2",IntervalList([Interval(0,10)]),nodeLabel="F2")
-nC2 = NodeT("M1",IntervalList([Interval(2,4),Interval(8,10)]),nodeLabel="M1")
-nD2 = NodeT("M2",IntervalList([Interval(0,0)]),nodeLabel="M2")
+nC2 = NodeT("M1",IntervalList([Interval(2,4),Interval(8,15)]),nodeLabel="M1")
+nD2 = NodeT("M2",IntervalList([Interval(10,20)]),nodeLabel="M2")
 
 nl2=NodeTList([nA2,nB2,nC2,nD2])
 layer2=Layer(struct,["mountain","Collaboration"],Interval(0,10),nl2)
 
 link3= Link(IntervalList([Interval(1,2),Interval(3,4)]),nA2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
 linkplus2= Link(IntervalList([Interval(2,3),Interval(8,9)]),nC2,["mountain","Collaboration"],nB2,["mountain","Collaboration"])
-interlink= Link(IntervalList([Interval(9,10)]),nC,["mountain","Collaboration"],nA2,["plain","Collaboration"])
-#link4= Link(IntervalList([Interval(5,8)]),nD2,["mountain","Collaboration"],nC2,["mountain","Collaboration"])
+interlink= Link(IntervalList([Interval(9,10),Interval(12,14)]),nC,["mountain","Collaboration"],nA2,["plain","Collaboration"])
+
 
 
 m=MultiStream(interval,struct,LayerList([layer1,layer2]),LinkList([link1,link2,link3,linkplus2,interlink]))
 
-m.drawMS("exrap.fig")
+m.drawMS("exraplong.fig")
 
 print(m.computeDensity())
 
