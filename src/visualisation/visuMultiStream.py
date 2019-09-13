@@ -98,7 +98,7 @@ class MultiStream :
         print("EM")
         for e in self.em.giveListOfLinks():
             e.printLink()
-    def drawMS(self,nameFile2="default.fig",colors="byLayer",neglect=-1,ordonne=False):
+    def drawMS(self,nameFile2="default.fig",colors="byLayer",neglect=-1,ordonne=False,colL={}):
         """
             function drawMS :
             =====
@@ -134,14 +134,15 @@ class MultiStream :
                     times=[]
                     for k in j.giveIntervals():
                         times.append((k.begining(),k.end()))
-                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
+                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=0,write=j.giveNodeLabel(),color=j.color)
+                    print("j.color",j.color)
                     newlay=0
             else :
                 for j in self.layers.giveLayer(i).giveNodesT().giveListOfNodes():
                     times=[]
                     for k in j.giveIntervals():
                         times.append((k.begining(),k.end()))
-                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=newlay,write=j.giveNodeLabel())
+                    f.addNode(str(j.giveNode()),times=times,layer=str(lay),newLayer=0,write=j.giveNodeLabel(),color=j.color)
                     newlay=0
         for j in self.em.giveListOfLinks():
             for inte in j.giveIntervals():
@@ -157,7 +158,7 @@ class MultiStream :
                     else:
                         c=0
                 else :
-                    c=int(uniform(1,30))
+                    c=j.color
                 if neglect<0:
                     f.addLink( u, v, b, e, layer1=lay1, layer2=lay2,color=c)
                 elif e-b>neglect:

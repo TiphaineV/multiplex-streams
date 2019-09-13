@@ -23,11 +23,12 @@ class NodeT :
     :type intervals: IntervalList
 
     """
-    def __init__(self,node,intervals,nodeLabel=""):
+    def __init__(self,node,intervals,nodeLabel="",color=0):
         self.node=node
         self.intervals = intervals
         self.intervals.condensateIntervals()
         self.nodeLabel=nodeLabel
+        self.color=color
     def giveIntervals(self):
         """
         function giveIntervals()
@@ -223,7 +224,7 @@ class Link:
     
     todo : Find a better indexing ?
     """
-    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0,directed=1):
+    def __init__(self,intervals,node1,layerLabel1,node2,layerLabel2,delta=0,directed=1,color=0):
         if directed==0:
             if node1.giveNode()>node2.giveNode():
                 layerLabel1,layerLabel2=layerLabel2,layerLabel1
@@ -233,6 +234,7 @@ class Link:
         self.node2=node2
         self.layerLabel1=layerLabel1
         self.layerLabel2=layerLabel2
+        self.color=color
         #intervals.printIntervals()
     
     def copy(self):

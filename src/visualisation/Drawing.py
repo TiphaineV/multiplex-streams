@@ -56,16 +56,18 @@ Letter\n\
 Single\n\
 -2\n\
 1200 2""")
+        
 
         self.alpha = float(alpha)
         self.omega = float(omega)
         self.time_unit = time_width
         self.discrete = discrete
 
-        self.linetype = 2
+        self.linetype = 1
 
         # Useful predefined colors
         self.addColor("grey", "#888888")
+        self.addColor("orange","#fdbf6f")
 
 
 
@@ -117,7 +119,8 @@ Single\n\
 
         if linetype is None:
             linetype = self.linetype
-
+        
+        linetype=1
         if color in self.colors:
             color = self.colors[color]
 
@@ -188,7 +191,7 @@ Single\n\
             numnodes = abs(self.nodes[u] - self.nodes[v])
 
 
-    def addContinuousLink(self, u, v,layer1,layer2, b, e, curving=0.0, color=0, height=0.5, width=3):
+    def addContinuousLink(self, u, v,layer1,layer2, b, e, curving=0.0, color=0, height=0.5, width=100):
         if color in self.colors:
             color = self.colors[color]
         #print("dictionnaire",self.nodes)
