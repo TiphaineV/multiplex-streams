@@ -8,3 +8,4 @@ This is the Readme for multiplex streams project.
   - multiLayers.py is a class to represent multilayer graphs.
   - elemMSGraph.py contains the bricks to build the multilayer stream graph.
   - visuMultiStream.py contains the object multilayer stream graph and several methods associated.
+  - Drawing.py contains the functions to draw multilayer stream graphs.
