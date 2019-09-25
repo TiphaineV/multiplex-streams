@@ -3,6 +3,8 @@ This is the Readme for multiplex streams project.
 
 - If you want to visualise the results on our two datasets, you can find on src/visualisation the Jupyter Notebooks lycée.ipynb, planes-1988.ipynb, planes-1995.ipynb, planes-2010.ipynb, planes-2019.ipynb.
 
+- "Drawing multilayer stream graphs.ipynb" in "src" folder gives an example of use of the drawing library.
+
 - The library is structured as follows: 
   - intervals.py contains the construction of the intervals.
   - multiLayers.py is a class to represent multilayer graphs.
