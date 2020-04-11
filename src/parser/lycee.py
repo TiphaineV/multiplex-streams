@@ -1,6 +1,9 @@
 # Datas
 # Datas are imported from SocioPattern website : http://www.sociopatterns.org/datasets/high-school-contact-and-friendship-networks/
 
+import functools
+import types
+
 from library.visuMultiStream import *
 from library.intervals import *
 from library.structure import *
@@ -33,7 +36,6 @@ sexe      = Aspect("sexe",     ["F", "M", "U"])
 typeOfRel = Aspect("relation", ["face_to_face", "facebook", "friendship", "diaries"])
 
 LYCEE = LayerStruct([typeOfRel, classe, sexe])
-
 
 ## Read the nodes (students). 
 
@@ -179,3 +181,9 @@ def layerWithCommonPoint(layerStruct,aspect,elemLayer):
                     a.pop()
         j=j+1
     return(liste)
+
+Lycee = MultiStream(interval, LYCEE, LayerList([]), LinkList([]))
+def _extract_(self, **params):
+    print(params.items())
+    functools.reduce(lambda key, spec: self.extractLayers(layerWithCommonPoint(LYCEE, key, spec)), params.items())
+Lycee.extract = types.MethodType(_extract_, Lycee)

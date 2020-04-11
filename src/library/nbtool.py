@@ -1,13 +1,5 @@
 import sys
 
-'''
-def configure(paths=['../multiplex-streams/src', '../sgvis/src']):
-    for p in paths:
-        if p not in sys.path: sys.path.append(p)
-
-configure()
-'''
-
 import os
 import tempfile
 
